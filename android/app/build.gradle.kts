@@ -37,6 +37,34 @@ android {
             signingConfig = signingConfigs.getByName("debug")
         }
     }
+
+    flavorDimensions += "default"
+    productFlavors {
+        create("local") {
+            dimension = "default"
+            resValue(
+                type = "string",
+                name = "app_name",
+                value = "MenuZen Local")
+            applicationIdSuffix = ".local"
+        }
+        create("staging") {
+            dimension = "default"
+            resValue(
+                type = "string",
+                name = "app_name",
+                value = "MenuZen Staging")
+            applicationIdSuffix = ".staging"
+        }
+        create("production") {
+            dimension = "default"
+            resValue(
+                type = "string",
+                name = "app_name",
+                value = "MenuZen")
+            applicationIdSuffix = ".production"
+        }
+    }
 }
 
 flutter {
