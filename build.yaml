@@ -1,0 +1,19 @@
+targets:
+  $default:
+    builders:
+      json_serializable:
+        options:
+          # Automatically convert camelCase to snake_case
+          field_rename: snake
+          include_if_null: false
+          explicit_to_json: true
+
+      injectable_generator:injectable_builder:
+        options:
+          auto_register: true
+          # auto registers any class with a name matches the given pattern
+          class_name_pattern:
+            "DatasourceImp$|Service$|RepositoryImpl$|Usecase$|Bloc$|Service$"
+          # auto registers any class inside a file with a
+          # name matches the given pattern
+          file_name_pattern: "_datasource$|_service$|_repository_impl$|_usecase$|_bloc$|_service$"
