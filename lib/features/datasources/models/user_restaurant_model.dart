@@ -21,26 +21,20 @@ class UserRestaurantModel extends UserRestaurantEntity {
   const UserRestaurantModel({
     required UserModel user,
     required RestaurantModel restaurant,
-    required this.token,
+    this.token,
   }) : _user = user,
         _restaurant = restaurant,
         super(user: user, restaurant: restaurant);
+
+  /// Constructor from UserRestaurantEntity
+  UserRestaurantModel.fromEntity(UserRestaurantEntity entity)
+      : _user = UserModel.fromEntity(entity.user),
+        _restaurant = RestaurantModel.fromEntity(entity.restaurant),
+        token = null,
+        super(user: entity.user, restaurant: entity.restaurant);
 
   factory UserRestaurantModel.fromJson(Map<String, dynamic> json) =>
       _$UserRestaurantModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$UserRestaurantModelToJson(this);
 }
-  // factory UserRestaurantModel.fromJson(Map<String, dynamic> json) {
-  //   return UserRestaurantModel(
-  //     UserModel.fromJson(json['user']),
-  //     RestaurantModel.fromJson(json['restaurant']),
-  //     Token.fromJson(json['token']),
-  //   );
-  // }
-  //
-  // Map<String, dynamic> toJson() => {
-  //   'user': (user as UserModel).toJson(),
-  //   'restaurant': (restaurant as RestaurantModel).toJson()
-  // };
-

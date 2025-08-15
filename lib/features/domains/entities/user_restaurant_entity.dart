@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:menu_zen_restaurant/features/domains/entities/restaurant_entity.dart';
 import 'package:menu_zen_restaurant/features/domains/entities/user_entity.dart';
 
-abstract class UserRestaurantEntity extends Equatable {
+class UserRestaurantEntity extends Equatable {
   final UserEntity user;
   final RestaurantEntity restaurant;
 

@@ -9,7 +9,7 @@ class UserEntity extends Equatable {
   final String username;
   final String? phone;
   final String? password;
-  final Role role;
+  final Role roles;
 
   const UserEntity({
     this.id,
@@ -19,7 +19,7 @@ class UserEntity extends Equatable {
     required this.username,
     this.phone,
     this.password,
-    required this.role,
+    required this.roles,
   });
 
   @override
@@ -31,7 +31,7 @@ class UserEntity extends Equatable {
     username,
     phone,
     password,
-    role,
+    roles,
   ];
 }
 
