@@ -5,19 +5,26 @@ abstract class RestaurantEvent extends Equatable {
 }
 
 class RestaurantCreated extends RestaurantEvent {
-  final UserRestaurantEntity userRestaurant;
-
-  const RestaurantCreated(this.userRestaurant);
+  const RestaurantCreated();
 
   @override
-  List<Object?> get props => [userRestaurant];
+  List<Object?> get props => [];
 }
 
-class RestaurantInfoFilled extends RestaurantEvent{
+class RestaurantInfoFilled extends RestaurantEvent {
   final RestaurantEntity restaurant;
 
   const RestaurantInfoFilled(this.restaurant);
 
   @override
   List<Object?> get props => [restaurant];
+}
+
+class RestaurantUserInfoFilled extends RestaurantEvent {
+  final UserEntity user;
+
+  const RestaurantUserInfoFilled(this.user);
+
+  @override
+  List<Object?> get props => [user];
 }

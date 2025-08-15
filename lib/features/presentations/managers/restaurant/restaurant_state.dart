@@ -1,18 +1,37 @@
 part of 'restaurant_bloc.dart';
 
 class RestaurantState extends Equatable {
-  const RestaurantState({this.restaurant, this.status = BlocStatus.init});
+  const RestaurantState({
+    this.restaurantFilled = false,
+    this.userFilled = false,
+    this.userRestaurant,
+    this.status = BlocStatus.init,
+  });
 
-  final RestaurantEntity? restaurant;
+  final UserRestaurantEntity? userRestaurant;
   final BlocStatus status;
+  final bool restaurantFilled;
+  final bool userFilled;
 
-  RestaurantState copyWith({RestaurantEntity? restaurant, BlocStatus? status}) {
+  RestaurantState copyWith({
+    UserRestaurantEntity? userRestaurant,
+    BlocStatus? status,
+    bool? restaurantFilled,
+    bool? userFilled,
+  }) {
     return RestaurantState(
-      restaurant: restaurant ?? this.restaurant,
+      userRestaurant: userRestaurant ?? this.userRestaurant,
       status: status ?? this.status,
+      restaurantFilled: restaurantFilled ?? this.restaurantFilled,
+      userFilled: userFilled ?? this.userFilled,
     );
   }
 
   @override
-  List<Object?> get props => [restaurant, status];
+  List<Object?> get props => [
+    userRestaurant,
+    status,
+    restaurantFilled,
+    userFilled,
+  ];
 }

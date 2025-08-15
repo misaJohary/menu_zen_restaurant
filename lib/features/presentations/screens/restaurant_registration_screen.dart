@@ -7,6 +7,7 @@ import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:menu_zen_restaurant/core/services/photon_geocoding_service.dart';
 import 'package:menu_zen_restaurant/features/presentations/controllers/user_registration_controller.dart';
 
+import '../../../core/enums/bloc_status.dart';
 import '../controllers/restaurant_registration_controller.dart';
 import 'package:menu_zen_restaurant/core/navigation/app_router.gr.dart'
     as app_router;
@@ -31,9 +32,28 @@ class _RestaurantRegistrationScreenState
       builder: (context, child, _) {
         final tabsRouter = AutoTabsRouter.of(context);
         return BlocListener<RestaurantBloc, RestaurantState>(
-          listenWhen: (previous, current)=> previous.restaurant != current.restaurant,
+          listenWhen: (previous, current) =>
+              previous.restaurantFilled != current.restaurantFilled ||
+              previous.userFilled != current.userFilled,
           listener: (context, state) {
-            tabsRouter.setActiveIndex(1);
+            switch ((state.restaurantFilled, state.userFilled)) {
+              case (true, true):
+                // Both forms complete - create restaurant
+                context.read<RestaurantBloc>().add(RestaurantCreated());
+                break;
+              case (true, false):
+                // Restaurant filled, user not - go to user tab
+                tabsRouter.setActiveIndex(1);
+                break;
+              case (false, true):
+                // User filled, restaurant not - go to restaurant tab
+                tabsRouter.setActiveIndex(0);
+                break;
+              case (false, false):
+                // Neither filled - could stay on current or go to first tab
+                // tabsRouter.setActiveIndex(0); // if needed
+                break;
+            }
           },
           child: Scaffold(body: child),
         );
@@ -112,7 +132,7 @@ class _RestaurantFormState extends State<RestaurantForm> {
                 ]),
               ),
               TypeAheadField<PhotonFeature>(
-                debounceDuration: const Duration(milliseconds: 2000),
+                debounceDuration: const Duration(milliseconds: 1000),
                 emptyBuilder: (context) {
                   return const ListTile(title: Text('No results found'));
                 },
@@ -270,15 +290,26 @@ class _UserFormState extends State<UserForm> {
                 },
               ),
               SizedBox(height: 24),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  minimumSize: const Size(double.infinity, 50),
-                  backgroundColor: Colors.blue,
-                  foregroundColor: Colors.white,
-                ),
-                child: Text('ENREGISTRER'),
-                onPressed: () {
-                  controller.validate();
+              BlocBuilder<RestaurantBloc, RestaurantState>(
+                builder: (context, state) {
+                  switch (state.status) {
+                    case BlocStatus.loading:
+                      return const Center(child: CircularProgressIndicator());
+                    case BlocStatus.loaded:
+                      return const SizedBox.shrink();
+                    default:
+                      return ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          minimumSize: const Size(double.infinity, 50),
+                          backgroundColor: Colors.blue,
+                          foregroundColor: Colors.white,
+                        ),
+                        child: Text('ENREGISTRER'),
+                        onPressed: () {
+                          controller.validate();
+                        },
+                      );
+                  }
                 },
               ),
             ],

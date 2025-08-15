@@ -23,24 +23,35 @@ class RestaurantRegistrationController extends ChangeNotifier {
   }
 
   void validate() {
-    if (formKey.currentState?.saveAndValidate() ?? false) {
-      Logger().e(
-        formKey.currentState?.fields.map((key, value) {
-            return MapEntry(key, value.value);
-        }),
-      );
-      final restaurant = RestaurantModel.fromJson(
-        formKey.currentState!.fields.map(
-          (key, value) => MapEntry(key, value.value),
-        ),
-      );
+    try {
+      final currentState = formKey.currentState;
+      // currentState?.patchValue({
+      //   'name': 'extra',
+      //   'phone': '03489876565',
+      //   'email': 'extra@gmail.com',
+      //   'city': 'Toliara'
+      // });
+      //   final restaurant = RestaurantModel.fromJson(
+      //     currentState!.fields.map((key, value) => MapEntry(key, value.value)),
+      //   );
+      //
+      //   // final restWithCoord = restaurant.copyWith(
+      //   //   lat: currentSelectedAdresss.geometry.coordinates[1],
+      //   //   long: currentSelectedAdresss.geometry.coordinates[0],
+      //   // );
+      //   context.read<RestaurantBloc>().add(RestaurantInfoFilled(restaurant));
+      if (currentState?.saveAndValidate() ?? false) {
+        final restaurant = RestaurantModel.fromJson(
+          currentState!.fields.map((key, value) => MapEntry(key, value.value)),
+        );
 
-      final restWithCoord = restaurant.copyWith(
-        lat: currentSelectedAdresss.geometry.coordinates[1],
-        long: currentSelectedAdresss.geometry.coordinates[0],
-      );
-      context.read<RestaurantBloc>().add(RestaurantInfoFilled(restWithCoord));
-    }
+        final restWithCoord = restaurant.copyWith(
+          lat: currentSelectedAdresss.geometry.coordinates[1],
+          long: currentSelectedAdresss.geometry.coordinates[0],
+        );
+        context.read<RestaurantBloc>().add(RestaurantInfoFilled(restWithCoord));
+      }
+    } catch (_) {}
   }
 
   Future<PhotonResponse> searchAddress(String query) async {

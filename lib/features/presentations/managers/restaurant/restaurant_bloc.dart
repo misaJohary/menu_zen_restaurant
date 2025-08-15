@@ -6,6 +6,7 @@ import 'package:menu_zen_restaurant/features/domains/entities/user_restaurant_en
 import 'package:menu_zen_restaurant/features/domains/repositories/restaurant_repository.dart';
 
 import '../../../../core/enums/bloc_status.dart';
+import '../../../domains/entities/user_entity.dart';
 
 part 'restaurant_event.dart';
 
@@ -13,18 +14,29 @@ part 'restaurant_state.dart';
 
 class RestaurantBloc extends Bloc<RestaurantEvent, RestaurantState> {
   final RestaurantRepository restaurant;
+  late RestaurantEntity _restaurantEntity;
+  late UserEntity _userEntity;
 
   RestaurantBloc({required this.restaurant}) : super(RestaurantState()) {
     on<RestaurantCreated>(_onRestaurantCreated);
     on<RestaurantInfoFilled>(_onRestaurantInfoFilled);
+    on<RestaurantUserInfoFilled>(_onRestaurantUserInfoFilled);
+  }
+
+  _onRestaurantUserInfoFilled(
+    RestaurantUserInfoFilled event,
+    Emitter<RestaurantState> emit,
+  ) {
+    _userEntity = event.user;
+    emit(state.copyWith(userFilled: true));
   }
 
   _onRestaurantInfoFilled(
     RestaurantInfoFilled event,
     Emitter<RestaurantState> emit,
   ) {
-    emit(state.copyWith(restaurant: event.restaurant));
-    Logger().i(event.restaurant);
+    _restaurantEntity = event.restaurant;
+    emit(state.copyWith(restaurantFilled: true));
   }
 
   _onRestaurantCreated(
@@ -32,12 +44,16 @@ class RestaurantBloc extends Bloc<RestaurantEvent, RestaurantState> {
     Emitter<RestaurantState> emit,
   ) async {
     emit(state.copyWith(status: BlocStatus.loading));
-    final res = await restaurant.createRestaurant(event.userRestaurant);
+    final userRestaurant = UserRestaurantEntity(
+      user: _userEntity,
+      restaurant: _restaurantEntity,
+    );
+    final res = await restaurant.createRestaurant(userRestaurant);
     if (res.isSuccess) {
       return emit(
         state.copyWith(
           status: BlocStatus.loaded,
-          restaurant: res.getSuccess?.restaurant,
+          userRestaurant: res.getSuccess,
         ),
       );
     } else if (res.isFailure) {
@@ -45,7 +61,7 @@ class RestaurantBloc extends Bloc<RestaurantEvent, RestaurantState> {
       return emit(
         state.copyWith(
           status: BlocStatus.failed,
-          restaurant: res.getSuccess?.restaurant,
+          //restaurant: res.getSuccess?.restaurant,
         ),
       );
     }
