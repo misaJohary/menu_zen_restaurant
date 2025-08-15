@@ -117,11 +117,17 @@ class PhotonException implements Exception {
 // Main service class
 @lazySingleton
 class PhotonGeocodingService {
-  static const String _baseUrl = 'https://photon.komoot.io';
+
   final Dio dio;
+  static const String _baseUrl = 'https://photon.komoot.io';
+
+
   final Duration _timeout = Duration(seconds: 10);
 
-  PhotonGeocodingService(this.dio);
+
+  PhotonGeocodingService(
+      @Named("noInterceptor")
+      this.dio);
 
   /// Search for locations by query string
   ///

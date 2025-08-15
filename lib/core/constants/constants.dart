@@ -1,0 +1,1 @@
+const double kspacing = 8.0;
