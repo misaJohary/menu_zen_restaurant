@@ -16,15 +16,21 @@ import 'package:shared_preferences/shared_preferences.dart' as _i460;
 
 import '../../features/datasources/repositories/auth_repository_impl.dart'
     as _i345;
+import '../../features/datasources/repositories/categories_repository_impl.dart'
+    as _i95;
 import '../../features/datasources/repositories/menus_repository_impl.dart'
     as _i1052;
 import '../../features/datasources/repositories/restaurant_respository_impl.dart'
     as _i659;
 import '../../features/domains/repositories/auth_repository.dart' as _i643;
+import '../../features/domains/repositories/categories_repository.dart'
+    as _i518;
 import '../../features/domains/repositories/menus_repository.dart' as _i1037;
 import '../../features/domains/repositories/restaurant_repository.dart'
     as _i986;
 import '../../features/presentations/managers/auths/auth_bloc.dart' as _i788;
+import '../../features/presentations/managers/categories/categories_bloc.dart'
+    as _i562;
 import '../../features/presentations/managers/menus/menus_bloc.dart' as _i789;
 import '../../features/presentations/managers/restaurant/restaurant_bloc.dart'
     as _i864;
@@ -107,20 +113,25 @@ extension GetItInjectableX on _i174.GetIt {
         baseUrl: gh<String>(instanceName: 'BaseUrl'),
       ),
     );
+    gh.lazySingleton<_i518.CategoriesRepository>(
+      () => _i95.CategoriesRepositoryImpl(rest: gh<_i306.RestClient>()),
+    );
+    gh.lazySingleton<_i1037.MenusRepository>(
+      () => _i1052.MenusRepositoryImpl(rest: gh<_i306.RestClient>()),
+    );
     gh.lazySingleton<_i643.AuthRepository>(
       () => _i345.AuthRepositoryImpl(
         db: gh<_i420.DbService>(),
         rest: gh<_i306.RestClient>(),
       ),
     );
-    gh.lazySingleton<_i986.RestaurantRepository>(
-      () => _i659.RestaurantRepositoryImpl(
-        rest: gh<_i306.RestClient>(),
-        db: gh<_i420.DbService>(),
+    gh.factory<_i562.CategoriesBloc>(
+      () => _i562.CategoriesBloc(
+        categoriesRepository: gh<_i518.CategoriesRepository>(),
       ),
     );
-    gh.lazySingleton<_i1037.MenusRepository>(
-      () => _i1052.MenusRepositoryImpl(
+    gh.lazySingleton<_i986.RestaurantRepository>(
+      () => _i659.RestaurantRepositoryImpl(
         rest: gh<_i306.RestClient>(),
         db: gh<_i420.DbService>(),
       ),

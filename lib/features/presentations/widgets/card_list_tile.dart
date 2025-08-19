@@ -19,16 +19,19 @@ class CardListTile extends StatelessWidget {
     return Card(
       child: Padding(
         padding: EdgeInsets.all(kspacing * 2),
-        child: Row(
+        child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Column(
-              mainAxisAlignment: MainAxisAlignment.start,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [title, if (subtitle != null) subtitle!],
+              children: [
+                title,
+                if (trailing != null) trailing!,
+              ],
             ),
-            if (trailing != null) trailing!,
+            if (subtitle != null) ...[subtitle!],
           ],
         ),
       ),

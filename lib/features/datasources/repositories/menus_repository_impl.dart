@@ -13,9 +13,8 @@ import '../../../core/errors/handle_exception.dart';
 @LazySingleton(as: MenusRepository)
 class MenusRepositoryImpl implements MenusRepository {
   final RestClient rest;
-  final DbService db;
 
-  MenusRepositoryImpl({required this.rest, required this.db});
+  MenusRepositoryImpl({required this.rest});
 
   @override
   Future<MultiResult<Failure, List<MenuEntity>>> getMenus() async {

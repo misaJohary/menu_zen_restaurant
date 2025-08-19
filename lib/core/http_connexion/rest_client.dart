@@ -3,6 +3,7 @@ import 'package:injectable/injectable.dart';
 import 'package:menu_zen_restaurant/features/datasources/models/user_restaurant_model.dart';
 import 'package:retrofit/retrofit.dart';
 
+import '../../features/datasources/models/category_model.dart';
 import '../../features/datasources/models/menu_model.dart';
 import '../../features/datasources/models/token.dart';
 
@@ -38,4 +39,16 @@ abstract class RestClient {
 
   @DELETE('/menus/{id}')
   Future<MenuModel> deleteMenus(@Path() int id);
+
+  @GET('/categories')
+  Future<List<CategoryModel>> getCategories();
+
+  @POST('/categories')
+  Future<CategoryModel> createCategories(@Body() CategoryModel params);
+
+  @PATCH('/categories/{id}')
+  Future<CategoryModel> updateCategories(@Path() int id, @Body() CategoryModel params);
+
+  @DELETE('/categories/{id}')
+  Future<CategoryModel> deleteCategories(@Path() int id);
 }

@@ -48,7 +48,7 @@ class _MenuScreenState extends State<MenuScreen> {
               labelButton: 'Ajouter Menu',
               onButtonPressed: () async {
                 controller.showField(false);
-                await Future.delayed(const Duration(milliseconds: 200));
+                await Future.delayed(resetFieldDuration);
                 controller.showField(true);
               },
             ),
@@ -146,7 +146,7 @@ class _MenuScreenState extends State<MenuScreen> {
                                     onEdit: () async {
                                       controller.showField(false);
                                       await Future.delayed(
-                                        const Duration(milliseconds: 200),
+                                          resetFieldDuration
                                       );
                                       controller.showField(true, entity: menu);
                                     },

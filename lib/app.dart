@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'core/injection/dependencies_injection.dart';
 import 'core/navigation/app_router.dart';
 import 'features/presentations/managers/auths/auth_bloc.dart';
+import 'features/presentations/managers/categories/categories_bloc.dart';
 import 'features/presentations/managers/menus/menus_bloc.dart';
 import 'features/presentations/managers/restaurant/restaurant_bloc.dart';
 
@@ -27,6 +28,9 @@ class App extends StatelessWidget {
         BlocProvider(
           create: (context) => getIt<AuthBloc>(),
         ),
+        BlocProvider(
+          create: (context)=> getIt<CategoriesBloc>(),
+        )
       ],
       child: MaterialApp.router(
         title: 'Menu Zen',
