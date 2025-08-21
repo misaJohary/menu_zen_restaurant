@@ -6,11 +6,13 @@ class CardListTile extends StatelessWidget {
   const CardListTile({
     super.key,
     required this.title,
+    this.leading,
     this.subtitle,
     this.trailing,
   });
 
   final Widget title;
+  final Widget? leading;
   final Widget? subtitle;
   final Widget? trailing;
 
@@ -19,19 +21,23 @@ class CardListTile extends StatelessWidget {
     return Card(
       child: Padding(
         padding: EdgeInsets.all(kspacing * 2),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Row(
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                title,
-                if (trailing != null) trailing!,
-              ],
+            if (leading != null) ...[leading!, SizedBox(width: kspacing * 2)],
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [title, if (trailing != null) trailing!],
+                  ),
+                  if (subtitle != null) ...[subtitle!],
+                ],
+              ),
             ),
-            if (subtitle != null) ...[subtitle!],
           ],
         ),
       ),

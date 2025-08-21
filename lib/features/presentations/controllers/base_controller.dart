@@ -51,7 +51,7 @@ abstract class BaseController<TBloc extends BlocBase, TModel, TEntity>
 
   void initEdit() {
     if (_currentModel != null) {
-      formKey.currentState?.patchValue(modelToJson(_currentModel!));
+      formKey.currentState?.patchValue(modelToJson(_currentModel as TModel));
     }
   }
 

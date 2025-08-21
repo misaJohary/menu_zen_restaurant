@@ -56,8 +56,8 @@ List<Widget> navLinks(String currentRoute) => [
   NavLink(
     label: 'Foods',
     icon: Icon(Icons.fastfood_rounded),
-    isSelected: currentRoute == FoodsRoute.name,
-    destination: const FoodsRoute(),
+    isSelected: currentRoute == MenuItemRoute.name,
+    destination: const MenuItemRoute(),
   ),
   NavLink(
     label: 'Tables',

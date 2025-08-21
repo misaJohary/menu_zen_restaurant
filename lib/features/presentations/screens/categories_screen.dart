@@ -1,12 +1,8 @@
 import 'package:auto_route/annotations.dart';
-import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
-import 'package:flutter/foundation.dart' as foundation;
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
-import 'package:logger/logger.dart';
 
 import '../../../core/constants/constants.dart';
 import '../../../core/enums/bloc_status.dart';
@@ -16,9 +12,9 @@ import '../managers/categories/categories_bloc.dart';
 import '../widgets/add_item_widget.dart';
 import '../widgets/board_title_widget.dart';
 import '../widgets/card_list_tile.dart';
+import '../widgets/category_name_widget.dart';
 import '../widgets/color_picker_widget.dart';
 import '../widgets/edit_delete_icon.dart';
-import '../widgets/emoji_keyboard_textfield.dart';
 
 @RoutePage()
 class CategoriesScreen extends StatefulWidget {
@@ -120,18 +116,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                               itemBuilder: (context, index) {
                                 final category = state.categories[index];
                                 return CardListTile(
-                                  title: Container(
-                                    padding: EdgeInsets.all(24),
-                                    decoration: BoxDecoration(
-                                      color: category.themeColor,
-                                      borderRadius: BorderRadius.circular(30),
-                                    ),
-                                    child: Text(
-                                      category.name,
-                                      style: Theme.of(
-                                        context,
-                                      ).textTheme.titleLarge,
-                                    ),
+                                  title: CategoryNameWidget(category
                                   ),
                                   subtitle: Text(category.description ?? ''),
                                   trailing: EditDeleteIcon(

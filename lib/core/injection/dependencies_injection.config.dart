@@ -18,6 +18,8 @@ import '../../features/datasources/repositories/auth_repository_impl.dart'
     as _i345;
 import '../../features/datasources/repositories/categories_repository_impl.dart'
     as _i95;
+import '../../features/datasources/repositories/menu_item_repository_impl.dart'
+    as _i402;
 import '../../features/datasources/repositories/menus_repository_impl.dart'
     as _i1052;
 import '../../features/datasources/repositories/restaurant_respository_impl.dart'
@@ -25,12 +27,15 @@ import '../../features/datasources/repositories/restaurant_respository_impl.dart
 import '../../features/domains/repositories/auth_repository.dart' as _i643;
 import '../../features/domains/repositories/categories_repository.dart'
     as _i518;
+import '../../features/domains/repositories/menu_item_repository.dart' as _i442;
 import '../../features/domains/repositories/menus_repository.dart' as _i1037;
 import '../../features/domains/repositories/restaurant_repository.dart'
     as _i986;
 import '../../features/presentations/managers/auths/auth_bloc.dart' as _i788;
 import '../../features/presentations/managers/categories/categories_bloc.dart'
     as _i562;
+import '../../features/presentations/managers/menu_item/menu_item_bloc.dart'
+    as _i910;
 import '../../features/presentations/managers/menus/menus_bloc.dart' as _i789;
 import '../../features/presentations/managers/restaurant/restaurant_bloc.dart'
     as _i864;
@@ -139,11 +144,17 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i788.AuthBloc>(
       () => _i788.AuthBloc(gh<_i643.AuthRepository>()),
     );
+    gh.lazySingleton<_i442.MenuItemRepository>(
+      () => _i402.MenuItemRepositoryImpl(rest: gh<_i306.RestClient>()),
+    );
     gh.factory<_i789.MenusBloc>(
       () => _i789.MenusBloc(menusRepository: gh<_i1037.MenusRepository>()),
     );
     gh.factory<_i864.RestaurantBloc>(
       () => _i864.RestaurantBloc(restaurant: gh<_i986.RestaurantRepository>()),
+    );
+    gh.factory<_i910.MenuItemBloc>(
+      () => _i910.MenuItemBloc(repo: gh<_i442.MenuItemRepository>()),
     );
     return this;
   }
