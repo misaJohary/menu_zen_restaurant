@@ -46,3 +46,7 @@ final List<Map<String, dynamic>> colors = [
 ];
 
 final resetFieldDuration = const Duration(milliseconds: 500);
+
+final primaryColor = Color(0xFFA0CD64);
+
+final grey =Color(0xFF999999);

@@ -4,6 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:menu_zen_restaurant/features/presentations/controllers/menus_controller.dart';
 import 'package:menu_zen_restaurant/features/presentations/widgets/add_item_widget.dart';
+import 'package:menu_zen_restaurant/features/presentations/widgets/custom_container.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 import '../../../core/constants/constants.dart';
 import '../../../core/enums/bloc_status.dart';
@@ -14,6 +16,8 @@ import '../widgets/card_list_tile.dart';
 import '../widgets/edit_delete_icon.dart';
 
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+
+import '../widgets/loading_widget.dart';
 
 @RoutePage()
 class MenuScreen extends StatefulWidget {
@@ -88,7 +92,7 @@ class _MenuScreenState extends State<MenuScreen> {
                       builder: (context, state) {
                         switch (state.status) {
                           case BlocStatus.loading:
-                            return Center(child: CircularProgressIndicator());
+                            return LoadingWidget();
                           case BlocStatus.loaded:
                             if (state.menus.isEmpty) {
                               return AddMenuWidget(
@@ -114,9 +118,13 @@ class _MenuScreenState extends State<MenuScreen> {
                                     children: [
                                       Text(
                                         menu.name,
-                                        style: Theme.of(
-                                          context,
-                                        ).textTheme.titleLarge,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleLarge!
+                                            .copyWith(
+                                              fontSize: 27,
+                                              fontWeight: FontWeight.w500,
+                                            ),
                                       ),
                                       Transform.scale(
                                         scale: .6,
@@ -139,29 +147,30 @@ class _MenuScreenState extends State<MenuScreen> {
                                       ),
                                     ],
                                   ),
-                                  subtitle: Text(menu.description),
+                                  subtitle: Text(
+                                    menu.description,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge!
+                                        .copyWith(color: grey, fontSize: 22),
+                                  ),
                                   trailing: EditDeleteIcon(
                                     onEdit: () async {
                                       controller.showField(false);
-                                      await Future.delayed(
-                                          resetFieldDuration
-                                      );
+                                      await Future.delayed(resetFieldDuration);
                                       controller.showField(true, entity: menu);
                                     },
                                     onDelete: () {
-                                      _showDeleteConfirmation(
-                                        menu,
-                                        () {
-                                          controller.showField(false);
-                                          final id = menu.id;
-                                          if (id != null) {
-                                            controller.addDeleteEvent(id);
-                                            // context.read<MenusBloc>().add(
-                                            //   MenusDeleted(id),
-                                            // );
-                                          }
-                                        },
-                                      );
+                                      _showDeleteConfirmation(menu, () {
+                                        controller.showField(false);
+                                        final id = menu.id;
+                                        if (id != null) {
+                                          controller.addDeleteEvent(id);
+                                          // context.read<MenusBloc>().add(
+                                          //   MenusDeleted(id),
+                                          // );
+                                        }
+                                      });
                                     },
                                   ),
                                 );
@@ -193,12 +202,15 @@ class _MenuScreenState extends State<MenuScreen> {
       ),
     );
   }
+
   void _showDeleteConfirmation(MenuEntity menu, VoidCallback onConfirm) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Confirmer la suppression'),
-        content: Text('Êtes-vous sûr de vouloir supprimer le menu "${menu.name}" ?'),
+        content: Text(
+          'Êtes-vous sûr de vouloir supprimer le menu "${menu.name}" ?',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
@@ -209,7 +221,10 @@ class _MenuScreenState extends State<MenuScreen> {
               Navigator.of(context).pop();
               onConfirm();
             },
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red, foregroundColor: Colors.white),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              foregroundColor: Colors.white,
+            ),
             child: const Text('Supprimer'),
           ),
         ],

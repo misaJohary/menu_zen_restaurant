@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 
+import '../../../core/constants/constants.dart';
 import '../../../core/navigation/app_router.gr.dart';
 
 class NavLink extends StatelessWidget {
@@ -19,17 +20,30 @@ class NavLink extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return IconButton(
-      icon: icon,
-      style: isSelected
-          ? IconButton.styleFrom(
-        foregroundColor: Colors.green,
-        backgroundColor: Colors.white,
-      )
-          : null,
-      onPressed: () {
-        context.router.push(destination);
-      },
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: kspacing * 3),
+      decoration: BoxDecoration(
+        color: isSelected
+            ? primaryColor.withOpacity(.3)
+            : null,
+        borderRadius: BorderRadius.all(Radius.circular(kspacing)),
+        border: Border(
+          left: isSelected
+              ? BorderSide(width: 5, color: primaryColor)
+              : BorderSide.none,
+        ),
+      ),
+      child: ListTile(
+        title: Text(
+          label ?? '',
+          style: Theme.of(context).textTheme.titleMedium!.copyWith(
+            color: isSelected ? Colors.green : grey, fontSize: 22,
+          ),
+        ),
+        onTap: () {
+          context.router.push(destination);
+        },
+      ),
     );
   }
 }
@@ -65,10 +79,10 @@ List<Widget> navLinks(String currentRoute) => [
     isSelected: currentRoute == TablesRoute.name,
     destination: const TablesRoute(),
   ),
-  NavLink(
-    label: 'Orders',
-    icon: Icon(Icons.restaurant_menu_rounded),
-    isSelected: currentRoute == OrderRoute.name,
-    destination: const OrderRoute(),
-  ),
+  // NavLink(
+  //   label: 'Orders',
+  //   icon: Icon(Icons.restaurant_menu_rounded),
+  //   isSelected: currentRoute == OrderRoute.name,
+  //   destination: const OrderRoute(),
+  // ),
 ];

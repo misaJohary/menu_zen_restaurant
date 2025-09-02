@@ -29,6 +29,9 @@ android {
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
+    buildFeatures {
+        buildConfig = true
+    }
 
     buildTypes {
         release {

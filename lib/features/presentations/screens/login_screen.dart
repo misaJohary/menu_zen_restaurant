@@ -5,9 +5,11 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:menu_zen_restaurant/features/presentations/controllers/login_controller.dart';
 
+import '../../../core/constants/constants.dart';
 import '../../../core/enums/bloc_status.dart';
 import '../../../core/navigation/app_router.gr.dart';
 import '../managers/auths/auth_bloc.dart';
+import '../widgets/logo.dart';
 
 @RoutePage()
 class LoginScreen extends StatefulWidget {
@@ -31,7 +33,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       body: Center(
         child: SizedBox(
-          width: MediaQuery.sizeOf(context).width * .5,
+          //width: MediaQuery.sizeOf(context).width * .3,
           child: MultiBlocListener(
             listeners: [
               BlocListener<AuthBloc, AuthState>(
@@ -66,32 +68,69 @@ class _LoginScreenState extends State<LoginScreen> {
             ],
             child: FormBuilder(
               key: controller.formKey,
-              child: Column(
+              child: Row(
                 children: [
-                  FormBuilderTextField(
-                    name: 'username',
-                    decoration: InputDecoration(labelText: 'Nom d\'utilisateur'),
-                    keyboardType: TextInputType.emailAddress,
-                    validator: FormBuilderValidators.compose([
-                      FormBuilderValidators.required(),
-                    ]),
-                  ),
-                  FormBuilderTextField(
-                    name: 'password',
-                    decoration: InputDecoration(labelText: 'Password'),
-                    obscureText: true,
-                    validator: FormBuilderValidators.required(),
-                  ),
-                  BlocBuilder<AuthBloc, AuthState>(
-                    builder: (context, state) {
-                      if (state.status == BlocStatus.loading) {
-                        return CircularProgressIndicator();
-                      }
-                      return ElevatedButton(
-                        onPressed: controller.validate,
-                        child: Text('Login'),
-                      );
-                    },
+                  Expanded(child: Center(child: Logo(isBig: true))),
+                  //Spacer(),
+                  Expanded(
+                    child: Center(
+                      child: SizedBox(
+                        width: 400,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            //SizedBox(height: kspacing*5,),
+                            FormBuilderTextField(
+                              name: 'username',
+                              decoration: InputDecoration(
+                                labelText: 'Nom d\'utilisateur',
+                              ),
+                              keyboardType: TextInputType.emailAddress,
+                              validator: FormBuilderValidators.compose([
+                                FormBuilderValidators.required(),
+                              ]),
+                            ),
+                            FormBuilderTextField(
+                              name: 'password',
+                              decoration: InputDecoration(
+                                labelText: 'Mot de passe',
+                              ),
+                              obscureText: true,
+                              validator: FormBuilderValidators.required(),
+                            ),
+                            SizedBox(height: kspacing * 3),
+                            BlocBuilder<AuthBloc, AuthState>(
+                              builder: (context, state) {
+                                if (state.status == BlocStatus.loading) {
+                                  return CircularProgressIndicator();
+                                }
+                                return ElevatedButton(
+                                  onPressed: controller.validate,
+                                  style: ElevatedButton.styleFrom(
+                                    minimumSize: Size(600, 60),
+                                  ),
+                                  child: Text('Se connecter'),
+                                );
+                              },
+                            ),
+                            SizedBox(height: kspacing * 3),
+                            ElevatedButton(
+                              onPressed: () {
+                                context.router.push(
+                                  RestaurantRegistrationRoute(),
+                                );
+                              },
+                              style: ElevatedButton.styleFrom(
+                                minimumSize: Size(600, 60),
+                                backgroundColor: Colors.black54,
+                              ),
+                              child: Text('S\'inscrire'),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
                 ],
               ),

@@ -13,6 +13,12 @@ class MainController extends ChangeNotifier {
 
   String get currentRoute => _currentRoute;
 
+  bool hidePannel = false;
+
+  togglePannelVisibility({required bool show}){
+    hidePannel = !show;
+  }
+
   changeCurrentRoute(String newRoute) {
     _currentRoute = newRoute;
     notifyListeners();

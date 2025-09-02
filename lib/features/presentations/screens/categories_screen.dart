@@ -15,6 +15,7 @@ import '../widgets/card_list_tile.dart';
 import '../widgets/category_name_widget.dart';
 import '../widgets/color_picker_widget.dart';
 import '../widgets/edit_delete_icon.dart';
+import '../widgets/loading_widget.dart';
 
 @RoutePage()
 class CategoriesScreen extends StatefulWidget {
@@ -42,8 +43,8 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             BoardTitleWidget(
-              title: 'Gestion de la Categorie des plats',
-              description: 'Gère les categories des plats de ton restaurant',
+              title: 'Gestion des Catégories',
+              description: 'Gèrer les categories de tes plats',
               labelButton: 'Ajouter une Categorie',
               onButtonPressed: () async {
                 controller.showField(false);
@@ -88,7 +89,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                       builder: (context, state) {
                         switch (state.status) {
                           case BlocStatus.loading:
-                            return Center(child: CircularProgressIndicator());
+                            return LoadingWidget();
                           case BlocStatus.loaded:
                             if (state.categories.isEmpty) {
                               return AddCategoryWidget(
@@ -105,11 +106,11 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                               shrinkWrap: true,
                               gridDelegate:
                                   const SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 3, // 4 items per row
+                                    crossAxisCount: 2, // 4 items per row
                                     crossAxisSpacing: 12,
                                     mainAxisSpacing: 12,
                                     childAspectRatio:
-                                        2, // makes them look like rectangles
+                                        1.8, // makes them look like rectangles
                                   ),
                               physics: const NeverScrollableScrollPhysics(),
                               itemCount: state.categories.length,
@@ -118,7 +119,9 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                                 return CardListTile(
                                   title: CategoryNameWidget(category
                                   ),
-                                  subtitle: Text(category.description ?? ''),
+                                  subtitle: Text(category.description ?? '', maxLines: 1, overflow: TextOverflow.ellipsis, style: Theme.of(
+                                    context,
+                                  ).textTheme.bodyLarge!.copyWith(color: grey, fontSize: 22),),
                                   trailing: EditDeleteIcon(
                                     onEdit: () async {
                                       controller.showField(false);

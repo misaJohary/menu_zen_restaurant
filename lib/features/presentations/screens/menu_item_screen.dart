@@ -8,6 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:menu_zen_restaurant/core/extensions/double_extension.dart';
 import 'package:menu_zen_restaurant/features/presentations/controllers/menu_item_controller.dart';
 
 import '../../../core/constants/constants.dart';
@@ -23,6 +24,7 @@ import '../widgets/board_title_widget.dart';
 import '../widgets/card_list_tile.dart';
 import '../widgets/category_name_widget.dart';
 import '../widgets/edit_delete_icon.dart';
+import '../widgets/loading_widget.dart';
 
 @RoutePage()
 class MenuItemScreen extends StatefulWidget {
@@ -97,7 +99,7 @@ class _MenuItemScreenState extends State<MenuItemScreen> {
                       builder: (context, state) {
                         switch (state.status) {
                           case BlocStatus.loading:
-                            return Center(child: CircularProgressIndicator());
+                            return LoadingWidget();
                           case BlocStatus.loaded:
                             if (state.menuItems.isEmpty) {
                               return AddMenuItemWidget(
@@ -138,25 +140,27 @@ class _MenuItemScreenState extends State<MenuItemScreen> {
                                     children: [
                                       Text(
                                         menu.name,
-                                        style: Theme.of(
-                                          context,
-                                        ).textTheme.titleLarge,
-                                      ),
-                                      Text(
-                                        '  ${menu.price.toStringAsFixed(2)} Ar  ',
                                         style: Theme.of(context)
                                             .textTheme
-                                            .titleLarge
+                                            .titleLarge!
+                                            .copyWith(fontSize: 27, fontWeight: FontWeight.w500),
+                                      ),
+                                      Text(
+                                        '  ${menu.price.formatMoney} Ar  ',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .headlineLarge
                                             ?.copyWith(
                                               color: Theme.of(
                                                 context,
                                               ).primaryColor,
+                                          fontWeight: FontWeight.w800
                                             ),
                                       ),
                                       Transform.scale(
                                         scale: .6,
                                         child: Switch(
-                                          value: menu.isAvailable ?? false,
+                                          value: menu.isAvailable ?? true,
                                           onChanged: (bool value) {
                                             controller.addUpdateEvent(
                                               menu.copyWith(isAvailable: value),
@@ -167,7 +171,7 @@ class _MenuItemScreenState extends State<MenuItemScreen> {
                                       Text(
                                         'Disponible',
                                         style: TextStyle(
-                                          color: menu.isAvailable ?? false
+                                          color: menu.isAvailable ?? true
                                               ? Theme.of(context).primaryColor
                                               : Colors.black54,
                                         ),
@@ -179,37 +183,69 @@ class _MenuItemScreenState extends State<MenuItemScreen> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      Text(menu.description ?? ''),
+                                      Text(
+                                        menu.description ?? '',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge!
+                                            .copyWith(
+                                              color: grey,
+                                              fontSize: 22,
+                                            ),
+                                      ),
+                                      SizedBox(height: kspacing*2,),
                                       Row(
                                         children: [
-                                          CategoryNameWidget(menu.category),
+                                          CategoryNameWidget(
+                                            menu.category,
+                                            padding: EdgeInsets.all(kspacing),
+                                            height: 43,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .titleLarge!
+                                                .copyWith(
+                                                  color: darken(
+                                                    menu.category.themeColor!,
+                                                    .5,
+                                                  ),
+                                                ),
+                                          ),
+                                          SizedBox(width: kspacing*3,),
                                           ...menu.menus.map(
                                             (menu) =>
-                                                Text('Menu: ${menu.name}'),
+                                                Text('Menus: ${menu.name}', style: Theme.of(context)
+                                                    .textTheme
+                                                    .labelMedium!
+                                                    .copyWith(
+                                                  color: grey,
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.w300
+                                                ),),
                                           ),
                                         ],
                                       ),
                                     ],
                                   ),
-                                  trailing: EditDeleteIcon(
-                                    onEdit: () async {
-                                      controller.showField(false);
-                                      await Future.delayed(resetFieldDuration);
-                                      controller.showField(true, entity: menu);
-                                    },
-                                    onDelete: () {
-                                      _showDeleteConfirmation(menu, () {
-                                        controller.showField(false);
-                                        final id = menu.id;
-                                        if (id != null) {
-                                          controller.addDeleteEvent(id);
-                                          // context.read<MenusBloc>().add(
-                                          //   MenusDeleted(id),
-                                          // );
-                                        }
-                                      },);
-                                    },
-                                  ),
+                                  // trailing: EditDeleteIcon(
+                                  //   isVertical: false,
+                                  //   onEdit: () async {
+                                  //     controller.showField(false);
+                                  //     await Future.delayed(resetFieldDuration);
+                                  //     controller.showField(true, entity: menu);
+                                  //   },
+                                  //   onDelete: () {
+                                  //     _showDeleteConfirmation(menu, () {
+                                  //       controller.showField(false);
+                                  //       final id = menu.id;
+                                  //       if (id != null) {
+                                  //         controller.addDeleteEvent(id);
+                                  //         // context.read<MenusBloc>().add(
+                                  //         //   MenusDeleted(id),
+                                  //         // );
+                                  //       }
+                                  //     });
+                                  //   },
+                                  // ),
                                 );
                               },
                             );
@@ -344,50 +380,50 @@ class _AddMenuItemWidgetState extends State<AddMenuItemWidget> {
                       ),
                     )
                   : IconButton(
-                icon: Icon(Icons.photo_camera),
-                onPressed: () async {
-                  showModalBottomSheet<XFile?>(
-                    context: context,
-                    builder: (context) {
-                      final ImagePicker picker = ImagePicker();
-                      return Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Expanded(
-                            child: IconButton(
-                              onPressed: () async {
-                                final file = await picker.pickImage(
-                                  source: ImageSource.camera,
-                                );
-                                if (file != null) {
-                                  widget.controller.setFilePicked = file;
-                                  Navigator.pop(context);
-                                }
-                              },
-                              icon: Icon(Icons.camera),
-                            ),
-                          ),
-                          Expanded(
-                            child: IconButton(
-                              onPressed: () async {
-                                final file = await picker.pickImage(
-                                  source: ImageSource.gallery,
-                                );
-                                if (file != null) {
-                                  widget.controller.setFilePicked = file;
-                                  Navigator.pop(context);
-                                }
-                              },
-                              icon: Icon(Icons.folder),
-                            ),
-                          ),
-                        ],
-                      );
-                    },
-                  );
-                },
-              );
+                      icon: Icon(Icons.photo_camera),
+                      onPressed: () async {
+                        showModalBottomSheet<XFile?>(
+                          context: context,
+                          builder: (context) {
+                            final ImagePicker picker = ImagePicker();
+                            return Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Expanded(
+                                  child: IconButton(
+                                    onPressed: () async {
+                                      final file = await picker.pickImage(
+                                        source: ImageSource.camera,
+                                      );
+                                      if (file != null) {
+                                        widget.controller.setFilePicked = file;
+                                        Navigator.pop(context);
+                                      }
+                                    },
+                                    icon: Icon(Icons.camera),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: IconButton(
+                                    onPressed: () async {
+                                      final file = await picker.pickImage(
+                                        source: ImageSource.gallery,
+                                      );
+                                      if (file != null) {
+                                        widget.controller.setFilePicked = file;
+                                        Navigator.pop(context);
+                                      }
+                                    },
+                                    icon: Icon(Icons.folder),
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      },
+                    );
             },
           ),
         ),
@@ -396,6 +432,8 @@ class _AddMenuItemWidgetState extends State<AddMenuItemWidget> {
           decoration: InputDecoration(label: Text("Nom de l'item")),
           validator: FormBuilderValidators.compose([
             FormBuilderValidators.required(),
+            FormBuilderValidators.minLength(3),
+            FormBuilderValidators.maxLength(23),
           ]),
         ),
         FormBuilderTextField(
@@ -437,7 +475,12 @@ class _AddMenuItemWidgetState extends State<AddMenuItemWidget> {
                 label: Text("Disponible dans les menus"),
               ),
               options: state.menus
-                  .map((menu) => FormBuilderChipOption(value: menu, child: Text(menu.name),))
+                  .map(
+                    (menu) => FormBuilderChipOption(
+                      value: menu,
+                      child: Text(menu.name),
+                    ),
+                  )
                   .toList(),
             );
           },

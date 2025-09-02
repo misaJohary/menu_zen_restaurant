@@ -15,4 +15,11 @@ extension StringExtension on String {
       return null;
     }
   }
+
+  String toSnakeCase() {
+    return replaceAllMapped(
+      RegExp('([a-z])([A-Z])'),
+          (match) => '${match.group(1)}_${match.group(2)?.toLowerCase()}',
+    );
+  }
 }

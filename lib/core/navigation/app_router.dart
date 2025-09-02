@@ -29,9 +29,10 @@ class AppRouter extends RootStackRouter {
         AutoRoute(path: 'menus', page: MenuRoute.page),
         AutoRoute(path: 'categories', page: CategoriesRoute.page),
         AutoRoute(path: 'menu_items', page: MenuItemRoute.page),
-        AutoRoute(path: 'order', page: OrderRoute.page),
         AutoRoute(path: 'tables', page: TablesRoute.page),
       ],
     ),
+    AutoRoute(path: '/make_order', page: MakeOrderRoute.page),
+    AutoRoute(path: '/order', page: OrdersRoute.page),
   ];
 }

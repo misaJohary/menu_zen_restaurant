@@ -1,42 +1,34 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:menu_zen_restaurant/features/presentations/controllers/main_controller.dart';
+import 'package:menu_zen_restaurant/features/presentations/widgets/custom_container.dart';
 
 import '../../../core/constants/constants.dart';
 import '../../../core/navigation/app_router.gr.dart';
+import 'logo.dart';
 import 'nav_links.dart';
 
-class MainNavigationPannelWidget extends StatefulWidget {
-  const MainNavigationPannelWidget({super.key, required this.currentRoute});
+class MainNavigationPannelWidget extends StatelessWidget {
+  const MainNavigationPannelWidget({
+    super.key,
+    required this.currentRoute,
+    required this.controller,
+    required this.onHidePressed,
+  });
 
   final String currentRoute;
+  final MainController controller;
+  final VoidCallback onHidePressed;
 
-  @override
-  State<MainNavigationPannelWidget> createState() => _MainNavigationPannelWidgetState();
-}
-
-class _MainNavigationPannelWidgetState extends State<MainNavigationPannelWidget> {
-
-  late MainController controller;
-  @override
-  void initState() {
-    super.initState();
-    controller = MainController(context);
-  }
   @override
   Widget build(BuildContext context) {
     final menuGap = kspacing;
     return SafeArea(
       bottom: false,
-      child: Container(
-        width: 80,
+      child: CustomContainer(
+        width: 300,
         height: double.infinity,
         margin: const EdgeInsets.all(8.0),
-        padding: EdgeInsets.symmetric(vertical: kspacing *2),
-        decoration: BoxDecoration(
-          color: Theme.of(context).primaryColor,
-          borderRadius: BorderRadius.circular(12),
-        ),
+        padding: EdgeInsets.symmetric(vertical: kspacing * 2),
         child: Theme(
           data: ThemeData(
             iconButtonTheme: IconButtonThemeData(
@@ -47,23 +39,58 @@ class _MainNavigationPannelWidgetState extends State<MainNavigationPannelWidget>
             ),
           ),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              ...navLinks(widget.currentRoute).map(
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: kspacing * 3,
+                  vertical: kspacing * 5,
+                ),
+                child: Logo(),
+              ),
+
+              ...navLinks(currentRoute).map(
                 (link) => Padding(
                   padding: EdgeInsets.only(bottom: menuGap),
                   child: link,
                 ),
               ),
               Spacer(),
-              IconButton(icon: Icon(Icons.settings), onPressed: () {}),
-              IconButton(icon: Icon(Icons.logout_rounded), onPressed: () {
-                controller.logout();
-              }),
               NavLink(
-                label: 'Profil',
+                label: 'Commande',
                 icon: CircleAvatar(child: Text('M')),
-                isSelected: widget.currentRoute == '',
-                destination: const DashboardRoute(),
+                destination: OrdersRoute(),
+                //destination: const MakeOrderRoute(),
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: kspacing * 3),
+                child: ListTile(
+                  title: Text(
+                    'Profil',
+                    style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                      color: grey,
+                      fontSize: 18,
+                    ),
+                  ),
+                  trailing: CircleAvatar(child: Text('M')),
+                  onTap: () {},
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: kspacing * 3),
+                child: ListTile(
+                  trailing: Icon(Icons.logout),
+                  title: Text(
+                    'Se déconnecter',
+                    style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                      color: grey,
+                      fontSize: 18,
+                    ),
+                  ),
+                  onTap: () {
+                    controller.logout();
+                  },
+                ),
               ),
             ],
           ),

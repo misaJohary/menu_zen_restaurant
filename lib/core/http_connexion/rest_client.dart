@@ -1,4 +1,3 @@
-
 import 'dart:io';
 
 import 'package:dio/dio.dart' hide Headers;
@@ -9,7 +8,10 @@ import 'package:retrofit/retrofit.dart';
 import '../../features/datasources/models/category_model.dart';
 import '../../features/datasources/models/menu_item_model.dart';
 import '../../features/datasources/models/menu_model.dart';
+import '../../features/datasources/models/order_menu_item_model.dart';
+import '../../features/datasources/models/order_model.dart';
 import '../../features/datasources/models/token.dart';
+import '../../features/domains/entities/order_entity.dart';
 
 part 'rest_client.g.dart';
 
@@ -77,6 +79,27 @@ abstract class RestClient {
     @Part() required File? picture,
   });
 
+  @GET('/menu-items-order')
+  Future<List<OrderMenuItemModel>> getMenuItemsOrder();
+
+  @POST('/orders')
+  Future<OrderModel> createOrder(@Body() OrderModel order);
+
+  @GET('/orders')
+  Future<List<OrderModel>> getOrders();
+
+  @DELETE('/orders/{id}')
+  Future<OrderModel> deleteOrder(@Path() int id);
+
+  @PATCH('/orders/{id}')
+  Future<OrderModel> updateOrder(@Path() int id, @Body() OrderModel order);
+
+  @PATCH('/orders/{id}/status')
+  Future<OrderModel> updateOrderStatus(
+    @Path() int id,
+    @Body() Map<String, String> orderStatus,
+  );
+
   @PATCH('/menu-items/{id}')
   Future<MenuItemModel> updateMenuItems(
     @Path() int id,
@@ -84,5 +107,5 @@ abstract class RestClient {
   );
 
   @DELETE('/menu-items/{id}')
-  Future<MenuItemModel> deleteMenuItems(@Path() int id);
+  Future deleteMenuItems(@Path() int id);
 }
