@@ -10,8 +10,8 @@ import '../../features/datasources/models/menu_item_model.dart';
 import '../../features/datasources/models/menu_model.dart';
 import '../../features/datasources/models/order_menu_item_model.dart';
 import '../../features/datasources/models/order_model.dart';
+import '../../features/datasources/models/table_model.dart';
 import '../../features/datasources/models/token.dart';
-import '../../features/domains/entities/order_entity.dart';
 
 part 'rest_client.g.dart';
 
@@ -108,4 +108,16 @@ abstract class RestClient {
 
   @DELETE('/menu-items/{id}')
   Future deleteMenuItems(@Path() int id);
+
+  @POST('/tables')
+  Future<TableModel> createTable(@Body() TableModel params);
+
+  @GET('/tables')
+  Future<List<TableModel>> getTables();
+
+  @DELETE('/tables/{id}')
+  Future<TableModel> deleteTable(@Path() int id);
+
+  @PATCH('/tables/{id}')
+  Future<TableModel> updateTables(@Path() int id, @Body() TableModel params);
 }

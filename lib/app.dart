@@ -11,6 +11,7 @@ import 'features/presentations/managers/categories/categories_bloc.dart';
 import 'features/presentations/managers/menu_item/menu_item_bloc.dart';
 import 'features/presentations/managers/menus/menus_bloc.dart';
 import 'features/presentations/managers/restaurant/restaurant_bloc.dart';
+import 'features/presentations/managers/tables/table_bloc.dart';
 
 class App extends StatelessWidget {
   App({super.key});
@@ -29,6 +30,7 @@ class App extends StatelessWidget {
         BlocProvider(create: (context) => getIt<MenuItemBloc>()),
         BlocProvider(create: (context) => getIt<OrdersBloc>()),
         BlocProvider(create: (context) => getIt<OrderMenuItemBloc>()),
+        BlocProvider(create: (context)=> getIt<TableBloc>(),),
       ],
       child: MaterialApp.router(
         title: 'Menu Zen',

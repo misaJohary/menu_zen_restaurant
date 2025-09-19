@@ -26,6 +26,8 @@ import '../../features/datasources/repositories/orders_repository_impl.dart'
     as _i745;
 import '../../features/datasources/repositories/restaurant_respository_impl.dart'
     as _i659;
+import '../../features/datasources/repositories/tables_repository_impl.dart'
+    as _i44;
 import '../../features/domains/repositories/auth_repository.dart' as _i643;
 import '../../features/domains/repositories/categories_repository.dart'
     as _i518;
@@ -34,6 +36,7 @@ import '../../features/domains/repositories/menus_repository.dart' as _i1037;
 import '../../features/domains/repositories/orders_repository.dart' as _i504;
 import '../../features/domains/repositories/restaurant_repository.dart'
     as _i986;
+import '../../features/domains/repositories/tables_repository.dart' as _i929;
 import '../../features/presentations/managers/auths/auth_bloc.dart' as _i788;
 import '../../features/presentations/managers/categories/categories_bloc.dart'
     as _i562;
@@ -45,6 +48,7 @@ import '../../features/presentations/managers/orders/order_menu_item/order_menu_
 import '../../features/presentations/managers/orders/orders_bloc.dart' as _i414;
 import '../../features/presentations/managers/restaurant/restaurant_bloc.dart'
     as _i864;
+import '../../features/presentations/managers/tables/table_bloc.dart' as _i419;
 import '../http_connexion/rest_client.dart' as _i306;
 import '../navigation/guards/auth_guards.dart' as _i1010;
 import '../services/db_service.dart' as _i420;
@@ -127,6 +131,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i504.OrdersRepository>(
       () => _i745.OrdersRepositoryImpl(rest: gh<_i306.RestClient>()),
     );
+    gh.lazySingleton<_i929.TablesRepository>(
+      () => _i44.TablesRepositoryImpl(rest: gh<_i306.RestClient>()),
+    );
     gh.lazySingleton<_i518.CategoriesRepository>(
       () => _i95.CategoriesRepositoryImpl(rest: gh<_i306.RestClient>()),
     );
@@ -149,6 +156,9 @@ extension GetItInjectableX on _i174.GetIt {
         rest: gh<_i306.RestClient>(),
         db: gh<_i420.DbService>(),
       ),
+    );
+    gh.factory<_i419.TableBloc>(
+      () => _i419.TableBloc(tablesRepository: gh<_i929.TablesRepository>()),
     );
     gh.factory<_i788.AuthBloc>(
       () => _i788.AuthBloc(gh<_i643.AuthRepository>()),
