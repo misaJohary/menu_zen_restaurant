@@ -2,13 +2,14 @@ import 'package:auto_route/annotations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
-import 'package:form_builder_validators/form_builder_validators.dart';
+import 'package:menu_zen_restaurant/core/extensions/list_extension.dart';
 
 import '../../../core/constants/constants.dart';
 import '../../../core/enums/bloc_status.dart';
 import '../../domains/entities/category_entity.dart';
 import '../controllers/category_controller.dart';
 import '../managers/categories/categories_bloc.dart';
+import '../managers/languages/languages_bloc.dart';
 import '../widgets/add_item_widget.dart';
 import '../widgets/board_title_widget.dart';
 import '../widgets/card_list_tile.dart';
@@ -16,6 +17,7 @@ import '../widgets/category_name_widget.dart';
 import '../widgets/color_picker_widget.dart';
 import '../widgets/edit_delete_icon.dart';
 import '../widgets/loading_widget.dart';
+import '../widgets/multilingual_field.dart';
 
 @RoutePage()
 class CategoriesScreen extends StatefulWidget {
@@ -49,7 +51,9 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
               onButtonPressed: () async {
                 controller.showField(false);
                 await Future.delayed(resetFieldDuration);
-                controller..showField(true)..resetThemeColor;
+                controller
+                  ..showField(true)
+                  ..resetThemeColor;
               },
             ),
             Expanded(
@@ -116,33 +120,60 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                               itemCount: state.categories.length,
                               itemBuilder: (context, index) {
                                 final category = state.categories[index];
-                                return CardListTile(
-                                  title: CategoryNameWidget(category
-                                  ),
-                                  subtitle: Text(category.description ?? '', maxLines: 1, overflow: TextOverflow.ellipsis, style: Theme.of(
-                                    context,
-                                  ).textTheme.bodyLarge!.copyWith(color: grey, fontSize: 22),),
-                                  trailing: EditDeleteIcon(
-                                    onEdit: () async {
-                                      controller.showField(false);
-                                      controller.setThemeColor =
-                                          category.themeColor;
-                                      await Future.delayed(resetFieldDuration);
-                                      controller.showField(
-                                        true,
-                                        entity: category,
-                                      );
-                                    },
-                                    onDelete: () {
-                                      _showDeleteConfirmation(category, () {
-                                        controller.showField(false);
-                                        final id = category.id;
-                                        if (id != null) {
-                                          controller.addDeleteEvent(id);
-                                        }
-                                      });
-                                    },
-                                  ),
+                                return BlocBuilder<
+                                  LanguagesBloc,
+                                  LanguagesState
+                                >(
+                                  builder: (context, langState) {
+                                    final selectedLang =
+                                        langState.selectedLanguage?.code ??
+                                        'en';
+                                    final categoryDescription =
+                                        category.translations.getOptionalField(
+                                          selectedLang,
+                                          (t) => t.description,
+                                        ) ??
+                                        '';
+
+                                    return CardListTile(
+                                      title: CategoryNameWidget(category),
+                                      subtitle: Text(
+                                        categoryDescription,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge!
+                                            .copyWith(
+                                              color: grey,
+                                              fontSize: 22,
+                                            ),
+                                      ),
+                                      trailing: EditDeleteIcon(
+                                        onEdit: () async {
+                                          controller.showField(false);
+                                          controller.setThemeColor =
+                                              category.themeColor;
+                                          await Future.delayed(
+                                            resetFieldDuration,
+                                          );
+                                          controller.showField(
+                                            true,
+                                            entity: category,
+                                          );
+                                        },
+                                        // onDelete: () {
+                                        //   _showDeleteConfirmation(category, () {
+                                        //     controller.showField(false);
+                                        //     final id = category.id;
+                                        //     if (id != null) {
+                                        //       controller.addDeleteEvent(id);
+                                        //     }
+                                        //   });
+                                        // },
+                                      ),
+                                    );
+                                  },
                                 );
                               },
                             );
@@ -176,28 +207,38 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
   void _showDeleteConfirmation(CategoryEntity menu, VoidCallback onConfirm) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Confirmer la suppression'),
-        content: Text(
-          'Êtes-vous sûr de vouloir supprimer le menu "${menu.name}" ?',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Annuler'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              onConfirm();
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
-              foregroundColor: Colors.white,
+      builder: (dialogContext) => BlocBuilder<LanguagesBloc, LanguagesState>(
+        builder: (context, langState) {
+          final selectedLang = langState.selectedLanguage?.code ?? 'en';
+          final categoryName = menu.translations.getField(
+            selectedLang,
+            (t) => t.name,
+          );
+
+          return AlertDialog(
+            title: const Text('Confirmer la suppression'),
+            content: Text(
+              'Êtes-vous sûr de vouloir supprimer la catégorie "$categoryName" ?',
             ),
-            child: const Text('Supprimer'),
-          ),
-        ],
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('Annuler'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  onConfirm();
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  foregroundColor: Colors.white,
+                ),
+                child: const Text('Supprimer'),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
@@ -218,6 +259,8 @@ class AddCategoryWidget extends StatefulWidget {
 }
 
 class _AddMenuWidgetState extends State<AddCategoryWidget> {
+  final GlobalKey<State<AddItemWidget>> _addItemWidgetKey = GlobalKey();
+
   @override
   void initState() {
     super.initState();
@@ -227,14 +270,77 @@ class _AddMenuWidgetState extends State<AddCategoryWidget> {
     });
   }
 
+  Map<String, Map<String, String>>? get translations {
+    return AddItemWidget.getTranslations(_addItemWidgetKey);
+  }
+
+  /// Extract translations from CategoryModel to Map format
+  Map<String, Map<String, String>>? _getInitialTranslations() {
+    if (!widget.controller.isEditMode || widget.controller.currentModel == null) {
+      return null;
+    }
+    
+    // Get the model - CategoryModel extends CategoryEntity and has translations
+    final categoryModel = widget.controller.currentModel!;
+    if (categoryModel.translations.isEmpty) {
+      return null;
+    }
+    
+    // Convert List<CategoryTranslationModel> to Map<String, Map<String, String>>
+    final Map<String, Map<String, String>> translationsMap = {};
+    for (var translation in categoryModel.translations) {
+      translationsMap[translation.languageCode] = {
+        'name': translation.name,
+        if (translation.description != null) 'description': translation.description!,
+      };
+    }
+    
+    return translationsMap;
+  }
+
+  void _handleValidation() {
+    print('=== VALIDATION STARTED ===');
+    print('Widget key current state: ${_addItemWidgetKey.currentState}');
+    print('State type: ${_addItemWidgetKey.currentState.runtimeType}');
+
+    final translationsData = translations;
+
+    print('Translations retrieved via getter: $translationsData');
+
+    // Also try direct access
+    final state = _addItemWidgetKey.currentState;
+    if (state is AddItemWidgetState) {
+      print('Direct access to translations: ${state.translations}');
+    } else {
+      print('ERROR: State is not AddItemWidgetState!');
+    }
+
+    // Call the new validateWithTranslations method
+    widget.controller.validateWithTranslations(translationsData);
+  }
+
   @override
   Widget build(BuildContext context) {
     return AddItemWidget(
+      key: _addItemWidgetKey,
       formKey: widget.controller.formKey,
       title: widget.controller.isEditMode
           ? "Modifier une categorie"
           : "Ajouter une categorie",
       cancelButton: widget.cancelButton,
+      initialTranslations: _getInitialTranslations(),
+      multilingualFields: [
+        MultilingualField(
+          name: 'name',
+          label: 'Nom de la Categorie',
+          maxLines: 1,
+        ),
+        MultilingualField(
+          name: 'description',
+          label: 'Description',
+          maxLines: 3,
+        ),
+      ],
       confirmationButton: BlocBuilder<CategoriesBloc, CategoriesState>(
         builder: (context, state) {
           switch (state.editStatus) {
@@ -242,12 +348,16 @@ class _AddMenuWidgetState extends State<AddCategoryWidget> {
               return Center(child: CircularProgressIndicator());
             case BlocStatus.failed:
               return ElevatedButton(
-                onPressed: widget.controller.validate,
+                onPressed: () {
+                  _handleValidation();
+                },
                 child: const Text("Réessayer"),
               );
             default:
               return ElevatedButton(
-                onPressed: widget.controller.validate,
+                onPressed: () {
+                  _handleValidation();
+                },
                 child: Text(
                   widget.controller.isEditMode
                       ? "Modifier la Categorie"
@@ -258,31 +368,9 @@ class _AddMenuWidgetState extends State<AddCategoryWidget> {
         },
       ),
       formBuilderFields: [
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Expanded(
-              child: FormBuilderTextField(
-                name: 'emoji',
-                decoration: InputDecoration(label: Text("🥣 Emoji")),
-              ),
-            ),
-            SizedBox(width: kspacing * 3),
-            Expanded(
-              flex: 5,
-              child: FormBuilderTextField(
-                name: 'name',
-                decoration: InputDecoration(label: Text("Nom de la Categorie")),
-                validator: FormBuilderValidators.compose([
-                  FormBuilderValidators.required(),
-                ]),
-              ),
-            ),
-          ],
-        ),
         FormBuilderTextField(
-          name: 'description',
-          decoration: InputDecoration(label: Text("Description")),
+          name: 'emoji',
+          decoration: InputDecoration(label: Text("🥣 Emoji")),
         ),
         SizedBox(height: kspacing * 3),
         Text("Thème de la Categorie"),

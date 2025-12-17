@@ -9,7 +9,8 @@ import '../../domains/entities/category_entity.dart';
 import '../managers/categories/categories_bloc.dart';
 import 'base_controller.dart';
 
-class CategoriesController extends BaseController<CategoriesBloc, CategoryModel, CategoryEntity> {
+class CategoriesController
+    extends BaseController<CategoriesBloc, CategoryModel, CategoryEntity> {
   CategoriesController({required super.context});
 
   Color? _themeColor;
@@ -60,21 +61,24 @@ class CategoriesController extends BaseController<CategoriesBloc, CategoryModel,
       if (currentState?.saveAndValidate() ?? false) {
         Logger().e(currentState!.fields);
         final emoji = currentState.fields['emoji']?.value;
-        if(emoji != null) {
+        if (emoji != null) {
           currentState.patchValue({
             'name': '$emoji ${currentState.fields['name']?.value ?? ''}',
           });
         }
-        final modelJson = currentState.fields.map((key, value) => MapEntry(key, value.value));
-        if(_themeColor != null){
+        final modelJson = currentState.fields.map(
+          (key, value) => MapEntry(key, value.value),
+        );
+        if (_themeColor != null) {
           modelJson['color'] = _themeColor!.toHex;
         }
-        final model = createModelFromJson(
-            modelJson
-        );
+        final model = createModelFromJson(modelJson);
 
         if (isEditMode && currentModel != null) {
-          final updatedModel = copyModelWithId(model, getModelId(currentModel!));
+          final updatedModel = copyModelWithId(
+            model,
+            getModelId(currentModel!),
+          );
           return updateItem(updatedModel);
         }
 
@@ -103,5 +107,75 @@ class CategoriesController extends BaseController<CategoriesBloc, CategoryModel,
   @override
   void addDeleteEvent(dynamic id) {
     bloc.add(CategoriesDeleted(id));
+  }
+
+  /// Validate form with multilingual translations
+  void validateWithTranslations(
+    Map<String, Map<String, String>>? translations,
+  ) {
+    final currentState = formKey.currentState;
+    if (currentState?.saveAndValidate() ?? false) {
+      Logger().d('Form fields: ${currentState!.fields}');
+      Logger().d('Translations: $translations');
+
+      final rawEmoji = currentState.fields['emoji']?.value as String?;
+
+      Map<String, Map<String, String>>? translationsToPersist = translations;
+      if (rawEmoji != null &&
+          rawEmoji.trim().isNotEmpty &&
+          translations != null &&
+          translations.isNotEmpty) {
+        final emoji = rawEmoji.trim();
+        translationsToPersist = translations.map((languageCode, fieldMap) {
+          final name = fieldMap['name'] ?? '';
+          final alreadyPrefixed = name.trim().startsWith(
+            '$emoji ',
+          ); // avoid double prefix
+          final updatedName = alreadyPrefixed || name.startsWith(emoji)
+              ? name
+              : '$emoji ${name.trim()}'.trim();
+
+          return MapEntry(languageCode, {...fieldMap, 'name': updatedName});
+        });
+      }
+
+      // Build model JSON from form fields (non-multilingual fields only)
+      final modelJson = Map<String, dynamic>.fromEntries(
+        currentState.fields.entries
+            .where(
+              (entry) =>
+                  !entry.key.startsWith('name_') &&
+                  !entry.key.startsWith('description_'),
+            )
+            .map((entry) => MapEntry(entry.key, entry.value.value)),
+      );
+
+      // Add color if set
+      if (_themeColor != null) {
+        modelJson['color'] = _themeColor!.toHex;
+      }
+
+      // Transform translations map to list format expected by model
+      if (translationsToPersist != null && translationsToPersist.isNotEmpty) {
+        modelJson['translations'] = translationsToPersist.entries.map((entry) {
+          return {
+            'language_code': entry.key,
+            'name': entry.value['name'] ?? '',
+            'description': entry.value['description'],
+          };
+        }).toList();
+      }
+
+      Logger().d('Model JSON before creation: $modelJson');
+
+      final model = createModelFromJson(modelJson);
+
+      if (isEditMode && currentModel != null) {
+        final updatedModel = copyModelWithId(model, getModelId(currentModel!));
+        return updateItem(updatedModel);
+      }
+
+      addItem(model);
+    }
   }
 }

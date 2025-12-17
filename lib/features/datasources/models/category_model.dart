@@ -6,6 +6,8 @@ import 'package:menu_zen_restaurant/core/extensions/color_extension.dart';
 import 'package:menu_zen_restaurant/core/extensions/string_extension.dart';
 import 'package:menu_zen_restaurant/features/domains/entities/category_entity.dart';
 
+import 'category_translation_model.dart';
+
 part 'category_model.g.dart';
 
 class ColorConverter implements JsonConverter<Color?, String?> {
@@ -26,10 +28,12 @@ class ColorConverter implements JsonConverter<Color?, String?> {
 
 @JsonSerializable()
 class CategoryModel extends CategoryEntity{
+  @override
+  final List<CategoryTranslationModel> translations;
+
   const CategoryModel({
     super.id,
-    required super.name,
-    super.description,
+    required this.translations,
     this.color,
   }): super(
     themeColor: color,
@@ -41,9 +45,10 @@ class CategoryModel extends CategoryEntity{
   factory CategoryModel.fromEntity(CategoryEntity entity) {
     return CategoryModel(
       id: entity.id,
-      name: entity.name,
-      description: entity.description,
       color: entity.themeColor,
+      translations: entity.translations.map((translation) {
+        return CategoryTranslationModel.fromEntity(translation);
+      }).toList(),
     );
   }
 
@@ -52,11 +57,10 @@ class CategoryModel extends CategoryEntity{
 
   Map<String, dynamic> toJson() => _$CategoryModelToJson(this);
 
-  CategoryModel copyWith({int? id, String? name, String? description, Color? color}) {
+  CategoryModel copyWith({int? id, List<CategoryTranslationModel>? translations, Color? color}) {
     return CategoryModel(
       id: id ?? this.id,
-      name: name ?? this.name,
-      description: description ?? this.description,
+      translations: translations ?? this.translations,
       color: color ?? this.color,
     );
   }

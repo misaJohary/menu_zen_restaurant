@@ -43,11 +43,9 @@ class CategoriesRepositoryImpl implements CategoriesRepository {
   }
 
   @override
-  Future<MultiResult<Failure, CategoryEntity>> deleteCategory(int categoryId) async {
+  Future<MultiResult<Failure, int>> deleteCategory(int categoryId) async {
     return executeWithErrorHandling(() async {
-      print('deeeeelete');
       final res = await rest.deleteCategories(categoryId);
-      print('deeeeelete res: $res');
       return res;
     });
   }
