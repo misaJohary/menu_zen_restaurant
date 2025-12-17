@@ -23,7 +23,7 @@ class TablesRepositoryImpl implements TablesRepository {
   }
 
   @override
-  Future<MultiResult<Failure, TableEntity>> delete(int id) async {
+  Future<MultiResult<Failure, int>> delete(int id) async {
     return executeWithErrorHandling(() async {
       final res = await rest.deleteTable(id);
       return res;

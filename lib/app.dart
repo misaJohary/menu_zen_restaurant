@@ -8,9 +8,11 @@ import 'core/injection/dependencies_injection.dart';
 import 'core/navigation/app_router.dart';
 import 'features/presentations/managers/auths/auth_bloc.dart';
 import 'features/presentations/managers/categories/categories_bloc.dart';
+import 'features/presentations/managers/languages/languages_bloc.dart';
 import 'features/presentations/managers/menu_item/menu_item_bloc.dart';
 import 'features/presentations/managers/menus/menus_bloc.dart';
 import 'features/presentations/managers/restaurant/restaurant_bloc.dart';
+import 'features/presentations/managers/stats/stats_bloc.dart';
 import 'features/presentations/managers/tables/table_bloc.dart';
 
 class App extends StatelessWidget {
@@ -30,7 +32,9 @@ class App extends StatelessWidget {
         BlocProvider(create: (context) => getIt<MenuItemBloc>()),
         BlocProvider(create: (context) => getIt<OrdersBloc>()),
         BlocProvider(create: (context) => getIt<OrderMenuItemBloc>()),
-        BlocProvider(create: (context)=> getIt<TableBloc>(),),
+        BlocProvider(create: (context) => getIt<TableBloc>()),
+        BlocProvider(create: (context) => getIt<LanguagesBloc>()),
+        BlocProvider(create: (context) => getIt<StatsBloc>()),
       ],
       child: MaterialApp.router(
         title: 'Menu Zen',
@@ -48,7 +52,7 @@ class App extends StatelessWidget {
                 borderRadius: BorderRadius.all(Radius.circular(20)),
               ),
               minimumSize: Size(50, 55),
-                textStyle: TextStyle(fontSize: 18)
+              textStyle: TextStyle(fontSize: 18),
             ),
           ),
         ),

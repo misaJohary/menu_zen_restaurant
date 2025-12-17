@@ -1,34 +1,45 @@
 import 'package:equatable/equatable.dart';
+import 'package:menu_zen_restaurant/features/domains/entities/translation_base.dart';
+
+abstract class MenuTranslation extends TranslationBase {
+  final String name;
+  final String? description;
+
+  const MenuTranslation({
+    required this.name,
+    this.description,
+    required super.languageCode,
+  });
+
+  @override
+  List<Object?> get props => [name, description, languageCode];
+}
 
 class MenuEntity extends Equatable {
   final int? id;
-  final String name;
-  final String description;
-  final bool? isActive;
+  final List<MenuTranslation> translations;
+  final bool? active;
 
   const MenuEntity({
     this.id,
-    required this.name,
-    required this.description,
-    this.isActive = true,
+    this.translations= const [],
+    this.active = true,
   });
 
   ///create copyWith
   ///
   MenuEntity copyWith({
     int? id,
-    String? name,
-    String? description,
-    bool? isActive,
+    List<MenuTranslation>? translations,
+    bool? active,
   }) {
     return MenuEntity(
       id: id ?? this.id,
-      name: name ?? this.name,
-      description: description ?? this.description,
-      isActive: isActive ?? this.isActive,
+      translations: translations ?? this.translations,
+      active: active ?? this.active,
     );
   }
 
   @override
-  List<Object?> get props => [id, name, description, isActive];
+  List<Object?> get props => [id, translations, active];
 }

@@ -2,16 +2,21 @@ import 'dart:io';
 
 import 'package:dio/dio.dart' hide Headers;
 import 'package:injectable/injectable.dart';
+import 'package:menu_zen_restaurant/features/datasources/models/order_count_model.dart';
 import 'package:menu_zen_restaurant/features/datasources/models/user_restaurant_model.dart';
 import 'package:retrofit/retrofit.dart';
 
 import '../../features/datasources/models/category_model.dart';
+import '../../features/datasources/models/language_model.dart';
 import '../../features/datasources/models/menu_item_model.dart';
+import '../../features/datasources/models/menu_item_update_model.dart';
 import '../../features/datasources/models/menu_model.dart';
 import '../../features/datasources/models/order_menu_item_model.dart';
 import '../../features/datasources/models/order_model.dart';
+import '../../features/datasources/models/revenues_model.dart';
 import '../../features/datasources/models/table_model.dart';
 import '../../features/datasources/models/token.dart';
+import '../../features/datasources/models/top_menu_item_model.dart';
 
 part 'rest_client.g.dart';
 
@@ -23,6 +28,9 @@ abstract class RestClient {
     @Named("withInterceptor") Dio dio, {
     @Named('BaseUrl') String baseUrl,
   }) = _RestClient;
+
+  @POST('/images')
+  Future<String> uploadImage(@Part() File picture);
 
   @POST('/login')
   Future<Token> login(@Part() String username, @Part() String password);
@@ -45,7 +53,7 @@ abstract class RestClient {
   Future<MenuModel> updateMenus(@Path() int id, @Body() MenuModel params);
 
   @DELETE('/menus/{id}')
-  Future<MenuModel> deleteMenus(@Path() int id);
+  Future<int> deleteMenus(@Path() int id);
 
   @GET('/categories')
   Future<List<CategoryModel>> getCategories();
@@ -60,7 +68,7 @@ abstract class RestClient {
   );
 
   @DELETE('/categories/{id}')
-  Future<CategoryModel> deleteCategories(@Path() int id);
+  Future<int> deleteCategories(@Path() int id);
 
   @GET('/menu-items')
   Future<List<MenuItemModel>> getMenuItems();
@@ -68,28 +76,28 @@ abstract class RestClient {
   @GET('/categories/{categoryId}/menu-items')
   Future<List<MenuItemModel>> getMenuItemsByCategory(@Path() int categoryId);
 
-  @POST('/menu-items-pics')
-  Future<MenuItemModel> createMenuItems({
-    @Part() required String name,
-    @Part() String? description,
-    @Part() required double price,
-    //@Part() required bool isAvailable,
-    @Part(name: 'category_id') required int categoryId,
-    @Part(name: 'menu_ids') required String menus,
-    @Part() required File? picture,
-  });
+  @POST('/menu-items')
+  Future<MenuItemModel> createMenuItems(@Body() MenuItemModel params);
 
   @GET('/menu-items-order')
   Future<List<OrderMenuItemModel>> getMenuItemsOrder();
 
+  //orders
   @POST('/orders')
   Future<OrderModel> createOrder(@Body() OrderModel order);
 
   @GET('/orders')
-  Future<List<OrderModel>> getOrders();
+  Future<List<OrderModel>> getOrders(
+      @Queries() Map<String, dynamic> queries
+  //     {
+  //   @Query('today_only') bool? todayOnly,
+  //   @Query('skip') int? page,
+  //   @Query('limit') int? limit,
+  // }
+  );
 
   @DELETE('/orders/{id}')
-  Future<OrderModel> deleteOrder(@Path() int id);
+  Future<int> deleteOrder(@Path() int id);
 
   @PATCH('/orders/{id}')
   Future<OrderModel> updateOrder(@Path() int id, @Body() OrderModel order);
@@ -103,11 +111,11 @@ abstract class RestClient {
   @PATCH('/menu-items/{id}')
   Future<MenuItemModel> updateMenuItems(
     @Path() int id,
-    @Body() MenuItemModel params,
+    @Body() MenuItemUpdateModel params,
   );
 
   @DELETE('/menu-items/{id}')
-  Future deleteMenuItems(@Path() int id);
+  Future<int> deleteMenuItems(@Path() int id);
 
   @POST('/tables')
   Future<TableModel> createTable(@Body() TableModel params);
@@ -116,8 +124,36 @@ abstract class RestClient {
   Future<List<TableModel>> getTables();
 
   @DELETE('/tables/{id}')
-  Future<TableModel> deleteTable(@Path() int id);
+  Future<int> deleteTable(@Path() int id);
 
   @PATCH('/tables/{id}')
   Future<TableModel> updateTables(@Path() int id, @Body() TableModel params);
+
+  @GET('/languages')
+  Future<List<LanguageModel>> getLanguages();
+
+  //stats
+  @GET('/stats/revenue')
+  Future<RevenuesModel> getRevenue({
+    @Query('period') String? period,
+    @Query('days') int? days,
+    @Query('start_date') String? startDate,
+    @Query('end_date') String? endDate,
+  });
+
+  @GET('/stats/top-menu-items')
+  Future<List<TopMenuItemModel>> getTopMenuItems({
+    @Query('period') String? period,
+    @Query('days') int? days,
+    @Query('start_date') String? startDate,
+    @Query('end_date') String? endDate,
+  });
+
+  @GET('/stats/order-count')
+  Future<OrderCountModel> getOrderCountToday({
+    @Query('period') String? period,
+    @Query('days') int? days,
+    @Query('start_date') String? startDate,
+    @Query('end_date') String? endDate,
+  });
 }

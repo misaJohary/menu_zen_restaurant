@@ -2,13 +2,11 @@ import 'package:auto_route/annotations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
-import 'package:menu_zen_restaurant/features/presentations/controllers/menus_controller.dart';
 import 'package:menu_zen_restaurant/features/presentations/widgets/add_item_widget.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 import '../../../core/constants/constants.dart';
 import '../../../core/enums/bloc_status.dart';
-import '../../domains/entities/menu_entity.dart';
 import '../../domains/entities/table_entity.dart';
 import '../controllers/table_controller.dart';
 import '../managers/menus/menus_bloc.dart';
@@ -59,7 +57,7 @@ class _TablesScreenState extends State<TablesScreen> {
             Expanded(
               child: BlocListener<TableBloc, TableState>(
                 listenWhen: (previous, current) =>
-                previous.editStatus != current.editStatus,
+                    previous.editStatus != current.editStatus,
                 listener: (context, state) {
                   if (state.editStatus == BlocStatus.loaded) {
                     controller
@@ -77,15 +75,15 @@ class _TablesScreenState extends State<TablesScreen> {
                           duration: const Duration(milliseconds: 300),
                           child: controller.isFieldShown
                               ? AddTableWidget(
-                            key: const ValueKey('add_menu_form'),
-                            controller: controller,
-                            cancelButton: ElevatedButton(
-                              child: Text("Annuler"),
-                              onPressed: () {
-                                controller.showField(false);
-                              },
-                            ),
-                          )
+                                  key: const ValueKey('add_menu_form'),
+                                  controller: controller,
+                                  cancelButton: ElevatedButton(
+                                    child: Text("Annuler"),
+                                    onPressed: () {
+                                      controller.showField(false);
+                                    },
+                                  ),
+                                )
                               : const SizedBox.shrink(),
                         );
                       },
@@ -124,9 +122,9 @@ class _TablesScreenState extends State<TablesScreen> {
                                             .textTheme
                                             .titleLarge!
                                             .copyWith(
-                                          fontSize: 27,
-                                          fontWeight: FontWeight.w500,
-                                        ),
+                                              fontSize: 27,
+                                              fontWeight: FontWeight.w500,
+                                            ),
                                       ),
                                       Transform.scale(
                                         scale: .6,
@@ -142,7 +140,7 @@ class _TablesScreenState extends State<TablesScreen> {
                                       Text(
                                         'Actif',
                                         style: TextStyle(
-                                          color: table.isActive!
+                                          color: table.isActive
                                               ? Theme.of(context).primaryColor
                                               : Colors.black54,
                                         ),
@@ -155,15 +153,15 @@ class _TablesScreenState extends State<TablesScreen> {
                                       await Future.delayed(resetFieldDuration);
                                       controller.showField(true, entity: table);
                                     },
-                                    onDelete: () {
-                                      _showDeleteConfirmation(table, () {
-                                        controller.showField(false);
-                                        final id = table.id;
-                                        if (id != null) {
-                                          controller.addDeleteEvent(id);
-                                        }
-                                      });
-                                    },
+                                    // onDelete: () {
+                                    //   _showDeleteConfirmation(table, () {
+                                    //     controller.showField(false);
+                                    //     final id = table.id;
+                                    //     if (id != null) {
+                                    //       controller.addDeleteEvent(id);
+                                    //     }
+                                    //   });
+                                    // },
                                   ),
                                 );
                               },

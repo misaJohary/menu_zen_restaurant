@@ -1,8 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
-import 'package:logger/logger.dart';
-import 'package:menu_zen_restaurant/features/domains/entities/restaurant_entity.dart';
 
 import '../../../core/injection/dependencies_injection.dart';
 import '../../../core/services/photon_geocoding_service.dart';

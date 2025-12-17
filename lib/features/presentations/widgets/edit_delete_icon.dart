@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 class EditDeleteIcon extends StatelessWidget {
   const EditDeleteIcon({
     super.key,
-    required this.onDelete,
-    required this.onEdit,
+    this.onDelete,
+    this.onEdit,
     this.isVertical = false,
     this.iconSize,
   });
 
-  final VoidCallback onEdit;
-  final VoidCallback onDelete;
+  final VoidCallback? onEdit;
+  final VoidCallback? onDelete;
   final bool? isVertical;
   final double? iconSize;
 
@@ -19,11 +19,13 @@ class EditDeleteIcon extends StatelessWidget {
     if (isVertical!) {
       return Column(
         children: [
+          if(onEdit != null)
           IconButton(
             icon: Icon(Icons.edit),
             iconSize: iconSize,
             onPressed: onEdit,
           ),
+          if(onDelete != null)
           IconButton(
             icon: Icon(Icons.delete),
             iconSize: iconSize,
@@ -35,11 +37,13 @@ class EditDeleteIcon extends StatelessWidget {
     }
     return Row(
       children: [
+        if(onEdit != null)
         IconButton(
           icon: Icon(Icons.edit),
           iconSize: iconSize,
           onPressed: onEdit,
         ),
+        if(onDelete != null)
         IconButton(
           icon: Icon(Icons.delete),
           iconSize: iconSize,

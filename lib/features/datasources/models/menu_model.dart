@@ -1,11 +1,16 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:menu_zen_restaurant/features/domains/entities/menu_entity.dart';
 
+import 'menu_translation_model.dart';
+
 part 'menu_model.g.dart';
 
 @JsonSerializable()
 class MenuModel extends MenuEntity {
-  const MenuModel({super.id, required super.name, required super.description, super.isActive});
+  @override
+  final List<MenuTranslationModel> translations;
+
+  const MenuModel({super.id, required this.translations, super.active});
 
   factory MenuModel.fromJson(Map<String, dynamic> json) =>
       _$MenuModelFromJson(json);
@@ -15,18 +20,21 @@ class MenuModel extends MenuEntity {
   @override
   MenuModel copyWith({
     int? id,
-    String? name,
-    String? description,
-    bool? isActive,
+    covariant List<MenuTranslationModel>? translations,
+    bool? active,
   }) {
     return MenuModel(
       id: id ?? this.id,
-      name: name ?? this.name,
-      description: description ?? this.description,
-      isActive: isActive ?? this.isActive,
+      translations: translations ?? this.translations,
+      active: active ?? this.active,
     );
   }
 
-  MenuModel.fromEntity(MenuEntity entity)
-    : super(id: entity.id, name: entity.name, description: entity.description, isActive: entity.isActive);
+  factory MenuModel.fromEntity(MenuEntity entity) => MenuModel(
+    id: entity.id,
+    translations: entity.translations.map((translation) {
+      return MenuTranslationModel.fromEntity(translation);
+    }).toList(),
+    active: entity.active,
+  );
 }

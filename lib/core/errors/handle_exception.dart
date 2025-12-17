@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:menu_zen_restaurant/core/errors/exceptions.dart';
 import 'package:menu_zen_restaurant/core/extensions/object_extension.dart';
-import 'package:menu_zen_restaurant/features/presentations/screens/restaurant_registration_screen.dart';
 import '../http_connexion/multi_result.dart';
 import 'failure.dart';
 

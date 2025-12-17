@@ -12,7 +12,8 @@ abstract class RegisterModule {
   String get baseUrl => dotenv.env['BASE_URL']!;
 
   @preResolve
-  final SharedPreferencesAsync prefs = SharedPreferencesAsync();
+  @lazySingleton
+  SharedPreferencesAsync get prefs => SharedPreferencesAsync();
 
   @Named("noInterceptor")
   @lazySingleton
@@ -24,7 +25,9 @@ abstract class RegisterModule {
   @lazySingleton
   Dio dio(@Named('BaseUrl') String url, DbService db) {
     final dio = Dio(BaseOptions(baseUrl: url));
-    dio.interceptors..add(LoggingInterceptors())..add(RequestInterceptor(dio: dioNoInterceptor(url), db: db));
+    dio.interceptors
+      ..add(LoggingInterceptors())
+      ..add(RequestInterceptor(dio: dioNoInterceptor(url), db: db));
     return dio;
   }
 }

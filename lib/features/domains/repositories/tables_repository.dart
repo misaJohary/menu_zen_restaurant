@@ -10,5 +10,5 @@ abstract class TablesRepository {
 
   Future<MultiResult<Failure, TableEntity>> update(TableModel params);
 
-  Future<MultiResult<Failure, TableEntity>> delete(int id);
+  Future<MultiResult<Failure, int>> delete(int id);
 }

@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import 'package:logger/logger.dart';
@@ -87,18 +86,15 @@ class PhotonResponse {
 
   factory PhotonResponse.fromJson(Map<String, dynamic> json) {
     final List<PhotonFeature> featuresMg = [];
-    final _ = (json['features'] as List<dynamic>?)?.map((x) {
-      if(x['properties']['countrycode'] == "MG") {
-        featuresMg.add(PhotonFeature.fromJson(x));
-        return PhotonFeature.fromJson(x);
-      }
-    }).toList() ??
+    final _ =
+        (json['features'] as List<dynamic>?)?.map((x) {
+          if (x['properties']['countrycode'] == "MG") {
+            featuresMg.add(PhotonFeature.fromJson(x));
+            return PhotonFeature.fromJson(x);
+          }
+        }).toList() ??
         [];
-    return PhotonResponse(
-      type: json['type'] ?? '',
-      features:
-      featuresMg,
-    );
+    return PhotonResponse(type: json['type'] ?? '', features: featuresMg);
   }
 }
 
@@ -117,17 +113,12 @@ class PhotonException implements Exception {
 // Main service class
 @lazySingleton
 class PhotonGeocodingService {
-
   final Dio dio;
   static const String _baseUrl = 'https://photon.komoot.io';
 
-
   final Duration _timeout = Duration(seconds: 10);
 
-
-  PhotonGeocodingService(
-      @Named("noInterceptor")
-      this.dio);
+  PhotonGeocodingService(@Named("noInterceptor") this.dio);
 
   /// Search for locations by query string
   ///
@@ -161,8 +152,6 @@ class PhotonGeocodingService {
       params['lang'] = lang;
     }
 
-    final uri = Uri.https('photon.komoot.io', '/api/', params);
-
     try {
       final response = await dio
           .get('$_baseUrl/api/', queryParameters: params)
@@ -189,8 +178,6 @@ class PhotonGeocodingService {
     if (lang != null && lang.isNotEmpty) {
       params['lang'] = lang;
     }
-
-    final uri = Uri.https('photon.komoot.io', '/reverse', params);
 
     try {
       final response = await dio
