@@ -7,5 +7,5 @@ abstract class MenusRepository{
   Future<MultiResult<Failure, List<MenuEntity>>> getMenus();
   Future<MultiResult<Failure, MenuEntity>> addMenu(MenuModel params);
   Future<MultiResult<Failure, MenuEntity>> updateMenu(MenuModel params);
-  Future<MultiResult<Failure, MenuEntity>> deleteMenu(int menuId);
+  Future<MultiResult<Failure, int>> deleteMenu(int menuId);
 }

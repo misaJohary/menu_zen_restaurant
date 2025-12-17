@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:logger/logger.dart';
 import 'package:menu_zen_restaurant/features/domains/entities/menu_entity.dart';
 
 import '../../datasources/models/menu_model.dart';
@@ -54,6 +55,57 @@ class MenusController extends BaseController<MenusBloc, MenuModel, MenuEntity> {
   @override
   void addDeleteEvent(dynamic id) {
     bloc.add(MenusDeleted(id));
+  }
+
+  /// Validate form with multilingual translations
+  void validateWithTranslations(
+    Map<String, Map<String, String>>? translations,
+  ) {
+    try {
+      final currentState = formKey.currentState;
+      if (currentState?.saveAndValidate() ?? false) {
+        Logger().d('Form fields: ${currentState!.fields}');
+        Logger().d('Translations: $translations');
+
+        // Build model JSON from form fields (non-multilingual fields only)
+        final modelJson = Map<String, dynamic>.fromEntries(
+          currentState.fields.entries
+              .where(
+                (entry) =>
+                    !entry.key.startsWith('name_') &&
+                    !entry.key.startsWith('description_'),
+              )
+              .map((entry) => MapEntry(entry.key, entry.value.value)),
+        );
+
+        // Transform translations map to list format expected by model
+        if (translations != null && translations.isNotEmpty) {
+          modelJson['translations'] = translations.entries.map((entry) {
+            return {
+              'language_code': entry.key,
+              'name': entry.value['name'] ?? '',
+              'description': entry.value['description'],
+            };
+          }).toList();
+        }
+
+        Logger().d('Model JSON before creation: $modelJson');
+
+        final model = createModelFromJson(modelJson);
+
+        if (isEditMode && currentModel != null) {
+          final updatedModel = copyModelWithId(
+            model,
+            getModelId(currentModel!),
+          );
+          return updateItem(updatedModel);
+        }
+
+        addItem(model);
+      }
+    } catch (e) {
+      Logger().e('Error in validateWithTranslations: $e');
+    }
   }
 }
 

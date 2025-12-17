@@ -2,7 +2,6 @@ import 'package:injectable/injectable.dart';
 import 'package:menu_zen_restaurant/core/errors/failure.dart';
 import 'package:menu_zen_restaurant/core/http_connexion/multi_result.dart';
 import 'package:menu_zen_restaurant/core/http_connexion/rest_client.dart';
-import 'package:menu_zen_restaurant/core/services/db_service.dart';
 import 'package:menu_zen_restaurant/features/datasources/models/menu_model.dart';
 import 'package:menu_zen_restaurant/features/domains/entities/menu_entity.dart';
 import 'package:menu_zen_restaurant/features/domains/repositories/menus_repository.dart';
@@ -33,7 +32,7 @@ class MenusRepositoryImpl implements MenusRepository {
   }
 
   @override
-  Future<MultiResult<Failure, MenuEntity>> deleteMenu(int menuId) async {
+  Future<MultiResult<Failure, int>> deleteMenu(int menuId) async {
     return executeWithErrorHandling(() async {
       final res = await rest.deleteMenus(menuId);
       return res;
