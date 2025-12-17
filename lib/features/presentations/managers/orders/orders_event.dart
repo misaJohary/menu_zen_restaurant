@@ -30,6 +30,16 @@ class OrderStatusUpdated extends OrdersEvent {
   List<Object?> get props => [orderId, orderStatus];
 }
 
+class OrderStatusRemoteUpdated extends OrdersEvent {
+  final int orderId;
+  final OrderStatus orderStatus;
+
+  const OrderStatusRemoteUpdated(this.orderId, this.orderStatus);
+
+  @override
+  List<Object?> get props => [orderId, orderStatus];
+}
+
 class OrderDeleted extends OrdersEvent {
   final int orderId;
 
@@ -39,10 +49,37 @@ class OrderDeleted extends OrdersEvent {
   List<Object?> get props => [orderId];
 }
 
+class OrderRemoteDeleted extends OrdersEvent {
+  final int orderId;
+
+  const OrderRemoteDeleted(this.orderId);
+
+  @override
+  List<Object?> get props => [orderId];
+}
+
 class OrderUpdated extends OrdersEvent {
   final OrderEntity orderEntity;
 
   const OrderUpdated(this.orderEntity);
+
+  @override
+  List<Object?> get props => [orderEntity];
+}
+
+class OrderRemoteUpdated extends OrdersEvent {
+  final OrderEntity orderEntity;
+
+  const OrderRemoteUpdated(this.orderEntity);
+
+  @override
+  List<Object?> get props => [orderEntity];
+}
+
+class OrderAdded extends OrdersEvent {
+  final OrderEntity orderEntity;
+
+  const OrderAdded(this.orderEntity);
 
   @override
   List<Object?> get props => [orderEntity];

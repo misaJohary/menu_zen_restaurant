@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:menu_zen_restaurant/core/extensions/double_extension.dart';
+import 'package:menu_zen_restaurant/core/extensions/list_extension.dart';
 import 'package:menu_zen_restaurant/core/navigation/app_router.gr.dart';
 import 'package:menu_zen_restaurant/features/presentations/controllers/make_order_controller.dart';
 import 'package:menu_zen_restaurant/features/presentations/widgets/orders/order_item.dart';
@@ -10,8 +11,10 @@ import 'package:menu_zen_restaurant/features/presentations/widgets/orders/order_
 import '../../../../core/constants/constants.dart';
 import '../../../../core/enums/bloc_status.dart';
 import '../../../domains/entities/order_entity.dart';
+import '../../managers/languages/languages_bloc.dart';
 import '../../managers/orders/order_menu_item/order_menu_item_bloc.dart';
 import '../../managers/orders/orders_bloc.dart';
+import '../../managers/tables/table_bloc.dart';
 import '../custom_container.dart';
 
 class OrderSummaryPannel extends StatefulWidget {
@@ -46,117 +49,117 @@ class _OrderSummaryPannelState extends State<OrderSummaryPannel> {
   @override
   Widget build(BuildContext context) {
     return MultiBlocListener(
-  listeners: [
-    BlocListener<OrdersBloc, OrdersState>(
-      listenWhen: (previous, current) =>
-          previous.createStatus != current.createStatus,
-      listener: (context, state) {
-        switch (state.createStatus) {
-          case BlocStatus.loaded:
-            showDialog(
-              context: context,
-              builder: (context) => AlertDialog(
-                backgroundColor: Colors.white,
-                title: Text(
-                  'Commande créée avec succès !',
-                  style: Theme.of(
-                    context,
-                  ).textTheme.titleLarge?.copyWith(color: Colors.green),
-                ),
-                content: OrderItem(
-                  order: state.selectedOrder!,
-                  onStatusChanged: (_) {},
-                ),
-                actions: [
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: Text('Créer une autre'),
+      listeners: [
+        BlocListener<OrdersBloc, OrdersState>(
+          listenWhen: (previous, current) =>
+              previous.createStatus != current.createStatus,
+          listener: (context, state) {
+            switch (state.createStatus) {
+              case BlocStatus.loaded:
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    backgroundColor: Colors.white,
+                    title: Text(
+                      'Commande créée avec succès !',
+                      style: Theme.of(
+                        context,
+                      ).textTheme.titleLarge?.copyWith(color: Colors.green),
+                    ),
+                    content: OrderItem(
+                      order: state.selectedOrder!,
+                      onStatusChanged: (_) {},
+                    ),
+                    actions: [
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: Text('Créer une autre'),
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                          context.router.push(OrdersRoute());
+                        },
+                        child: Text('Voir listes'),
+                      ),
+                    ],
                   ),
-                  ElevatedButton(
-                    onPressed: () {
-                      context.router.push(OrdersRoute());
-                    },
-                    child: Text('Voir listes'),
+                );
+                widget.controller.clearOrderMenuItem();
+                widget.controller.formKey.currentState?.reset();
+                break;
+              case BlocStatus.failed:
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      'Une erreur est survenue lors de la création de la commande',
+                    ),
+                    backgroundColor: Colors.green,
                   ),
-                ],
-              ),
-            );
-            widget.controller.clearOrderMenuItem();
-            widget.controller.formKey.currentState?.reset();
-            break;
-          case BlocStatus.failed:
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                  'Une erreur est survenue lors de la création de la commande',
-                ),
-                backgroundColor: Colors.green,
-              ),
-            );
-            break;
-          default:
-            break;
-        }
-      },
-),
-    BlocListener<OrdersBloc, OrdersState>(
-      listenWhen: (previous, current) =>
-      previous.updateStatus != current.updateStatus,
-      listener: (context, state) {
-        switch (state.updateStatus) {
-          case BlocStatus.loaded:
-            showDialog(
-              context: context,
-              builder: (context) => AlertDialog(
-                backgroundColor: Colors.white,
-                title: Text(
-                  'Commande mise à jour avec succès !',
-                  style: Theme.of(
-                    context,
-                  ).textTheme.titleLarge?.copyWith(color: Colors.green),
-                ),
-                content: OrderItem(
-                  order: state.selectedOrder!,
-                  onStatusChanged: (_) {},
-                ),
-                actions: [
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: Text('Créer une autre'),
+                );
+                break;
+              default:
+                break;
+            }
+          },
+        ),
+        BlocListener<OrdersBloc, OrdersState>(
+          listenWhen: (previous, current) =>
+              previous.updateStatus != current.updateStatus,
+          listener: (context, state) {
+            switch (state.updateStatus) {
+              case BlocStatus.loaded:
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    backgroundColor: Colors.white,
+                    title: Text(
+                      'Commande mise à jour avec succès !',
+                      style: Theme.of(
+                        context,
+                      ).textTheme.titleLarge?.copyWith(color: Colors.green),
+                    ),
+                    content: OrderItem(
+                      order: state.selectedOrder!,
+                      onStatusChanged: (_) {},
+                    ),
+                    actions: [
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: Text('Créer une autre'),
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                          context.router.push(OrdersRoute());
+                        },
+                        child: Text('Voir listes'),
+                      ),
+                    ],
                   ),
-                  ElevatedButton(
-                    onPressed: () {
-                      context.router.push(OrdersRoute());
-                    },
-                    child: Text('Voir listes'),
+                );
+                widget.controller.clearOrderMenuItem();
+                widget.controller.formKey.currentState?.reset();
+                break;
+              case BlocStatus.failed:
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      'Une erreur est survenue lors de la création de la commande',
+                    ),
+                    backgroundColor: Colors.green,
                   ),
-                ],
-              ),
-            );
-            widget.controller.clearOrderMenuItem();
-            widget.controller.formKey.currentState?.reset();
-            break;
-          case BlocStatus.failed:
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                  'Une erreur est survenue lors de la création de la commande',
-                ),
-                backgroundColor: Colors.green,
-              ),
-            );
-            break;
-          default:
-            break;
-        }
-      },
-    ),
-  ],
-  child: BlocBuilder<OrderMenuItemBloc, OrderMenuItemState>(
+                );
+                break;
+              default:
+                break;
+            }
+          },
+        ),
+      ],
+      child: BlocBuilder<OrderMenuItemBloc, OrderMenuItemState>(
         builder: (context, state) {
           if (state.status == BlocStatus.loading) {
             return Center(child: CircularProgressIndicator());
@@ -193,12 +196,21 @@ class _OrderSummaryPannelState extends State<OrderSummaryPannel> {
                     ),
                     SizedBox(height: kspacing * 2),
                     OrderInfoField(
-                      label: 'Numéro de table',
-                      field: FormBuilderDropdown(
-                        //initialValue: 1,
-                        name: 'table_number',
-                        decoration: inputDecoration,
-                        items: [],
+                      label: 'Table',
+                      field: BlocBuilder<TableBloc, TableState>(
+                        builder: (context, state) {
+                          return FormBuilderDropdown(
+                            name: 'table_number',
+                            decoration: inputDecoration,
+                            items: [
+                              for(final table in state.tables)
+                                DropdownMenuItem(
+                                  value: table.id,
+                                  child: Text(table.name),
+                                ),
+                            ]
+                          );
+                        },
                       ),
                     ),
                     SizedBox(height: kspacing * 2),
@@ -236,55 +248,71 @@ class _OrderSummaryPannelState extends State<OrderSummaryPannel> {
                             shrinkWrap: true,
                             children: [
                               ...order.map((orderMenu) {
-                                return Row(
-                                  children: [
-                                    Expanded(
-                                      child: ListTile(
-                                        title: Text(orderMenu.menuItem.name),
-                                        subtitle: RichText(
-                                          text: TextSpan(
-                                            text: '${orderMenu.quantity}x',
-                                            style: Theme.of(
-                                              context,
-                                            ).textTheme.labelLarge,
-                                            children: [
-                                              TextSpan(
-                                                text:
-                                                    ' ${orderMenu.unitPrice.formatMoney} Ar',
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .bodyMedium!
-                                                    .copyWith(
-                                                      color: Color(0xFF999999),
-                                                    ),
+                                return BlocBuilder<
+                                  LanguagesBloc,
+                                  LanguagesState
+                                >(
+                                  builder: (context, langState) {
+                                    final selectedLang =
+                                        langState.selectedLanguage?.code ??
+                                        'en';
+                                    final itemName = orderMenu
+                                        .menuItem
+                                        .translations
+                                        .getField(selectedLang, (t) => t.name);
+
+                                    return Row(
+                                      children: [
+                                        Expanded(
+                                          child: ListTile(
+                                            title: Text(itemName),
+                                            subtitle: RichText(
+                                              text: TextSpan(
+                                                text: '${orderMenu.quantity}x',
+                                                style: Theme.of(
+                                                  context,
+                                                ).textTheme.labelLarge,
+                                                children: [
+                                                  TextSpan(
+                                                    text:
+                                                        ' ${orderMenu.unitPrice.formatMoney} Ar',
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodyMedium!
+                                                        .copyWith(
+                                                          color: Color(
+                                                            0xFF999999,
+                                                          ),
+                                                        ),
+                                                  ),
+                                                ],
                                               ),
-                                            ],
+                                            ),
+                                            trailing: Text(
+                                              '${(orderMenu.quantity * orderMenu.unitPrice).formatMoney} Ar',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyMedium!
+                                                  .copyWith(
+                                                    color: Color(0xFF999999),
+                                                  ),
+                                            ),
                                           ),
                                         ),
-                                        trailing: Text(
-                                          '${(orderMenu.quantity * orderMenu.unitPrice).formatMoney} Ar',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyMedium!
-                                              .copyWith(
-                                                color: Color(0xFF999999),
-                                              ),
+                                        InkWell(
+                                          onTap: () {
+                                            widget.controller
+                                                .removeOrderFromList(orderMenu);
+                                          },
+                                          child: Icon(
+                                            Icons.clear,
+                                            color: Color(0xFF999999),
+                                            size: 18,
+                                          ),
                                         ),
-                                      ),
-                                    ),
-                                    InkWell(
-                                      onTap: () {
-                                        widget.controller.removeOrderFromList(
-                                          orderMenu,
-                                        );
-                                      },
-                                      child: Icon(
-                                        Icons.clear,
-                                        color: Color(0xFF999999),
-                                        size: 18,
-                                      ),
-                                    ),
-                                  ],
+                                      ],
+                                    );
+                                  },
                                 );
                               }),
                               Divider(),
@@ -308,8 +336,9 @@ class _OrderSummaryPannelState extends State<OrderSummaryPannel> {
                               BlocBuilder<OrdersBloc, OrdersState>(
                                 builder: (context, orderState) {
                                   if (orderState.createStatus ==
-                                      BlocStatus.loading || orderState.updateStatus ==
-                                      BlocStatus.loading) {
+                                          BlocStatus.loading ||
+                                      orderState.updateStatus ==
+                                          BlocStatus.loading) {
                                     return Center(
                                       child: CircularProgressIndicator(),
                                     );
@@ -346,7 +375,7 @@ class _OrderSummaryPannelState extends State<OrderSummaryPannel> {
           return SizedBox.shrink();
         },
       ),
-);
+    );
   }
 }
 
@@ -376,7 +405,7 @@ class OrderInfoField extends StatelessWidget {
           style: Theme.of(context).textTheme.labelLarge?.copyWith(fontSize: 17),
         ),
         SizedBox(width: kspacing * 3),
-        Expanded(child: SizedBox(height: 40, child: field)),
+        Expanded(child: field),
       ],
     );
   }

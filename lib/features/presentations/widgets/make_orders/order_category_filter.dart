@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:menu_zen_restaurant/core/extensions/list_extension.dart';
 
 import '../../../domains/entities/category_entity.dart';
 import '../../controllers/make_order_controller.dart';
 import '../../managers/categories/categories_bloc.dart';
+import '../../managers/languages/languages_bloc.dart';
 import '../custom_chip_choice.dart';
 
 class OrderCategoryFilter extends StatelessWidget {
@@ -34,19 +36,29 @@ class OrderCategoryFilter extends StatelessWidget {
                 if (categories.isEmpty) {
                   return SizedBox.shrink();
                 }
-                return Row(
-                  children: [
-                    ...state.categories.map(
-                      (category) => CustomChipChoice<CategoryEntity>(
-                        label: category.name,
-                        item: category,
-                        selected: controller.selectedCategory == category,
-                        onSelected: (cat) {
-                          controller.selectCategory(cat);
-                        },
-                      ),
-                    ),
-                  ],
+                return BlocBuilder<LanguagesBloc, LanguagesState>(
+                  builder: (context, langState) {
+                    final selectedLang =
+                        langState.selectedLanguage?.code ?? 'en';
+                    return Row(
+                      children: [
+                        ...state.categories.map((category) {
+                          final categoryName = category.translations.getField(
+                            selectedLang,
+                            (t) => t.name,
+                          );
+                          return CustomChipChoice<CategoryEntity>(
+                            label: categoryName,
+                            item: category,
+                            selected: controller.selectedCategory == category,
+                            onSelected: (cat) {
+                              controller.selectCategory(cat);
+                            },
+                          );
+                        }),
+                      ],
+                    );
+                  },
                 );
               },
             ),

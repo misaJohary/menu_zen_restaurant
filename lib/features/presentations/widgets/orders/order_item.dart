@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:menu_zen_restaurant/core/extensions/color_extension.dart';
 import 'package:menu_zen_restaurant/core/extensions/double_extension.dart';
+import 'package:menu_zen_restaurant/core/extensions/list_extension.dart';
 
 import '../../../../core/constants/constants.dart';
 import '../../../domains/entities/order_entity.dart';
+import '../../managers/languages/languages_bloc.dart';
 import '../edit_delete_icon.dart';
 
 class OrderItem extends StatelessWidget {
@@ -41,7 +44,7 @@ class OrderItem extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('Table X', style: Theme.of(context).textTheme.titleLarge),
+              Text(order.rTable!.name, style: Theme.of(context).textTheme.titleLarge),
               EditDeleteIcon(
                 onDelete: onDelete ?? () {},
                 onEdit: onEdit ?? () {},
@@ -99,30 +102,41 @@ class OrderItem extends StatelessWidget {
                     ),
                   ),
                   Expanded(
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: order.orderMenuItems.length,
-                      itemBuilder: (context, index) {
-                        final orderMenuItem = order.orderMenuItems[index];
-                        return Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: kspacing * 2,
-                            vertical: kspacing / 4,
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                '${orderMenuItem.menuItem.name} x${orderMenuItem.quantity}',
+                    child: BlocBuilder<LanguagesBloc, LanguagesState>(
+                      builder: (context, langState) {
+                        final selectedLang =
+                            langState.selectedLanguage?.code ?? 'en';
+
+                        return ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: order.orderMenuItems.length,
+                          itemBuilder: (context, index) {
+                            final orderMenuItem = order.orderMenuItems[index];
+                            final itemName = orderMenuItem.menuItem.translations
+                                .getField(selectedLang, (t) => t.name);
+
+                            return Padding(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: kspacing * 2,
+                                vertical: kspacing / 4,
                               ),
-                              Text(
-                                (orderMenuItem.menuItem.price *
-                                        orderMenuItem.quantity)
-                                    .formatMoney,
-                                style: Theme.of(context).textTheme.bodyLarge,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text('$itemName x${orderMenuItem.quantity}'),
+                                  Text(
+                                    (orderMenuItem.menuItem.price *
+                                            orderMenuItem.quantity)
+                                        .formatMoney,
+                                    style: Theme.of(
+                                      context,
+                                    ).textTheme.bodyLarge,
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
+                            );
+                          },
                         );
                       },
                     ),
@@ -131,7 +145,7 @@ class OrderItem extends StatelessWidget {
                   ListTile(
                     title: Text('${order.orderMenuItems.length} items'),
                     trailing: Text(
-                      '${order.orderMenuItems.fold<double>(0, (sum, item) => sum + (item.quantity * item.unitPrice)).formatMoney} Ar',
+                      '${order.totalAmount.formatMoney} Ar',
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: primaryColor.darken(),

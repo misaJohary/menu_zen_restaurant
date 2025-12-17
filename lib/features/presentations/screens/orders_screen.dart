@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -5,7 +8,10 @@ import 'package:menu_zen_restaurant/core/extensions/color_extension.dart';
 import 'package:menu_zen_restaurant/features/presentations/managers/orders/orders_bloc.dart';
 
 import '../../../core/constants/constants.dart';
+import '../../../core/injection/dependencies_injection.dart';
 import '../../../core/navigation/app_router.gr.dart';
+import '../../../core/services/ws_service.dart';
+import '../../datasources/models/order_model.dart';
 import '../../domains/entities/order_entity.dart';
 import '../controllers/order_controller.dart';
 import '../widgets/board_title_widget.dart';
@@ -22,10 +28,87 @@ class OrdersScreen extends StatefulWidget {
 class _OrdersScreenState extends State<OrdersScreen> {
   late OrderController controller;
 
+  late final RestaurantWebSocketService _wsService;
+  StreamSubscription<dynamic>? _wsSubscription;
+
+  bool isConnected = false;
+
   @override
   void initState() {
     super.initState();
     controller = OrderController(context: context)..addFetchOrders();
+    _initializeWebSocket();
+  }
+
+  Future<void> _initializeWebSocket() async {
+    // Get the service from your DI (GetIt, Provider, etc.)
+    _wsService = getIt<RestaurantWebSocketService>();
+
+    try {
+      // Connect and get the stream
+      final channel = await _wsService.connect();
+      channel!.stream.listen(
+        (message) {
+          final data = jsonDecode(message);
+          switch (data['type']) {
+            case 'connection_established':
+              print('Connected to restaurant: ${data['restaurant_id']}');
+              break;
+            case 'update_order_status':
+              _handleUpdateOrderStatus(context, data);
+              break;
+            case 'new_order':
+              // Handle new order
+              _handleNewOrder(context, data);
+              break;
+            case 'order_deleted':
+              _handleOrderDeleted(context, data);
+              break;
+            case 'order_updated':
+              _handleOrderUpdated(context, message);
+              break;
+          }
+        },
+        onError: (error) => (),
+        onDone: () => (),
+      );
+    } catch (e) {
+      print('Failed to connect WebSocket: $e');
+      setState(() {
+        isConnected = false;
+      });
+    }
+  }
+
+  _handleNewOrder(BuildContext context, message) {
+    context.read<OrdersBloc>().add(
+      OrderAdded(OrderModel.fromJson(json.decode(message['order']))),
+    );
+  }
+
+  _handleUpdateOrderStatus(BuildContext context, message) {
+    context.read<OrdersBloc>().add(
+      OrderStatusRemoteUpdated(
+        message['order_id'],
+        OrderStatus.fromString(message['new_status'])
+      ),
+    );
+  }
+
+  _handleOrderDeleted(BuildContext context, message) {
+    context.read<OrdersBloc>().add(
+      OrderRemoteDeleted(
+        message['order_id'],
+      ),
+    );
+  }
+
+  _handleOrderUpdated(BuildContext context, message) {
+    context.read<OrdersBloc>().add(
+      OrderRemoteUpdated(
+        OrderModel.fromJson(json.decode(message['order'])),
+      ),
+    );
   }
 
   @override

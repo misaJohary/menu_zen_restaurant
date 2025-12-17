@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:menu_zen_restaurant/core/extensions/string_extension.dart';
 import 'package:menu_zen_restaurant/features/domains/entities/order_menu_item.dart';
+import 'package:menu_zen_restaurant/features/domains/entities/table_entity.dart';
 
 class OrderEntity extends Equatable {
   final int? id;
@@ -10,16 +11,20 @@ class OrderEntity extends Equatable {
   final String? clientName;
   final List<OrderMenuItem> orderMenuItems;
   final int restaurantTableId;
+  final TableEntity? rTable;
   final DateTime? createdAt;
+  final int totalAmount;
 
   const OrderEntity({
     this.id,
     required this.orderStatus,
     required this.paymentStatus,
+    this.rTable,
     this.clientName,
     this.orderMenuItems = const [],
     required this.restaurantTableId,
     this.createdAt,
+    required this.totalAmount,
   });
 
   ///create copyWith method
@@ -30,7 +35,9 @@ class OrderEntity extends Equatable {
     String? clientName,
     List<OrderMenuItem>? orderMenuItems,
     int? restaurantTableId,
+    TableEntity? rTable,
     DateTime? createdAt,
+    int? totalAmount,
   }) {
     return OrderEntity(
       id: id ?? this.id,
@@ -39,7 +46,9 @@ class OrderEntity extends Equatable {
       clientName: clientName ?? this.clientName,
       orderMenuItems: orderMenuItems ?? this.orderMenuItems,
       restaurantTableId: restaurantTableId ?? this.restaurantTableId,
+      rTable: rTable ?? this.rTable,
       createdAt: createdAt ?? this.createdAt,
+      totalAmount: totalAmount ?? this.totalAmount,
     );
   }
 
@@ -51,7 +60,9 @@ class OrderEntity extends Equatable {
     clientName,
     orderMenuItems,
     restaurantTableId,
+    rTable,
     createdAt,
+    totalAmount,
   ];
 }
 
@@ -63,7 +74,15 @@ enum OrderStatus {
   served;
 
   String get toSnakeCase => name.toSnakeCase();
+
   Map<String, String> get toJson => {'status': toSnakeCase};
+
+  static OrderStatus fromString(String value) {
+    return OrderStatus.values.firstWhere(
+      (status) => status.toSnakeCase == value,
+      orElse: () => throw ArgumentError('Invalid OrderStatus: $value'),
+    );
+  }
 }
 
 enum PaymentStatus { unpaid, paid, prepaid, refunded }

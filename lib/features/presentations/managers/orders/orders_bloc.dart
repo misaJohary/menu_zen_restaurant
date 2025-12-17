@@ -5,7 +5,7 @@ import 'package:logger/logger.dart';
 import '../../../../core/enums/bloc_status.dart';
 import '../../../datasources/models/order_model.dart';
 import '../../../domains/entities/order_entity.dart';
-import '../../../domains/entities/order_menu_item.dart';
+import '../../../domains/params/order_params.dart';
 import '../../../domains/repositories/orders_repository.dart';
 
 part 'orders_event.dart';
@@ -17,10 +17,82 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
 
   OrdersBloc({required this.repo}) : super(OrdersState()) {
     on<OrderCreated>(_onOrderCreated);
+    on<OrderAdded>(_onOrderAdded);
     on<OrderFetched>(_onOrderFetched);
     on<OrderUpdated>(_onOrderUpdated);
+    on<OrderRemoteUpdated>(_onOrderRemoteUpdated);
     on<OrderStatusUpdated>(_onOrderStatusUpdated);
+    on<OrderStatusRemoteUpdated>(_onOrderStatusRemoteUpdated);
     on<OrderDeleted>(_onOrderDeleted);
+    on<OrderRemoteDeleted>(_onOrderRemoteDeleted);
+
+  }
+
+  _onOrderRemoteDeleted(
+    OrderRemoteDeleted event,
+    Emitter<OrdersState> emit,
+  ) {
+    emit(
+      state.copyWith(
+        orders: List.of(state.orders)
+          ..removeWhere((element) => element.id == event.orderId),
+      ),
+    );
+  }
+
+  _onOrderRemoteUpdated(
+    OrderRemoteUpdated event,
+    Emitter<OrdersState> emit,
+  ) {
+    final index = state.orders.indexWhere(
+      (element) => element.id == event.orderEntity.id,
+    );
+    if (index != -1) {
+      emit(
+        state.copyWith(
+          orders: List.of(state.orders)
+            ..removeAt(index)
+            ..insert(
+              index,
+              OrderModel.fromEntity(event.orderEntity),
+            ),
+        ),
+      );
+    } else {
+      add(OrderFetched());
+    }
+  }
+
+  _onOrderStatusRemoteUpdated(
+    OrderStatusRemoteUpdated event,
+    Emitter<OrdersState> emit,
+  ) {
+    final index = state.orders.indexWhere(
+      (element) => element.id == event.orderId,
+    );
+    if (index != -1) {
+      final updatedOrder = state.orders[index].copyWith(
+        orderStatus: event.orderStatus,
+      );
+      emit(
+        state.copyWith(
+          orders: List.of(state.orders)
+            ..removeAt(index)
+            ..insert(index, updatedOrder),
+        ),
+      );
+    } else {
+      add(OrderFetched());
+    }
+  }
+
+  _onOrderAdded(OrderAdded event, Emitter<OrdersState> emit) {
+    emit(
+      state.copyWith(
+        orders: List.of(state.orders)
+          ..insert(0, OrderModel.fromEntity(event.orderEntity)),
+      ),
+    );
   }
 
   _onOrderUpdated(OrderUpdated event, Emitter<OrdersState> emit) async {
@@ -90,7 +162,7 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
 
   _onOrderFetched(OrderFetched event, Emitter<OrdersState> emit) async {
     emit(state.copyWith(status: BlocStatus.loading));
-    final result = await repo.getOrders();
+    final result = await repo.getOrders(OrderParams(todayOnly: true));
     if (result.isSuccess) {
       emit(
         state.copyWith(orders: result.getSuccess, status: BlocStatus.loaded),

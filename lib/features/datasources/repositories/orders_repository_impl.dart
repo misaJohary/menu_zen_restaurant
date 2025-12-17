@@ -1,4 +1,5 @@
 import 'package:injectable/injectable.dart';
+import 'package:logger/logger.dart';
 import 'package:menu_zen_restaurant/core/errors/handle_exception.dart';
 import 'package:menu_zen_restaurant/features/datasources/models/order_model.dart';
 import 'package:menu_zen_restaurant/features/domains/entities/order_entity.dart';
@@ -6,6 +7,7 @@ import 'package:menu_zen_restaurant/features/domains/entities/order_entity.dart'
 import '../../../core/errors/failure.dart';
 import '../../../core/http_connexion/multi_result.dart';
 import '../../../core/http_connexion/rest_client.dart';
+import '../../domains/params/order_params.dart';
 import '../../domains/repositories/orders_repository.dart';
 import '../models/order_menu_item_model.dart';
 
@@ -31,9 +33,9 @@ class OrdersRepositoryImpl implements OrdersRepository {
   }
 
   @override
-  Future<MultiResult<Failure, List<OrderModel>>> getOrders() async {
+  Future<MultiResult<Failure, List<OrderModel>>> getOrders(OrderParams params) async {
     return executeWithErrorHandling(() async {
-      return await rest.getOrders();
+      return await rest.getOrders(params.toJson());
     });
   }
 
