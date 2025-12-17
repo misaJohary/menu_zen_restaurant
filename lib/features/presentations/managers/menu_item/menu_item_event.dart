@@ -22,7 +22,7 @@ class MenuItemCreated extends MenuItemEvent {
 }
 
 class MenuItemUpdated extends MenuItemEvent {
-  final MenuItemEntity menu;
+  final MenuItemUpdateModel menu;
 
   const MenuItemUpdated(this.menu);
 
@@ -37,4 +37,13 @@ class MenuItemDeleted extends MenuItemEvent {
 
   @override
   List<Object?> get props => [menuId];
+}
+
+class MenuItemPictureUploaded extends MenuItemEvent {
+  final File file;
+
+  const MenuItemPictureUploaded(this.file);
+
+  @override
+  List<Object?> get props => [file];
 }

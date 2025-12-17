@@ -1,48 +1,60 @@
 import 'package:equatable/equatable.dart';
+import 'package:logger/logger.dart';
 import 'package:menu_zen_restaurant/features/domains/entities/category_entity.dart';
+import 'package:menu_zen_restaurant/features/domains/entities/translation_base.dart';
 
 import 'menu_entity.dart';
 
-class MenuItemEntity extends Equatable {
-  final int? id;
+abstract class MenuItemTranslation extends TranslationBase {
   final String name;
   final String? description;
+
+  const MenuItemTranslation({
+    required this.name,
+    this.description,
+    required super.languageCode,
+  });
+
+  @override
+  List<Object?> get props => [name, description, languageCode];
+}
+
+class MenuItemEntity extends Equatable {
+  final int? id;
+  final List<MenuItemTranslation> translations;
   final double price;
   final String? picture;
-  final bool? isAvailable;
-  final CategoryEntity category;
+  final bool? active;
+  final CategoryEntity? category;
   final List<MenuEntity> menus;
 
   const MenuItemEntity({
     required this.id,
-    required this.name,
-    this.description,
+    required this.translations,
     required this.price,
     this.picture,
-    this.isAvailable,
-    required this.category,
-    required this.menus,
+    this.active,
+    this.category,
+    this.menus = const [],
   });
 
   /// Create a copyWith method to allow for easy copying with modifications
 
   copyWith({
     int? id,
-    String? name,
-    String? description,
+    List<MenuItemTranslation>? translations,
     double? price,
     String? picture,
-    bool? isAvailable,
+    bool? active,
     CategoryEntity? category,
     List<MenuEntity>? menus,
   }) {
     return MenuItemEntity(
       id: id ?? this.id,
-      name: name ?? this.name,
-      description: description ?? this.description,
+      translations: translations ?? this.translations,
       price: price ?? this.price,
       picture: picture ?? this.picture,
-      isAvailable: isAvailable ?? this.isAvailable,
+      active: active ?? this.active,
       category: category ?? this.category,
       menus: menus ?? this.menus,
     );
@@ -51,11 +63,10 @@ class MenuItemEntity extends Equatable {
   @override
   List<Object?> get props => [
     id,
-    name,
-    description,
+    translations,
     price,
     picture,
-    isAvailable,
+    active,
     category,
     menus,
   ];

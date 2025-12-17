@@ -2,11 +2,15 @@ import 'dart:io';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:logger/logger.dart';
+import 'package:menu_zen_restaurant/features/domains/repositories/image_repository.dart';
 import 'package:menu_zen_restaurant/features/domains/repositories/menu_item_repository.dart';
 
 import '../../../../core/enums/bloc_status.dart';
 import '../../../datasources/models/category_model.dart';
 import '../../../datasources/models/menu_item_model.dart';
+import '../../../datasources/models/menu_item_translation_model.dart';
+import '../../../datasources/models/menu_item_update_model.dart';
 import '../../../datasources/models/menu_model.dart';
 import '../../../domains/entities/menu_item_entity.dart';
 
@@ -16,23 +20,25 @@ part 'menu_item_state.dart';
 
 class MenuItemBloc extends Bloc<MenuItemEvent, MenuItemState> {
   final MenuItemRepository repo;
+  final ImageRepository imageRepo;
 
-  MenuItemBloc({required this.repo}) : super(MenuItemState()) {
+  MenuItemBloc({required this.repo, required this.imageRepo})
+    : super(MenuItemState()) {
     on<MenuItemCreated>(_onMenuItemCreated);
     on<MenuItemFetched>(_onMenuItemFetched);
     on<MenuItemUpdated>(_onMenuItemUpdated);
     on<MenuItemDeleted>(_onMenuItemDeleted);
+    on<MenuItemPictureUploaded>(_onMenuItemPictureUploaded);
   }
 
   //MenuItem CRUD
   _onMenuItemCreated(MenuItemCreated event, Emitter<MenuItemState> emit) async {
     emit(state.copyWith(editStatus: BlocStatus.loading));
-
     final res = await repo.addMenuItem(
       MenuItemModel.fromEntity(
-        event.menu,
-        CategoryModel.fromEntity(event.menu.category),
-          event.menu.menus.map((menu) => MenuModel.fromEntity(menu)).toList()
+        (event.menu as MenuItemModel).copyWith(
+          picture: state.uploadedPictureUrl,
+        ),
       ),
       event.file!,
     );
@@ -55,7 +61,9 @@ class MenuItemBloc extends Bloc<MenuItemEvent, MenuItemState> {
 
     final res = await repo.getMenuItems();
     if (res.isSuccess) {
-      emit(state.copyWith(status: BlocStatus.loaded, menuItems: res.getSuccess));
+      emit(
+        state.copyWith(status: BlocStatus.loaded, menuItems: res.getSuccess),
+      );
     } else {
       emit(state.copyWith(status: BlocStatus.failed));
     }
@@ -64,13 +72,7 @@ class MenuItemBloc extends Bloc<MenuItemEvent, MenuItemState> {
   _onMenuItemUpdated(MenuItemUpdated event, Emitter<MenuItemState> emit) async {
     emit(state.copyWith(editStatus: BlocStatus.loading));
 
-    final res = await repo.updateMenuItem(
-      MenuItemModel.fromEntity(
-        event.menu,
-        CategoryModel.fromEntity(event.menu.category),
-          event.menu.menus.map((menu) => MenuModel.fromEntity(menu)).toList()
-      ),
-    );
+    final res = await repo.updateMenuItem(event.menu);
     if (res.isSuccess) {
       final updatedMenuItems = state.menuItems.map((menuItem) {
         return menuItem.id == res.getSuccess!.id ? res.getSuccess! : menuItem;
@@ -91,9 +93,10 @@ class MenuItemBloc extends Bloc<MenuItemEvent, MenuItemState> {
 
     final res = await repo.deleteMenuItem(event.menuId);
     if (res.isSuccess) {
-      final updatedMenuItems = state.menuItems
-          .where((menuItem) => menuItem.id != event.menuId)
-          .toList();
+      Logger().d(event.menuId);
+      final updatedMenuItems = state.menuItems.where((menuItem) {
+        return menuItem.id != event.menuId;
+      }).toList();
       emit(
         state.copyWith(
           editStatus: BlocStatus.loaded,
@@ -102,6 +105,27 @@ class MenuItemBloc extends Bloc<MenuItemEvent, MenuItemState> {
       );
     } else {
       emit(state.copyWith(editStatus: BlocStatus.failed));
+    }
+  }
+
+  _onMenuItemPictureUploaded(
+    MenuItemPictureUploaded event,
+    Emitter<MenuItemState> emit,
+  ) async {
+    emit(state.copyWith(uploadStatus: BlocStatus.loading));
+    Logger().e(event.file);
+    final res = await imageRepo.uploadImage(event.file);
+    Logger().e(res);
+    if (res.isSuccess) {
+      Logger().e(res.getSuccess);
+      emit(
+        state.copyWith(
+          uploadStatus: BlocStatus.loaded,
+          uploadedPictureUrl: res.getSuccess,
+        ),
+      );
+    } else {
+      emit(state.copyWith(uploadStatus: BlocStatus.failed));
     }
   }
 }

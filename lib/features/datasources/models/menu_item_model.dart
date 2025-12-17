@@ -1,7 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:logger/logger.dart';
+import 'package:menu_zen_restaurant/features/datasources/models/menu_item_translation_model.dart';
 import 'package:menu_zen_restaurant/features/domains/entities/menu_item_entity.dart';
 
+import '../../domains/entities/category_entity.dart';
+import '../../domains/entities/menu_entity.dart';
 import 'category_model.dart';
 import 'menu_model.dart';
 
@@ -9,47 +15,78 @@ part 'menu_item_model.g.dart';
 
 @JsonSerializable()
 class MenuItemModel extends MenuItemEntity {
-  final CategoryModel _category;
-  final List<MenuModel> _menus;
+  @override
+  final CategoryModel? category;
 
   @override
-  CategoryModel get category => _category;
+  final List<MenuModel> menus;
 
   @override
-  List<MenuModel> get menus => _menus;
+  final List<MenuItemTranslationModel> translations;
+
+  final int? categoryId;
 
   const MenuItemModel({
     super.id,
-    required super.name,
     required super.price,
-    super.isAvailable,
-    super.description,
+    super.active,
     super.picture,
-    required CategoryModel super.category,
-    required List<MenuModel> super.menus,
-  }) : _category = category, _menus = menus;
+    required this.category,
+    required this.menus,
+    required this.translations,
+    this.categoryId,
+  }) : super(translations: translations);
 
-  MenuItemModel.fromEntity(MenuItemEntity entity, this._category, this._menus)
-    : super(
-        id: entity.id,
-        name: entity.name,
-        price: entity.price,
-        isAvailable: entity.isAvailable,
-        description: entity.description,
-        picture: entity.picture,
-        category: CategoryModel.fromEntity(entity.category),
-        menus: entity.menus
-            .map((menu) => MenuModel.fromEntity(menu))
-            .toList(),
-      );
+  factory MenuItemModel.fromEntity(MenuItemEntity entity) {
+    return MenuItemModel(
+      id: entity.id,
+      price: entity.price,
+      active: entity.active,
+      picture: entity.picture,
+      category: entity.category != null
+          ? CategoryModel.fromEntity(entity.category!)
+          : null,
+      menus: entity.menus.map((menu) => MenuModel.fromEntity(menu)).toList(),
+      translations: entity.translations
+          .map(
+            (translation) => MenuItemTranslationModel.fromEntity(translation),
+          )
+          .toList(),
+    );
+  }
 
   factory MenuItemModel.fromJson(Map<String, dynamic> json) {
     if (json['picture'] != null) {
-      json['picture'] =
-          '${dotenv.env['BASE_URL']!}/${json['picture'].toString()}';
+      final pic = json['picture'];
+      json['picture'] = '${dotenv.env['BASE_URL']!}/$pic';
     }
     return _$MenuItemModelFromJson(json);
   }
 
   Map<String, dynamic> toJson() => _$MenuItemModelToJson(this);
+
+  @override
+  copyWith({
+    int? id,
+    List<MenuItemTranslation>? translations,
+    double? price,
+    String? picture,
+    bool? active,
+    CategoryEntity? category,
+    List<MenuEntity>? menus,
+    int? categoryId,
+  }) {
+    return MenuItemModel(
+      id: id ?? this.id,
+      price: price ?? this.price,
+      active: active ?? this.active,
+      picture: picture ?? this.picture,
+      category: (category != null)
+          ? CategoryModel.fromEntity(category)
+          : this.category,
+      menus: menus != null ? menus.map((e) => MenuModel.fromEntity(e)).toList() : this.menus,
+      translations: translations != null ? translations.map((e) => MenuItemTranslationModel.fromEntity(e)).toList() : this.translations,
+      categoryId: categoryId ?? this.categoryId,
+    );
+  }
 }

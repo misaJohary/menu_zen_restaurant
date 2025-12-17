@@ -9,6 +9,7 @@ import 'package:menu_zen_restaurant/features/domains/entities/menu_item_entity.d
 import 'package:menu_zen_restaurant/features/domains/repositories/menu_item_repository.dart';
 
 import '../../../core/http_connexion/rest_client.dart';
+import '../models/menu_item_update_model.dart';
 
 @LazySingleton(as: MenuItemRepository)
 class MenuItemRepositoryImpl implements MenuItemRepository {
@@ -23,20 +24,14 @@ class MenuItemRepositoryImpl implements MenuItemRepository {
   ) {
     return executeWithErrorHandling(() async {
       final res = await rest.createMenuItems(
-        name: params.name,
-        price: params.price,
-        //isAvailable: params.isAvailable ?? true,
-        description: params.description,
-        categoryId: params.category.id!,
-        menus: params.menus.map((menu) => menu.id!).toList().join(','),
-        picture: picture,
+        params.copyWith(categoryId: params.category?.id),
       );
       return res;
     });
   }
 
   @override
-  Future<MultiResult<Failure, MenuItemEntity>> deleteMenuItem(int menuItemId) {
+  Future<MultiResult<Failure, int>> deleteMenuItem(int menuItemId) {
     return executeWithErrorHandling(() async {
       final res = await rest.deleteMenuItems(menuItemId);
       return res;
@@ -53,9 +48,23 @@ class MenuItemRepositoryImpl implements MenuItemRepository {
 
   @override
   Future<MultiResult<Failure, MenuItemEntity>> updateMenuItem(
-    MenuItemModel params,
+      MenuItemUpdateModel params,
   ) {
-    // TODO: implement updateMenuItem
-    throw UnimplementedError();
+    return executeWithErrorHandling(() async {
+      return await rest.updateMenuItems(
+        params.id,
+        params,
+      );
+    });
   }
+
+  // @override
+  // Future<MultiResult<Failure, MenuItemEntity>> changeMenuItemAvalaibility(bool active) async {
+  //   return executeWithErrorHandling(() async {
+  //     return await rest.updateMenuItems(
+  //       params.id!,
+  //       params.copyWith(categoryId: params.category?.id),
+  //     );
+  //   });
+  // }
 }

@@ -2,21 +2,22 @@ import 'dart:io';
 
 import 'package:auto_route/annotations.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:menu_zen_restaurant/core/extensions/double_extension.dart';
+import 'package:menu_zen_restaurant/core/extensions/list_extension.dart';
 import 'package:menu_zen_restaurant/features/presentations/controllers/menu_item_controller.dart';
 
 import '../../../core/constants/constants.dart';
 import '../../../core/enums/bloc_status.dart';
-import '../../datasources/models/menu_model.dart';
+import '../../datasources/models/menu_item_update_model.dart';
 import '../../domains/entities/menu_entity.dart';
 import '../../domains/entities/menu_item_entity.dart';
 import '../managers/categories/categories_bloc.dart';
+import '../managers/languages/languages_bloc.dart';
 import '../managers/menu_item/menu_item_bloc.dart';
 import '../managers/menus/menus_bloc.dart';
 import '../widgets/add_item_widget.dart';
@@ -25,6 +26,7 @@ import '../widgets/card_list_tile.dart';
 import '../widgets/category_name_widget.dart';
 import '../widgets/edit_delete_icon.dart';
 import '../widgets/loading_widget.dart';
+import '../widgets/multilingual_field.dart';
 
 @RoutePage()
 class MenuItemScreen extends StatefulWidget {
@@ -135,117 +137,189 @@ class _MenuItemScreenState extends State<MenuItemScreen> {
                                       : const CircleAvatar(
                                           child: Icon(Icons.fastfood),
                                         ),
-                                  title: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Text(
-                                        menu.name,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .titleLarge!
-                                            .copyWith(fontSize: 27, fontWeight: FontWeight.w500),
-                                      ),
-                                      Text(
-                                        '  ${menu.price.formatMoney} Ar  ',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .headlineLarge
-                                            ?.copyWith(
-                                              color: Theme.of(
-                                                context,
-                                              ).primaryColor,
-                                          fontWeight: FontWeight.w800
-                                            ),
-                                      ),
-                                      Transform.scale(
-                                        scale: .6,
-                                        child: Switch(
-                                          value: menu.isAvailable ?? true,
-                                          onChanged: (bool value) {
-                                            controller.addUpdateEvent(
-                                              menu.copyWith(isAvailable: value),
-                                            );
-                                          },
-                                        ),
-                                      ),
-                                      Text(
-                                        'Disponible',
-                                        style: TextStyle(
-                                          color: menu.isAvailable ?? true
-                                              ? Theme.of(context).primaryColor
-                                              : Colors.black54,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  subtitle: Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        menu.description ?? '',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyLarge!
-                                            .copyWith(
-                                              color: grey,
-                                              fontSize: 22,
-                                            ),
-                                      ),
-                                      SizedBox(height: kspacing*2,),
-                                      Row(
-                                        children: [
-                                          CategoryNameWidget(
-                                            menu.category,
-                                            padding: EdgeInsets.all(kspacing),
-                                            height: 43,
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .titleLarge!
-                                                .copyWith(
-                                                  color: darken(
-                                                    menu.category.themeColor!,
-                                                    .5,
-                                                  ),
-                                                ),
-                                          ),
-                                          SizedBox(width: kspacing*3,),
-                                          ...menu.menus.map(
-                                            (menu) =>
-                                                Text('Menus: ${menu.name}', style: Theme.of(context)
+                                  title:
+                                      BlocBuilder<
+                                        LanguagesBloc,
+                                        LanguagesState
+                                      >(
+                                        builder: (context, langState) {
+                                          final selectedLang =
+                                              langState
+                                                  .selectedLanguage
+                                                  ?.code ??
+                                              'en';
+                                          final menuName = menu.translations
+                                              .getField(
+                                                selectedLang,
+                                                (t) => t.name,
+                                              );
+                                          return Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Text(
+                                                menuName,
+                                                style: Theme.of(context)
                                                     .textTheme
-                                                    .labelMedium!
+                                                    .titleLarge!
                                                     .copyWith(
-                                                  color: grey,
-                                                  fontSize: 20,
-                                                  fontWeight: FontWeight.w300
-                                                ),),
-                                          ),
-                                        ],
+                                                      fontSize: 27,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                    ),
+                                              ),
+                                              Text(
+                                                '  ${menu.price.formatMoney} Ar  ',
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .headlineLarge
+                                                    ?.copyWith(
+                                                      color: Theme.of(
+                                                        context,
+                                                      ).primaryColor,
+                                                      fontWeight:
+                                                          FontWeight.w800,
+                                                    ),
+                                              ),
+                                              Transform.scale(
+                                                scale: .6,
+                                                child: Switch(
+                                                  value: menu.active ?? true,
+                                                  onChanged: (bool value) {
+                                                    if(menu.active != value) {
+                                                  context
+                                                      .read<MenuItemBloc>()
+                                                      .add(
+                                                        MenuItemUpdated(
+                                                          MenuItemUpdateModel(
+                                                            id: menu.id!,
+                                                            active: value,
+                                                          ),
+                                                        ),
+                                                      );
+                                                }
+                                              },
+                                                ),
+                                              ),
+                                              Text(
+                                                'Disponible',
+                                                style: TextStyle(
+                                                  color: menu.active ?? true
+                                                      ? Theme.of(
+                                                          context,
+                                                        ).primaryColor
+                                                      : Colors.black54,
+                                                ),
+                                              ),
+                                            ],
+                                          );
+                                        },
                                       ),
-                                    ],
+                                  subtitle:
+                                      BlocBuilder<
+                                        LanguagesBloc,
+                                        LanguagesState
+                                      >(
+                                        builder: (context, langState) {
+                                          final selectedLang =
+                                              langState
+                                                  .selectedLanguage
+                                                  ?.code ??
+                                              'en';
+                                          final menuDescription =
+                                              menu.translations
+                                                  .getOptionalField(
+                                                    selectedLang,
+                                                    (t) => t.description,
+                                                  ) ??
+                                              '';
+
+                                          return Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                menuDescription,
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyLarge!
+                                                    .copyWith(
+                                                      color: grey,
+                                                      fontSize: 22,
+                                                    ),
+                                              ),
+                                              SizedBox(height: kspacing * 2),
+                                              Row(
+                                                children: [
+                                                  if (menu.category != null)
+                                                    CategoryNameWidget(
+                                                      menu.category!,
+                                                      padding: EdgeInsets.all(
+                                                        kspacing,
+                                                      ),
+                                                      height: 43,
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .titleLarge!
+                                                          .copyWith(
+                                                            color: darken(
+                                                              menu
+                                                                  .category!
+                                                                  .themeColor!,
+                                                              .5,
+                                                            ),
+                                                          ),
+                                                    ),
+                                                  SizedBox(width: kspacing * 3),
+                                                  ...menu.menus.map((
+                                                    menuEntity,
+                                                  ) {
+                                                    final menuName = menuEntity
+                                                        .translations
+                                                        .getField(
+                                                          selectedLang,
+                                                          (t) => t.name,
+                                                        );
+                                                    return Text(
+                                                      'Menus: $menuName',
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .labelMedium!
+                                                          .copyWith(
+                                                            color: grey,
+                                                            fontSize: 20,
+                                                            fontWeight:
+                                                                FontWeight.w300,
+                                                          ),
+                                                    );
+                                                  }),
+                                                ],
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      ),
+                                  trailing: EditDeleteIcon(
+                                    isVertical: false,
+                                    onEdit: () async {
+                                      controller.showField(false);
+                                      await Future.delayed(resetFieldDuration);
+                                      controller.showField(true, entity: menu);
+                                    },
+                                    // onDelete: () {
+                                    //   _showDeleteConfirmation(menu, () {
+                                    //     controller.showField(false);
+                                    //     final id = menu.id;
+                                    //     if (id != null) {
+                                    //       controller.addDeleteEvent(id);
+                                    //       // context.read<MenusBloc>().add(
+                                    //       //   MenusDeleted(id),
+                                    //       // );
+                                    //     }
+                                    //   });
+                                    // },
                                   ),
-                                  // trailing: EditDeleteIcon(
-                                  //   isVertical: false,
-                                  //   onEdit: () async {
-                                  //     controller.showField(false);
-                                  //     await Future.delayed(resetFieldDuration);
-                                  //     controller.showField(true, entity: menu);
-                                  //   },
-                                  //   onDelete: () {
-                                  //     _showDeleteConfirmation(menu, () {
-                                  //       controller.showField(false);
-                                  //       final id = menu.id;
-                                  //       if (id != null) {
-                                  //         controller.addDeleteEvent(id);
-                                  //         // context.read<MenusBloc>().add(
-                                  //         //   MenusDeleted(id),
-                                  //         // );
-                                  //       }
-                                  //     });
-                                  //   },
-                                  // ),
                                 );
                               },
                             );
@@ -279,28 +353,38 @@ class _MenuItemScreenState extends State<MenuItemScreen> {
   void _showDeleteConfirmation(MenuItemEntity menu, VoidCallback onConfirm) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Confirmer la suppression'),
-        content: Text(
-          'Êtes-vous sûr de vouloir supprimer le menu "${menu.name}" ?',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Annuler'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              onConfirm();
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
-              foregroundColor: Colors.white,
+      builder: (dialogContext) => BlocBuilder<LanguagesBloc, LanguagesState>(
+        builder: (context, langState) {
+          final selectedLang = langState.selectedLanguage?.code ?? 'en';
+          final menuName = menu.translations.getField(
+            selectedLang,
+            (t) => t.name,
+          );
+
+          return AlertDialog(
+            title: const Text('Confirmer la suppression'),
+            content: Text(
+              'Êtes-vous sûr de vouloir supprimer la menu "$menuName" ?',
             ),
-            child: const Text('Supprimer'),
-          ),
-        ],
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('Annuler'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  onConfirm();
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  foregroundColor: Colors.white,
+                ),
+                child: const Text('Supprimer'),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
@@ -321,23 +405,132 @@ class AddMenuItemWidget extends StatefulWidget {
 }
 
 class _AddMenuItemWidgetState extends State<AddMenuItemWidget> {
+  final GlobalKey<State<AddItemWidget>> _addItemWidgetKey = GlobalKey();
+
   @override
   void initState() {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       widget.controller.initEdit();
+
+      // Patch additional non-multilingual fields when editing
+      final currentModel = widget.controller.currentModel;
+      if (currentModel != null) {
+        void patchWithAvailableReferences() {
+          final formState = widget.controller.formKey.currentState;
+          if (formState is! FormBuilderState) return;
+
+          // Try to resolve category and menus against current bloc states,
+          // so Dropdown/Chips find the exact same instances
+          final categoriesState = context.read<CategoriesBloc>().state;
+          final menusState = context.read<MenusBloc>().state;
+
+          final categoryId = currentModel.category?.id;
+          final resolvedCategory = categoryId != null
+              ? categoriesState.categories.firstWhere(
+                  (c) => c.id == categoryId,
+                  orElse: () =>
+                      currentModel.category ?? categoriesState.categories.first,
+                )
+              : currentModel.category;
+
+          final desiredMenuIds = currentModel.menus
+              .map((m) => m.id)
+              .whereType<int>()
+              .toSet();
+          final resolvedMenus = menusState.menus
+              .where((m) => desiredMenuIds.contains(m.id))
+              .toList();
+          final menusToPatch = resolvedMenus.isNotEmpty
+              ? resolvedMenus
+              : currentModel.menus;
+
+          formState.patchValue({
+            'price': currentModel.price.toString(),
+            'category': resolvedCategory,
+            'menus': menusToPatch,
+          });
+        }
+
+        // If blocs already have data, patch immediately; else, trigger fetch and patch later
+        final categoriesLoaded = context
+            .read<CategoriesBloc>()
+            .state
+            .categories
+            .isNotEmpty;
+        final menusLoaded = context.read<MenusBloc>().state.menus.isNotEmpty;
+        if (!categoriesLoaded) {
+          context.read<CategoriesBloc>().add(CategoriesFetched());
+        }
+        if (!menusLoaded) {
+          context.read<MenusBloc>().add(MenusFetched());
+        }
+
+        // First attempt
+        patchWithAvailableReferences();
+        // Schedule another attempt next frame to catch freshly loaded bloc data
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          patchWithAvailableReferences();
+        });
+      }
     });
+  }
+
+  Map<String, Map<String, String>>? get translations {
+    return AddItemWidget.getTranslations(_addItemWidgetKey);
+  }
+
+  /// Extract translations from MenuItemModel to Map format
+  Map<String, Map<String, String>>? _getInitialTranslations() {
+    if (!widget.controller.isEditMode ||
+        widget.controller.currentModel == null) {
+      return null;
+    }
+
+    // Get the model - MenuItemModel extends MenuItemEntity and has translations
+    final menuItemModel = widget.controller.currentModel!;
+    if (menuItemModel.translations.isEmpty) {
+      return null;
+    }
+
+    // Convert List<MenuItemTranslationModel> to Map<String, Map<String, String>>
+    final Map<String, Map<String, String>> translationsMap = {};
+    for (var translation in menuItemModel.translations) {
+      translationsMap[translation.languageCode] = {
+        'name': translation.name,
+        if (translation.description != null)
+          'description': translation.description!,
+      };
+    }
+
+    return translationsMap;
+  }
+
+  void _handleValidation() {
+    final translationsData = translations;
+    print('Translations collected: $translationsData');
+    widget.controller.validateWithTranslations(translationsData);
   }
 
   @override
   Widget build(BuildContext context) {
     return AddItemWidget(
+      key: _addItemWidgetKey,
       formKey: widget.controller.formKey,
       title: widget.controller.isEditMode
           ? "Modifier un menu item"
           : "Ajouter un menu item",
       cancelButton: widget.cancelButton,
+      initialTranslations: _getInitialTranslations(),
+      multilingualFields: [
+        MultilingualField(name: 'name', label: "Nom de l'item", maxLines: 1),
+        MultilingualField(
+          name: 'description',
+          label: 'Description',
+          maxLines: 2,
+        ),
+      ],
       confirmationButton: BlocBuilder<MenuItemBloc, MenuItemState>(
         builder: (context, state) {
           switch (state.editStatus) {
@@ -345,12 +538,16 @@ class _AddMenuItemWidgetState extends State<AddMenuItemWidget> {
               return Center(child: CircularProgressIndicator());
             case BlocStatus.failed:
               return ElevatedButton(
-                onPressed: widget.controller.validate,
+                onPressed: () {
+                  _handleValidation();
+                },
                 child: const Text("Réessayer"),
               );
             default:
               return ElevatedButton(
-                onPressed: widget.controller.validate,
+                onPressed: () {
+                  _handleValidation();
+                },
                 child: Text(
                   widget.controller.isEditMode
                       ? "Modifier Menu"
@@ -372,12 +569,52 @@ class _AddMenuItemWidgetState extends State<AddMenuItemWidget> {
             listenable: widget.controller,
             builder: (BuildContext context, Widget? child) {
               return widget.controller.filePicked != null
-                  ? ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
-                      child: Image.file(
-                        File(widget.controller.filePicked!.path),
-                        fit: BoxFit.cover,
-                      ),
+                  ? Stack(
+                      children: [
+                        BlocBuilder<MenuItemBloc, MenuItemState>(
+                          builder: (context, state) {
+                            switch (state.uploadStatus) {
+                              case BlocStatus.init:
+                                return SizedBox.shrink();
+                              case BlocStatus.loading:
+                                return Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              case BlocStatus.loaded:
+                                return Center(child: Text('goood'));
+                              case BlocStatus.failed:
+                                return Center(
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        'Erreur lors du téléchargement de l\'image',
+                                        style: Theme.of(
+                                          context,
+                                        ).textTheme.bodyLarge,
+                                      ),
+                                      SizedBox(height: kspacing),
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          widget.controller.setFilePicked =
+                                              widget.controller.filePicked;
+                                        },
+                                        child: Text('Réessayer'),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                            }
+                          },
+                        ),
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: Image.file(
+                            File(widget.controller.filePicked!.path),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ],
                     )
                   : IconButton(
                       icon: Icon(Icons.photo_camera),
@@ -428,15 +665,6 @@ class _AddMenuItemWidgetState extends State<AddMenuItemWidget> {
           ),
         ),
         FormBuilderTextField(
-          name: 'name',
-          decoration: InputDecoration(label: Text("Nom de l'item")),
-          validator: FormBuilderValidators.compose([
-            FormBuilderValidators.required(),
-            FormBuilderValidators.minLength(3),
-            FormBuilderValidators.maxLength(23),
-          ]),
-        ),
-        FormBuilderTextField(
           name: 'price',
           keyboardType: TextInputType.number,
           validator: FormBuilderValidators.numeric(),
@@ -445,43 +673,52 @@ class _AddMenuItemWidgetState extends State<AddMenuItemWidget> {
           },
           decoration: InputDecoration(label: Text("Prix (Ar)")),
         ),
-        FormBuilderTextField(
-          name: 'description',
-          maxLines: 2,
-          decoration: InputDecoration(label: Text("Description")),
-        ),
         BlocBuilder<CategoriesBloc, CategoriesState>(
           builder: (context, state) {
-            return FormBuilderDropdown(
-              name: 'category',
-              hint: Text("Sélectionner une catégorie"),
-              items: state.categories
-                  .map(
-                    (category) => DropdownMenuItem(
+            return BlocBuilder<LanguagesBloc, LanguagesState>(
+              builder: (context, langState) {
+                final selectedLang = langState.selectedLanguage?.code ?? 'en';
+                return FormBuilderDropdown(
+                  name: 'category',
+                  hint: Text("Sélectionner une catégorie"),
+                  items: state.categories.map((category) {
+                    final categoryName = category.translations.getField(
+                      selectedLang,
+                      (t) => t.name,
+                    );
+                    return DropdownMenuItem(
                       value: category,
-                      child: Text(category.name),
-                    ),
-                  )
-                  .toList(),
+                      child: Text(categoryName),
+                    );
+                  }).toList(),
+                );
+              },
             );
           },
         ),
         BlocBuilder<MenusBloc, MenusState>(
           builder: (context, state) {
-            return FormBuilderFilterChips<MenuEntity>(
-              name: 'menus',
-              spacing: 8,
-              decoration: InputDecoration(
-                label: Text("Disponible dans les menus"),
-              ),
-              options: state.menus
-                  .map(
-                    (menu) => FormBuilderChipOption(
+            return BlocBuilder<LanguagesBloc, LanguagesState>(
+              builder: (context, langState) {
+                final selectedLang = langState.selectedLanguage?.code ?? 'en';
+                return FormBuilderFilterChips<MenuEntity>(
+                  name: 'menus',
+                  spacing: 8,
+                  decoration: InputDecoration(
+                    label: Text("Disponible dans les menus"),
+                  ),
+                  options: state.menus.map((menu) {
+                    final menuName = menu.translations.getField(
+                      selectedLang,
+                      (t) => t.name,
+                    );
+                    return FormBuilderChipOption(
                       value: menu,
-                      child: Text(menu.name),
-                    ),
-                  )
-                  .toList(),
+                      child: Text(menuName),
+                    );
+                  }).toList(),
+                );
+              },
             );
           },
         ),
