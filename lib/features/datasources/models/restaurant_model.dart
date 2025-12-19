@@ -18,6 +18,8 @@ class RestaurantModel extends RestaurantEntity {
     required super.city,
     super.lat,
     super.long,
+    super.type,
+    super.languages,
   });
 
   /// Constructor from RestaurantEntity
@@ -35,6 +37,8 @@ class RestaurantModel extends RestaurantEntity {
     city: entity.city,
     lat: entity.lat,
     long: entity.long,
+    type: entity.type,
+    languages: entity.languages,
   );
 
   /// Copywith constructor
@@ -51,6 +55,8 @@ class RestaurantModel extends RestaurantEntity {
     String? city,
     double? lat,
     double? long,
+    String? type,
+    List<String>? languages,
   }) {
     return RestaurantModel(
       id: id ?? this.id,
@@ -65,6 +71,8 @@ class RestaurantModel extends RestaurantEntity {
       city: city ?? this.city,
       lat: lat ?? this.lat,
       long: long ?? this.long,
+      type: type ?? this.type,
+      languages: languages ?? this.languages,
     );
   }
 

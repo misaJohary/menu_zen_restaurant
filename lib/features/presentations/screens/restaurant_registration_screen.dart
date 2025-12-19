@@ -4,14 +4,19 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
+import 'package:logger/logger.dart';
 import 'package:menu_zen_restaurant/core/services/photon_geocoding_service.dart';
 import 'package:menu_zen_restaurant/features/presentations/controllers/user_registration_controller.dart';
 
+import '../../../core/constants/constants.dart';
 import '../../../core/enums/bloc_status.dart';
+import '../../domains/entities/language_entity.dart';
+import '../controllers/restaurant_more_info_controller.dart';
 import '../controllers/restaurant_registration_controller.dart';
 import 'package:menu_zen_restaurant/core/navigation/app_router.gr.dart'
     as app_router;
 
+import '../managers/languages/languages_bloc.dart';
 import '../managers/restaurant/restaurant_bloc.dart';
 
 @RoutePage()
@@ -26,30 +31,46 @@ class RestaurantRegistrationScreen extends StatefulWidget {
 class _RestaurantRegistrationScreenState
     extends State<RestaurantRegistrationScreen> {
   @override
+  void initState() {
+    super.initState();
+    context.read<LanguagesBloc>().add(LanguagesFetched());
+  }
+
+  @override
   Widget build(BuildContext context) {
     return AutoTabsRouter.pageView(
-      routes: [app_router.RestaurantForm(), app_router.UserForm()],
+      routes: [
+        app_router.RestaurantForm(),
+        app_router.RestaurantCustomizeForm(),
+        app_router.UserForm(),
+      ],
       builder: (context, child, _) {
         final tabsRouter = AutoTabsRouter.of(context);
         return BlocListener<RestaurantBloc, RestaurantState>(
           listenWhen: (previous, current) =>
               previous.restaurantFilled != current.restaurantFilled ||
-              previous.userFilled != current.userFilled,
+              previous.userFilled != current.userFilled ||
+              previous.restaurantMoreInfoFilled !=
+                  current.restaurantMoreInfoFilled,
           listener: (context, state) {
-            switch ((state.restaurantFilled, state.userFilled)) {
-              case (true, true):
+            switch ((
+              state.restaurantFilled,
+              state.restaurantMoreInfoFilled,
+              state.userFilled,
+            )) {
+              case (true, true, true):
                 // Both forms complete - create restaurant
                 context.read<RestaurantBloc>().add(RestaurantCreated());
                 break;
-              case (true, false):
+              case (true, false, false):
                 // Restaurant filled, user not - go to user tab
                 tabsRouter.setActiveIndex(1);
                 break;
-              case (false, true):
-                // User filled, restaurant not - go to restaurant tab
-                tabsRouter.setActiveIndex(0);
+              case (true, true, false):
+                // Restaurant filled, user not - go to user tab
+                tabsRouter.setActiveIndex(2);
                 break;
-              case (false, false):
+              default:
                 // Neither filled - could stay on current or go to first tab
                 // tabsRouter.setActiveIndex(0); // if needed
                 break;
@@ -58,6 +79,84 @@ class _RestaurantRegistrationScreenState
           child: Scaffold(body: child),
         );
       },
+    );
+  }
+}
+
+@RoutePage()
+class RestaurantCustomizeForm extends StatefulWidget {
+  const RestaurantCustomizeForm({super.key});
+
+  @override
+  State<RestaurantCustomizeForm> createState() =>
+      _RestaurantCustomizeFormState();
+}
+
+class _RestaurantCustomizeFormState extends State<RestaurantCustomizeForm> {
+  late RestaurantMoreInfoController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = RestaurantMoreInfoController(context);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FormBuilder(
+      key: controller.formKey,
+      child: Center(
+        child: SizedBox(
+          width: MediaQuery.sizeOf(context).width * .5,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              FormBuilderDropdown(
+                name: 'type',
+                decoration: const InputDecoration(labelText: 'Catégorie'),
+                validator: FormBuilderValidators.required(),
+                items: RestaurantType.values.map((type) {
+                  return DropdownMenuItem(
+                    value: type,
+                    child: Text(type.toString()),
+                  );
+                }).toList(),
+              ),
+              SizedBox(height: 12),
+              BlocBuilder<LanguagesBloc, LanguagesState>(
+                builder: (context, langState) {
+                  final selectedLang = langState.languages;
+                  return FormBuilderFilterChips<String>(
+                    name: 'languages',
+                    initialValue: ['fr'],
+                    spacing: 8,
+                    decoration: InputDecoration(
+                      label: Text("Languages du menu"),
+                    ),
+                    options: selectedLang.map((lang) {
+                      return FormBuilderChipOption(
+                        value: lang.code,
+                        child: Text(lang.name),
+                      );
+                    }).toList(),
+                  );
+                },
+              ),
+              SizedBox(height: 24),
+              ElevatedButton(
+                onPressed: controller.validate,
+                style: ElevatedButton.styleFrom(
+                  minimumSize: const Size(double.infinity, 50),
+                  backgroundColor: Colors.blue,
+                  foregroundColor: Colors.white,
+                ),
+                child: Text('Suivant'),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
@@ -96,8 +195,11 @@ class _RestaurantFormState extends State<RestaurantForm> {
               ),
               SizedBox(height: 24),
               FormBuilderTextField(
+                autofocus: true,
                 name: 'name',
-                decoration: const InputDecoration(labelText: 'Name'),
+                decoration: const InputDecoration(
+                  labelText: 'Nom de l\'établissement',
+                ),
                 validator: FormBuilderValidators.compose([
                   FormBuilderValidators.required(),
                   FormBuilderValidators.maxLength(
@@ -108,6 +210,7 @@ class _RestaurantFormState extends State<RestaurantForm> {
               ),
               FormBuilderTextField(
                 name: 'description',
+
                 decoration: const InputDecoration(labelText: 'Description'),
                 validator: FormBuilderValidators.compose([
                   FormBuilderValidators.maxLength(
@@ -116,6 +219,7 @@ class _RestaurantFormState extends State<RestaurantForm> {
                   ),
                 ]),
               ),
+
               FormBuilderTextField(
                 name: 'email',
                 decoration: const InputDecoration(labelText: 'Email'),
@@ -125,6 +229,7 @@ class _RestaurantFormState extends State<RestaurantForm> {
               ),
               FormBuilderTextField(
                 name: 'phone',
+                initialValue: '+261',
                 decoration: const InputDecoration(labelText: 'Téléphone'),
                 validator: FormBuilderValidators.compose([
                   FormBuilderValidators.phoneNumber(),
@@ -175,6 +280,7 @@ class _RestaurantFormState extends State<RestaurantForm> {
                 },
               ),
               SizedBox(height: 24),
+
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   minimumSize: const Size(double.infinity, 50),
@@ -259,16 +365,18 @@ class _UserFormState extends State<UserForm> {
               ),
               FormBuilderTextField(
                 name: 'phone',
+                initialValue: '+261',
                 decoration: const InputDecoration(labelText: 'Téléphone'),
                 validator: FormBuilderValidators.compose([
                   FormBuilderValidators.phoneNumber(),
+                  FormBuilderValidators.required(),
                 ]),
               ),
               FormBuilderTextField(
                 name: 'password',
                 decoration: const InputDecoration(labelText: 'Mot de passe'),
                 validator: FormBuilderValidators.compose([
-                  FormBuilderValidators.password(),
+                  FormBuilderValidators.password(minSpecialCharCount: 0, minUppercaseCount: 0, minNumberCount: 0),
                   FormBuilderValidators.required(),
                 ]),
               ),

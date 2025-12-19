@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import 'package:logger/logger.dart';
+import 'package:menu_zen_restaurant/core/http_connexion/interceptors.dart';
 
 // Data models for the API response
 class PhotonGeometry {
@@ -134,31 +135,42 @@ class PhotonGeocodingService {
     int limit = 10,
     String? lang,
   }) async {
+    Logger().i('photon search');
     if (query.trim().isEmpty) {
       throw PhotonException('Query cannot be empty');
     }
-
+    Logger().i('photon search 1');
     final params = <String, String>{
       'q': query.trim(),
       'limit': limit.toString(),
     };
-
+    Logger().i('photon search 2');
     if (lat != null && lon != null) {
       params['lat'] = lat.toString();
       params['lon'] = lon.toString();
     }
-
+    Logger().i('photon search 3');
     if (lang != null && lang.isNotEmpty) {
       params['lang'] = lang;
     }
-
+    Logger().i('photon search params $params');
     try {
-      final response = await dio
-          .get('$_baseUrl/api/', queryParameters: params)
-          .timeout(_timeout);
+      final dio2 = Dio();
+      dio2.interceptors.add(LoggingInterceptors());
+      final response = await dio2.get(
+        '$_baseUrl/api',
+        queryParameters: params,
+        options: Options(
+          headers: {
+            'User-Agent': 'MenuZen/1.0', // More honest and professional
+          },
+        ),
+      );
+      //.timeout(_timeout);
       Logger().e(response);
       return _handleResponse(response);
     } catch (e) {
+      Logger().e('photon search error ${e.toString()}');
       if (e is PhotonException) rethrow;
       throw PhotonException('Network error: $e');
     }

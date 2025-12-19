@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:json_annotation/json_annotation.dart';
 
 const double kspacing = 8.0;
 
@@ -49,4 +50,24 @@ final resetFieldDuration = const Duration(milliseconds: 500);
 
 final primaryColor = Color(0xFFA0CD64);
 
-final grey =Color(0xFF999999);
+final grey = Color(0xFF999999);
+
+enum RestaurantType {
+  casual,
+  fastfood,
+  @JsonValue('fine_dining')
+  fineDining;
+
+  String get toName => switch (this) {
+    RestaurantType.casual => "casual",
+    RestaurantType.fastfood => "fastfood",
+    RestaurantType.fineDining => "fine_dining",
+  };
+
+  @override
+  String toString() => switch (this) {
+    RestaurantType.casual => "Simple",
+    RestaurantType.fastfood => "Gargotte",
+    RestaurantType.fineDining => "Etoilé",
+  };
+}

@@ -15,6 +15,7 @@ class AppRouter extends RootStackRouter {
       page: RestaurantRegistrationRoute.page,
       children: [
         AutoRoute(page: RestaurantForm.page),
+        AutoRoute(page: RestaurantCustomizeForm.page),
         AutoRoute(page: UserForm.page),
       ],
     ),

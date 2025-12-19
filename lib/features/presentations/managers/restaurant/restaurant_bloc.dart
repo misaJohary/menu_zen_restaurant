@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:bloc/bloc.dart';
+import 'package:flutter/foundation.dart';
 import 'package:logger/logger.dart';
 import 'package:menu_zen_restaurant/features/domains/entities/restaurant_entity.dart';
 import 'package:menu_zen_restaurant/features/domains/entities/user_restaurant_entity.dart';
@@ -20,7 +21,19 @@ class RestaurantBloc extends Bloc<RestaurantEvent, RestaurantState> {
   RestaurantBloc({required this.restaurant}) : super(RestaurantState()) {
     on<RestaurantCreated>(_onRestaurantCreated);
     on<RestaurantInfoFilled>(_onRestaurantInfoFilled);
+    on<RestaurantMoreInfoFilled>(_onRestaurantMoreInfoFilled);
     on<RestaurantUserInfoFilled>(_onRestaurantUserInfoFilled);
+  }
+
+  _onRestaurantMoreInfoFilled(
+    RestaurantMoreInfoFilled event,
+    Emitter<RestaurantState> emit,
+  ) {
+    _restaurantEntity = _restaurantEntity.copyWith(
+      type: event.datas['type'].toName,
+      languages: event.datas['languages'],
+    );
+    emit(state.copyWith(restaurantMoreInfoFilled: true));
   }
 
   _onRestaurantUserInfoFilled(

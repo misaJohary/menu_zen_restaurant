@@ -509,7 +509,6 @@ class _AddMenuItemWidgetState extends State<AddMenuItemWidget> {
 
   void _handleValidation() {
     final translationsData = translations;
-    print('Translations collected: $translationsData');
     widget.controller.validateWithTranslations(translationsData);
   }
 

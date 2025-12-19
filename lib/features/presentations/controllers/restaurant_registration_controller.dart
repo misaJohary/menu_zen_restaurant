@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:logger/logger.dart';
 
 import '../../../core/injection/dependencies_injection.dart';
 import '../../../core/services/photon_geocoding_service.dart';
@@ -23,33 +24,19 @@ class RestaurantRegistrationController extends ChangeNotifier {
   void validate() {
     try {
       final currentState = formKey.currentState;
-      // currentState?.patchValue({
-      //   'name': 'extra',
-      //   'phone': '03489876565',
-      //   'email': 'extra@gmail.com',
-      //   'city': 'Toliara'
-      // });
-      //   final restaurant = RestaurantModel.fromJson(
-      //     currentState!.fields.map((key, value) => MapEntry(key, value.value)),
-      //   );
-      //
-      //   // final restWithCoord = restaurant.copyWith(
-      //   //   lat: currentSelectedAdresss.geometry.coordinates[1],
-      //   //   long: currentSelectedAdresss.geometry.coordinates[0],
-      //   // );
-      //   context.read<RestaurantBloc>().add(RestaurantInfoFilled(restaurant));
       if (currentState?.saveAndValidate() ?? false) {
         final restaurant = RestaurantModel.fromJson(
           currentState!.fields.map((key, value) => MapEntry(key, value.value)),
         );
-
         final restWithCoord = restaurant.copyWith(
           lat: currentSelectedAdresss.geometry.coordinates[1],
           long: currentSelectedAdresss.geometry.coordinates[0],
         );
         context.read<RestaurantBloc>().add(RestaurantInfoFilled(restWithCoord));
       }
-    } catch (_) {}
+    } catch (error) {
+      Logger().e(error.toString());
+    }
   }
 
   Future<PhotonResponse> searchAddress(String query) async {

@@ -13,6 +13,8 @@ class RestaurantEntity extends Equatable {
   final String city;
   final double? lat;
   final double? long;
+  final String? type;
+  final List<String>? languages;
 
   const RestaurantEntity({
     this.id,
@@ -27,7 +29,44 @@ class RestaurantEntity extends Equatable {
     required this.city,
     this.lat,
     this.long,
+    this.type,
+    this.languages,
   });
+
+  ///create copyWith
+  RestaurantEntity copyWith({
+    int? id,
+    String? name,
+    String? description,
+    String? logo,
+    String? cover,
+    List<String>? pictures,
+    List<String>? socialMedia,
+    String? phone,
+    String? email,
+    String? city,
+    double? lat,
+    double? long,
+    String? type,
+    List<String>? languages,
+  }) {
+    return RestaurantEntity(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      description: description ?? this.description,
+      logo: logo ?? this.logo,
+      cover: cover ?? this.cover,
+      pictures: pictures ?? this.pictures,
+      socialMedia: socialMedia ?? this.socialMedia,
+      phone: phone ?? this.phone,
+      email: email ?? this.email,
+      city: city ?? this.city,
+      lat: lat ?? this.lat,
+      long: long ?? this.long,
+      type: type ?? this.type,
+      languages: languages ?? this.languages,
+    );
+  }
 
   @override
   List<Object?> get props => [
@@ -43,5 +82,7 @@ class RestaurantEntity extends Equatable {
     city,
     lat,
     long,
+    type,
+    languages,
   ];
 }

@@ -20,6 +20,16 @@ class RestaurantInfoFilled extends RestaurantEvent {
   List<Object?> get props => [restaurant];
 }
 
+class RestaurantMoreInfoFilled extends RestaurantEvent {
+  final Map<String, dynamic> datas;
+
+  const RestaurantMoreInfoFilled(this.datas);
+
+  @override
+  List<Object?> get props => [datas];
+}
+
+
 class RestaurantUserInfoFilled extends RestaurantEvent {
   final UserEntity user;
 
