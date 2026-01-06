@@ -30,7 +30,7 @@ abstract class RestClient {
   }) = _RestClient;
 
   @POST('/images')
-  Future<String> uploadImage(@Part() File picture);
+  Future<String> uploadImage(@Body() FormData formData);
 
   @POST('/login')
   Future<Token> login(@Part() String username, @Part() String password);

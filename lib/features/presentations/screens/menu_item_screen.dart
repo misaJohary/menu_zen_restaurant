@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:auto_route/annotations.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -137,55 +138,47 @@ class _MenuItemScreenState extends State<MenuItemScreen> {
                                       : const CircleAvatar(
                                           child: Icon(Icons.fastfood),
                                         ),
-                                  title:
-                                      BlocBuilder<
-                                        LanguagesBloc,
-                                        LanguagesState
-                                      >(
-                                        builder: (context, langState) {
-                                          final selectedLang =
-                                              langState
-                                                  .selectedLanguage
-                                                  ?.code ??
-                                              'en';
-                                          final menuName = menu.translations
-                                              .getField(
-                                                selectedLang,
-                                                (t) => t.name,
-                                              );
-                                          return Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              Text(
-                                                menuName,
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .titleLarge!
-                                                    .copyWith(
-                                                      fontSize: 27,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                    ),
-                                              ),
-                                              Text(
-                                                '  ${menu.price.formatMoney} Ar  ',
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .headlineLarge
-                                                    ?.copyWith(
-                                                      color: Theme.of(
-                                                        context,
-                                                      ).primaryColor,
-                                                      fontWeight:
-                                                          FontWeight.w800,
-                                                    ),
-                                              ),
-                                              Transform.scale(
-                                                scale: .6,
-                                                child: Switch(
-                                                  value: menu.active ?? true,
-                                                  onChanged: (bool value) {
-                                                    if(menu.active != value) {
+                                  title: BlocBuilder<LanguagesBloc, LanguagesState>(
+                                    builder: (context, langState) {
+                                      final selectedLang =
+                                          langState.selectedLanguage?.code ??
+                                          'en';
+                                      final menuName = menu.translations
+                                          .getField(
+                                            selectedLang,
+                                            (t) => t.name,
+                                          );
+                                      return Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Text(
+                                            menuName,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .titleLarge!
+                                                .copyWith(
+                                                  fontSize: 27,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                          ),
+                                          Text(
+                                            '  ${menu.price.formatMoney} Ar  ',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .headlineLarge
+                                                ?.copyWith(
+                                                  color: Theme.of(
+                                                    context,
+                                                  ).primaryColor,
+                                                  fontWeight: FontWeight.w800,
+                                                ),
+                                          ),
+                                          Transform.scale(
+                                            scale: .6,
+                                            child: Switch(
+                                              value: menu.active ?? true,
+                                              onChanged: (bool value) {
+                                                if (menu.active != value) {
                                                   context
                                                       .read<MenuItemBloc>()
                                                       .add(
@@ -198,22 +191,22 @@ class _MenuItemScreenState extends State<MenuItemScreen> {
                                                       );
                                                 }
                                               },
-                                                ),
-                                              ),
-                                              Text(
-                                                'Disponible',
-                                                style: TextStyle(
-                                                  color: menu.active ?? true
-                                                      ? Theme.of(
-                                                          context,
-                                                        ).primaryColor
-                                                      : Colors.black54,
-                                                ),
-                                              ),
-                                            ],
-                                          );
-                                        },
-                                      ),
+                                            ),
+                                          ),
+                                          Text(
+                                            'Disponible',
+                                            style: TextStyle(
+                                              color: menu.active ?? true
+                                                  ? Theme.of(
+                                                      context,
+                                                    ).primaryColor
+                                                  : Colors.black54,
+                                            ),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  ),
                                   subtitle:
                                       BlocBuilder<
                                         LanguagesBloc,
@@ -608,10 +601,15 @@ class _AddMenuItemWidgetState extends State<AddMenuItemWidget> {
                         ),
                         ClipRRect(
                           borderRadius: BorderRadius.circular(10),
-                          child: Image.file(
-                            File(widget.controller.filePicked!.path),
-                            fit: BoxFit.cover,
-                          ),
+                          child: (kIsWeb)
+                              ? Image.network(
+                                  widget.controller.filePicked!.path,
+                                  fit: BoxFit.cover,
+                                )
+                              : Image.file(
+                                  File(widget.controller.filePicked!.path),
+                                  fit: BoxFit.cover,
+                                ),
                         ),
                       ],
                     )

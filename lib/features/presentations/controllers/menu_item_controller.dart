@@ -8,7 +8,6 @@ import 'package:menu_zen_restaurant/features/domains/entities/menu_entity.dart';
 
 import '../../datasources/models/category_model.dart';
 import '../../datasources/models/menu_item_model.dart';
-import '../../datasources/models/menu_item_translation_model.dart';
 import '../../datasources/models/menu_model.dart';
 import '../../domains/entities/menu_item_entity.dart';
 import '../managers/menu_item/menu_item_bloc.dart';
@@ -29,7 +28,7 @@ class MenuItemController
   set setFilePicked(XFile? file) {
     _filePicked = file;
     if (file != null) {
-      bloc.add(MenuItemPictureUploaded(File(file.path)));
+      bloc.add(MenuItemPictureUploaded(file));
     }
     notifyListeners();
   }

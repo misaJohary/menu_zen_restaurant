@@ -2,16 +2,14 @@ import 'dart:io';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:logger/logger.dart';
 import 'package:menu_zen_restaurant/features/domains/repositories/image_repository.dart';
 import 'package:menu_zen_restaurant/features/domains/repositories/menu_item_repository.dart';
 
 import '../../../../core/enums/bloc_status.dart';
-import '../../../datasources/models/category_model.dart';
 import '../../../datasources/models/menu_item_model.dart';
-import '../../../datasources/models/menu_item_translation_model.dart';
 import '../../../datasources/models/menu_item_update_model.dart';
-import '../../../datasources/models/menu_model.dart';
 import '../../../domains/entities/menu_item_entity.dart';
 
 part 'menu_item_event.dart';
@@ -112,20 +110,24 @@ class MenuItemBloc extends Bloc<MenuItemEvent, MenuItemState> {
     MenuItemPictureUploaded event,
     Emitter<MenuItemState> emit,
   ) async {
-    emit(state.copyWith(uploadStatus: BlocStatus.loading));
-    Logger().e(event.file);
-    final res = await imageRepo.uploadImage(event.file);
-    Logger().e(res);
-    if (res.isSuccess) {
-      Logger().e(res.getSuccess);
-      emit(
-        state.copyWith(
-          uploadStatus: BlocStatus.loaded,
-          uploadedPictureUrl: res.getSuccess,
-        ),
-      );
-    } else {
-      emit(state.copyWith(uploadStatus: BlocStatus.failed));
+    try{
+      emit(state.copyWith(uploadStatus: BlocStatus.loading));
+      Logger().e('begin');
+      final res = await imageRepo.uploadImage(event.file);
+      Logger().e('end');
+      if (res.isSuccess) {
+        Logger().e(res.getSuccess);
+        emit(
+          state.copyWith(
+            uploadStatus: BlocStatus.loaded,
+            uploadedPictureUrl: res.getSuccess,
+          ),
+        );
+      } else {
+        emit(state.copyWith(uploadStatus: BlocStatus.failed));
+      }
+    }catch(e){
+      Logger().e(e.toString());
     }
   }
 }

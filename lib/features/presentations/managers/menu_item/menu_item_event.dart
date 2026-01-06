@@ -40,7 +40,7 @@ class MenuItemDeleted extends MenuItemEvent {
 }
 
 class MenuItemPictureUploaded extends MenuItemEvent {
-  final File file;
+  final XFile file;
 
   const MenuItemPictureUploaded(this.file);
 
