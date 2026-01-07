@@ -11,7 +11,7 @@ abstract class RegisterModule {
   @Named("BaseUrl")
   String get baseUrl => dotenv.env['BASE_URL']!;
 
-  @preResolve
+  //@preResolve
   @lazySingleton
   SharedPreferencesAsync get prefs => SharedPreferencesAsync();
 

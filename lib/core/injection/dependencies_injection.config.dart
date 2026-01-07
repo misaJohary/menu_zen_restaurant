@@ -76,9 +76,7 @@ extension GetItInjectableX on _i174.GetIt {
   }) {
     final gh = _i526.GetItHelper(this, environment, environmentFilter);
     final registerModule = _$RegisterModule();
-    gh.lazySingleton<_i460.SharedPreferencesAsync>(
-      () => registerModule.prefs,
-    );
+    gh.lazySingleton<_i460.SharedPreferencesAsync>(() => registerModule.prefs);
     gh.singleton<_i420.DbService>(
       () => _i420.DbServiceImp(prefs: gh<_i460.SharedPreferencesAsync>()),
     );
