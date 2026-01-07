@@ -55,7 +55,6 @@ flutter:
      - .env.local
      - .env.staging
      - assets/images/.
-     - assets/icons/.
      - assets/lotties/.
 
   # An image asset can refer to one or more resolution-specific "variants", see
