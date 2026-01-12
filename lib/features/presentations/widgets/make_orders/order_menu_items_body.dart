@@ -6,7 +6,6 @@ import 'package:menu_zen_restaurant/core/extensions/list_extension.dart';
 import 'package:menu_zen_restaurant/features/presentations/widgets/loading_widget.dart';
 
 import '../../../../core/constants/constants.dart';
-import '../../../../core/enums/bloc_status.dart';
 import '../../controllers/make_order_controller.dart';
 import '../../managers/categories/categories_bloc.dart';
 import '../../managers/languages/languages_bloc.dart';
@@ -44,16 +43,16 @@ class _OrderMenuItemsBodyState extends State<OrderMenuItemsBody> {
                   child: BlocBuilder<OrderMenuItemBloc, OrderMenuItemState>(
                     builder: (context, state) {
                       switch (state.status) {
-                        case BlocStatus.loading:
+                        case .loading:
                           return Center(child: LoadingWidget());
-                        case BlocStatus.failed:
+                        case .failed:
                           return Center(
                             child: Text(
                               'Échec du chargement des éléments de menu',
                               style: Theme.of(context).textTheme.bodyLarge,
                             ),
                           );
-                        case BlocStatus.loaded:
+                        case .loaded:
                           final orderMenu = state.orderMenuItems;
                           if (orderMenu.isEmpty) {
                             return Center(
@@ -73,7 +72,7 @@ class _OrderMenuItemsBodyState extends State<OrderMenuItemsBody> {
                                       ? 4
                                       : 3, // 4 items per row
                                   crossAxisSpacing: 12,
-                                  mainAxisSpacing: 12,
+                                  mainAxisSpacing: 0,
                                   childAspectRatio:
                                       1, // makes them look like rectangles
                                 ),
@@ -89,14 +88,14 @@ class _OrderMenuItemsBodyState extends State<OrderMenuItemsBody> {
                                       .getField(selectedLang, (t) => t.name);
 
                                   return Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    mainAxisAlignment: .start,
                                     crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                        .start,
                                     children: [
                                       menuItem.picture != null
                                           ? ClipRRect(
                                               borderRadius:
-                                                  BorderRadius.circular(
+                                                  .circular(
                                                     kspacing * 2,
                                                   ),
                                               child: CachedNetworkImage(
@@ -117,12 +116,12 @@ class _OrderMenuItemsBodyState extends State<OrderMenuItemsBody> {
                                             .labelLarge
                                             ?.copyWith(fontSize: 17),
                                         maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
+                                        overflow: .ellipsis,
                                       ),
                                       SizedBox(height: kspacing),
                                       Row(
                                         mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
+                                            .spaceBetween,
                                         children: [
                                           Text(
                                             '${menuItem.price.formatMoney} Ar',
@@ -138,7 +137,7 @@ class _OrderMenuItemsBodyState extends State<OrderMenuItemsBody> {
                                               color: Color(0xFFF5F5F5),
 
                                               borderRadius:
-                                                  BorderRadius.circular(
+                                                  .circular(
                                                     kspacing * 2,
                                                   ),
                                             ),
@@ -162,7 +161,7 @@ class _OrderMenuItemsBodyState extends State<OrderMenuItemsBody> {
                                                   ),
                                                 ),
                                                 Padding(
-                                                  padding: const EdgeInsets.all(
+                                                  padding: const .all(
                                                     kspacing,
                                                   ),
                                                   child: Text(

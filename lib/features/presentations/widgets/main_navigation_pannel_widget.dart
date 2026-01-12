@@ -1,3 +1,4 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:menu_zen_restaurant/features/presentations/controllers/main_controller.dart';
 import 'package:menu_zen_restaurant/features/presentations/widgets/custom_container.dart';
@@ -73,7 +74,7 @@ class MainNavigationPannelWidget extends StatelessWidget {
                     ),
                   ),
                   trailing: CircleAvatar(child: Text('M')),
-                  onTap: () {},
+                  onTap: () => context.router.push(ProfileRoute()),
                 ),
               ),
               Padding(
