@@ -43,7 +43,8 @@ class _MainScreenState extends State<MainScreen> {
                     final user = authState.userRestaurant?.user;
                     final isCook = user?.role == Role.cook;
                     final isCashier = user?.role == Role.cashier;
-                    final isStaff = isCook || isCashier;
+                    final isServer = user?.role == Role.server;
+                    final isStaff = isCook || isCashier || isServer;
 
                     // Auto redirect staff to their respective page if they are on dashboard
                     if (isStaff && controller.currentRoute == 'DashboardRoute') {

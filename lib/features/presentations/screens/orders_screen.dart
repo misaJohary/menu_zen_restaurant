@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:menu_zen_restaurant/core/extensions/color_extension.dart';
 import 'package:menu_zen_restaurant/features/presentations/managers/orders/orders_bloc.dart';
+import 'package:menu_zen_restaurant/features/presentations/managers/tables/table_bloc.dart';
 
 import '../../../core/constants/constants.dart';
 import '../../../core/injection/dependencies_injection.dart';
@@ -37,6 +38,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
   void initState() {
     super.initState();
     controller = OrderController(context: context)..addFetchOrders();
+    context.read<TableBloc>().add(const TableFetched());
     _initializeWebSocket();
   }
 
@@ -114,6 +116,12 @@ class _OrdersScreenState extends State<OrdersScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          context.router.push(MakeOrderRoute());
+        },
+        child: const Icon(Icons.add),
+      ),
       body: Padding(
         padding: EdgeInsets.all(kspacing * 2),
         child: Column(

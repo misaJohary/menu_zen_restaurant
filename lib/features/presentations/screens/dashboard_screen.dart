@@ -51,7 +51,8 @@ class _RevenueCardState extends State<RevenueCard> {
   void initState() {
     super.initState();
     final authState = context.read<AuthBloc>().state;
-    if (authState.userRestaurant?.user.role != Role.cook) {
+    if (authState.userRestaurant?.user.role != Role.cook &&
+        authState.userRestaurant?.user.role != Role.server) {
       context.read<StatsBloc>().add(StatsRevenueGot());
     }
   }
@@ -165,7 +166,8 @@ class _OrderCountCardState extends State<OrderCountCard> {
   void initState() {
     super.initState();
     final authState = context.read<AuthBloc>().state;
-    if (authState.userRestaurant?.user.role != Role.cook) {
+    if (authState.userRestaurant?.user.role != Role.cook &&
+        authState.userRestaurant?.user.role != Role.server) {
       context.read<StatsBloc>().add(StatsTodayOrderCountGot());
     }
   }
@@ -247,7 +249,8 @@ class _TopMenuCardState extends State<TopMenuCard> {
   void initState() {
     super.initState();
     final authState = context.read<AuthBloc>().state;
-    if (authState.userRestaurant?.user.role != Role.cook) {
+    if (authState.userRestaurant?.user.role != Role.cook &&
+        authState.userRestaurant?.user.role != Role.server) {
       context.read<StatsBloc>().add(StatsTopMenuItemsGot());
     }
   }
