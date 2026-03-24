@@ -5,6 +5,7 @@ import 'package:logger/logger.dart';
 import '../../../../core/enums/bloc_status.dart';
 import '../../../datasources/models/order_model.dart';
 import '../../../domains/entities/order_entity.dart';
+import '../../../domains/entities/order_menu_item.dart';
 import '../../../domains/params/order_params.dart';
 import '../../../domains/repositories/orders_repository.dart';
 
@@ -23,6 +24,7 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
     on<OrderRemoteUpdated>(_onOrderRemoteUpdated);
     on<OrderStatusUpdated>(_onOrderStatusUpdated);
     on<OrderStatusRemoteUpdated>(_onOrderStatusRemoteUpdated);
+    on<OrderMenuItemStatusUpdated>(_onOrderMenuItemStatusUpdated);
     on<OrderDeleted>(_onOrderDeleted);
     on<OrderRemoteDeleted>(_onOrderRemoteDeleted);
 
@@ -139,6 +141,57 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
       );
     } else {
       Logger().i('is failure');
+      emit(state.copyWith(updateStatus: BlocStatus.failed));
+    }
+  }
+
+  _onOrderMenuItemStatusUpdated(
+    OrderMenuItemStatusUpdated event,
+    Emitter<OrdersState> emit,
+  ) async {
+    emit(state.copyWith(updateStatus: BlocStatus.loading));
+    final res = await repo.updateOrderMenuItemStatus(
+      event.orderMenuItemId,
+      event.status,
+    );
+    if (res.isSuccess) {
+      final orderIndex = state.orders.indexWhere(
+        (element) => element.id == event.orderId,
+      );
+      if (orderIndex == -1) {
+        emit(state.copyWith(updateStatus: BlocStatus.loaded));
+        return;
+      }
+      final order = state.orders[orderIndex];
+      final items = List<OrderMenuItem>.from(order.orderMenuItems);
+      final updatedItem = res.getSuccess;
+      if (updatedItem != null) {
+        int itemIndex = items.indexWhere(
+          (item) => item.id == event.orderMenuItemId,
+        );
+        if (itemIndex == -1) {
+          itemIndex = items.indexWhere(
+            (item) =>
+                item.menuItemId == updatedItem.menuItemId ||
+                item.menuItem.id == updatedItem.menuItem.id,
+          );
+        }
+        if (itemIndex != -1) {
+          items[itemIndex] = updatedItem;
+        } else {
+          items.add(updatedItem);
+        }
+      }
+      final updatedOrder = order.copyWith(orderMenuItems: items);
+      emit(
+        state.copyWith(
+          updateStatus: BlocStatus.loaded,
+          orders: List.of(state.orders)
+            ..removeAt(orderIndex)
+            ..insert(orderIndex, updatedOrder),
+        ),
+      );
+    } else {
       emit(state.copyWith(updateStatus: BlocStatus.failed));
     }
   }

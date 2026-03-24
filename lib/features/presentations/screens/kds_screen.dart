@@ -482,7 +482,8 @@ class KdsOrderCard extends StatelessWidget {
             padding: const EdgeInsets.all(kspacing),
             child: Column(
               children: [
-                for (final item in slot.items) _buildOrderItem(context, item),
+                for (final item in slot.items)
+                  _buildOrderItem(context, slot.order, item),
               ],
             ),
           ),
@@ -541,49 +542,94 @@ class KdsOrderCard extends StatelessWidget {
     );
   }
 
-  Widget _buildOrderItem(BuildContext context, OrderMenuItem item) {
+  Widget _buildOrderItem(
+    BuildContext context,
+    OrderEntity order,
+    OrderMenuItem item,
+  ) {
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final bool isStarted = order.orderStatus == OrderStatus.inPreparation;
+    final bool isReady = item.status == 'ready';
+    final bool canToggle =
+        isStarted && order.id != null && item.id != null;
+    final String nextStatus = isReady ? 'init' : 'ready';
+    final TextDecoration? decoration =
+        isReady ? TextDecoration.lineThrough : null;
+    final Color readyColor = const Color(0xFFF36D21);
+    final Color? textColor = isReady ? readyColor : null;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: kspacing / 2),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "${item.quantity}",
-                style: const TextStyle(
-                  fontWeight: FontWeight.w900,
-                  fontSize: 13,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: canToggle
+            ? () {
+                context.read<OrdersBloc>().add(
+                  OrderMenuItemStatusUpdated(
+                    order.id!,
+                    item.id!,
+                    nextStatus,
+                  ),
+                );
+              }
+            : null,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "${item.quantity}",
+                  style: TextStyle(
+                    fontWeight: FontWeight.w900,
+                    fontSize: 13,
+                    decoration: decoration,
+                    color: textColor,
+                  ),
                 ),
-              ),
-              const SizedBox(width: kspacing * 1.5),
+                const SizedBox(width: kspacing * 1.5),
               Expanded(
                 child: Text(
                   item.menuItem.translations.isNotEmpty
                       ? item.menuItem.translations.first.name
                       : 'Nom',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 13,
+                    decoration: decoration,
+                    color: textColor,
                   ),
                 ),
               ),
+              if (isStarted) ...[
+                const SizedBox(width: kspacing),
+                Icon(
+                  isReady
+                      ? Icons.check_circle
+                      : Icons.radio_button_unchecked,
+                  size: 16,
+                  color: isReady
+                      ? readyColor
+                      : (isDark ? Colors.white38 : Colors.black38),
+                ),
+              ],
             ],
           ),
-          if (item.notes != null && item.notes!.isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.only(left: kspacing * 3),
-              child: Text(
-                "${item.notes}",
-                style: TextStyle(
-                  fontSize: 11,
-                  color: isDark ? Colors.white60 : Colors.black54,
+            if (item.notes != null && item.notes!.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(left: kspacing * 3),
+                child: Text(
+                  "${item.notes}",
+                  style: TextStyle(
+                    fontSize: 11,
+                    color:
+                        isReady ? readyColor : (isDark ? Colors.white60 : Colors.black54),
+                    decoration: decoration,
+                  ),
                 ),
               ),
-            ),
-        ],
+          ],
+        ),
       ),
     );
   }

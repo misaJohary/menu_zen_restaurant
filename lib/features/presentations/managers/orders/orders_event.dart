@@ -40,6 +40,21 @@ class OrderStatusRemoteUpdated extends OrdersEvent {
   List<Object?> get props => [orderId, orderStatus];
 }
 
+class OrderMenuItemStatusUpdated extends OrdersEvent {
+  final int orderId;
+  final int orderMenuItemId;
+  final String status;
+
+  const OrderMenuItemStatusUpdated(
+    this.orderId,
+    this.orderMenuItemId,
+    this.status,
+  );
+
+  @override
+  List<Object?> get props => [orderId, orderMenuItemId, status];
+}
+
 class OrderDeleted extends OrdersEvent {
   final int orderId;
 
