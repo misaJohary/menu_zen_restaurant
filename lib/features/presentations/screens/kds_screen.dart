@@ -310,6 +310,7 @@ class KdsOrderCard extends StatelessWidget {
     final String timeStr = order.createdAt != null
         ? DateFormat('hh:mm a').format(order.createdAt!)
         : '--:--';
+    final bool showHeader = !slot.showContinuedTop;
 
     return Container(
       decoration: BoxDecoration(
@@ -328,68 +329,70 @@ class KdsOrderCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           // Header
-          Container(
-            padding: const EdgeInsets.all(kspacing),
-            decoration: BoxDecoration(
-              color: headerColor,
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(8),
+          if (showHeader) ...[
+            Container(
+              padding: const EdgeInsets.all(kspacing),
+              decoration: BoxDecoration(
+                color: headerColor,
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(8),
+                ),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Order #${order.id}",
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        timeStr,
+                        style: const TextStyle(
+                          color: Colors.white70,
+                          fontSize: 10,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Icon(
+                    isInProgress ? Icons.soup_kitchen : Icons.print,
+                    color: Colors.white,
+                    size: 24,
+                  ),
+                ],
               ),
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Order #${order.id}",
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
+            // Subheader
+            Padding(
+              padding: const EdgeInsets.all(kspacing),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    order.rTable?.name ?? order.clientName ?? "Take-Out",
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  Row(
+                    children: [
+                      const Icon(Icons.person, size: 14, color: Colors.grey),
+                      const SizedBox(width: 4),
+                      Text(
+                        "Brownie Jennifer", // Hardcoded for now
+                        style: Theme.of(context).textTheme.bodyMedium,
                       ),
-                    ),
-                    Text(
-                      timeStr,
-                      style: const TextStyle(
-                        color: Colors.white70,
-                        fontSize: 10,
-                      ),
-                    ),
-                  ],
-                ),
-                Icon(
-                  isInProgress ? Icons.soup_kitchen : Icons.print,
-                  color: Colors.white,
-                  size: 24,
-                ),
-              ],
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
-          // Subheader
-          Padding(
-            padding: const EdgeInsets.all(kspacing),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  order.rTable?.name ?? order.clientName ?? "Take-Out",
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
-                Row(
-                  children: [
-                    const Icon(Icons.person, size: 14, color: Colors.grey),
-                    const SizedBox(width: 4),
-                    Text(
-                      "Brownie Jennifer", // Hardcoded for now
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          const Divider(height: 1),
+            const Divider(height: 1),
+          ],
           // Continued Top
           if (slot.showContinuedTop)
             _buildContinuedIndicator("Continued...", Icons.arrow_upward),
@@ -534,17 +537,17 @@ List<List<_CardSlot>> _buildColumns(
   List<OrderEntity> orders,
   double columnHeight,
 ) {
-  const double headerHeight = 52;
-  const double subHeaderHeight = 100;
+  const double headerHeight = 40; // 8*2 padding + title/time text
+  const double subHeaderHeight = 100; // 8*2 padding + single line
   const double dividerHeight = 1;
-  const double continuedHeight = 24;
-  const double buttonHeight = 50;
+  const double continuedHeight = 20; // 4*2 padding + 12 icon/text
+  const double buttonHeight = 54; // 8*2 padding + button height
   const double cardGap = kspacing * 2;
 
   double itemHeight(OrderMenuItem item) {
-    double h = 22;
+    double h = 21; // 8 vertical padding + 13 text
     if (item.notes != null && item.notes!.isNotEmpty) {
-      h += 16;
+      h += 11; // note line
     }
     return h;
   }
@@ -560,10 +563,10 @@ List<List<_CardSlot>> _buildColumns(
 
     while (remaining.isNotEmpty) {
       double available = columnHeight - usedHeight - cardGap;
-      final double minNeeded =
-          headerHeight +
-          subHeaderHeight +
-          dividerHeight +
+      final double headerBlockHeight =
+          isFirstSlice ? (headerHeight + subHeaderHeight + dividerHeight) : 0;
+      final double minNeeded = headerBlockHeight +
+          (isFirstSlice ? 0 : continuedHeight) +
           itemHeight(remaining.first) +
           continuedHeight;
 
@@ -574,7 +577,7 @@ List<List<_CardSlot>> _buildColumns(
       }
 
       final List<OrderMenuItem> slice = [];
-      double sliceHeight = headerHeight + subHeaderHeight + dividerHeight;
+      double sliceHeight = headerBlockHeight + (isFirstSlice ? 0 : continuedHeight);
       bool willContinue = false;
 
       for (int i = 0; i < remaining.length; i++) {
