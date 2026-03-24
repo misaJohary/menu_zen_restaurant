@@ -61,8 +61,8 @@ class _KdsScreenState extends State<KdsScreen> {
                         return Center(
                           child: Text(
                             showCompleted
-                                ? "No completed orders"
-                                : "No open orders",
+                                ? "Aucune commande terminée"
+                                : "Aucune commande en cours",
                             style: Theme.of(context).textTheme.headlineSmall,
                           ),
                         );
@@ -234,7 +234,7 @@ class _KdsScreenState extends State<KdsScreen> {
       child: Row(
         children: [
           Text(
-            "$stationName Station - 1",
+            "$stationName Poste - 1",
             style: const TextStyle(color: Colors.white),
           ),
           const SizedBox(width: kspacing),
@@ -273,13 +273,13 @@ class _KdsScreenState extends State<KdsScreen> {
           child: Row(
             children: [
               _buildToggleButton(
-                label: "Open ($openCount)",
+                label: "Ouvertes ($openCount)",
                 isActive: !showCompleted,
                 onTap: () => setState(() => showCompleted = false),
                 activeColor: const Color(0xFF00897B),
               ),
               _buildToggleButton(
-                label: "Completed ($completedCount)",
+                label: "Terminées ($completedCount)",
                 isActive: showCompleted,
                 onTap: () => setState(() => showCompleted = true),
                 activeColor:
@@ -340,7 +340,7 @@ class _KdsScreenState extends State<KdsScreen> {
         }
       },
       itemBuilder: (BuildContext context) => [
-        const PopupMenuItem<String>(value: 'logout', child: Text('Logout')),
+        const PopupMenuItem<String>(value: 'logout', child: Text('Déconnexion')),
       ],
     );
   }
@@ -418,7 +418,7 @@ class KdsOrderCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Order #${order.id}",
+                        "Commande #${order.id}",
                         style: const TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
@@ -448,7 +448,7 @@ class KdsOrderCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    order.rTable?.name ?? order.clientName ?? "Take-Out",
+                    order.rTable?.name ?? order.clientName ?? "À emporter",
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                   Row(
@@ -474,7 +474,7 @@ class KdsOrderCard extends StatelessWidget {
           if (slot.showContinuedTop)
             _buildContinuedIndicator(
               context,
-              "Continued...",
+              "Suite...",
               Icons.arrow_upward,
             ),
           // Items
@@ -491,7 +491,7 @@ class KdsOrderCard extends StatelessWidget {
           if (slot.showContinuedBottom)
             _buildContinuedIndicator(
               context,
-              "Continued...",
+              "Suite...",
               Icons.arrow_downward,
             ),
           // Action Buttons
@@ -499,14 +499,14 @@ class KdsOrderCard extends StatelessWidget {
             if (isInProgress)
               _buildActionButton(
                 context,
-                "Mark Done",
+                "Terminer",
                 const Color(0xFFF36D21),
                 OrderStatus.ready,
               )
             else if (order.orderStatus == OrderStatus.created)
               _buildActionButton(
                 context,
-                "Start",
+                "Démarrer",
                 const Color(0xFF2D2D2D),
                 OrderStatus.inPreparation,
               ),
