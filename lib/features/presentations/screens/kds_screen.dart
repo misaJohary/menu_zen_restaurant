@@ -20,6 +20,7 @@ class KdsScreen extends StatefulWidget {
 
 class _KdsScreenState extends State<KdsScreen> {
   bool showCompleted = false;
+  bool isDarkMode = false;
 
   @override
   void initState() {
@@ -29,107 +30,146 @@ class _KdsScreenState extends State<KdsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
-      body: Column(
-        children: [
-          _buildNavbar(),
-          Expanded(
-            child: BlocBuilder<OrdersBloc, OrdersState>(
-              builder: (context, state) {
-                if (state.status == BlocStatus.loading &&
-                    state.orders.isEmpty) {
-                  return const Center(child: CircularProgressIndicator());
-                }
+    return Theme(
+      data: isDarkMode ? _buildDarkTheme() : _buildLightTheme(),
+      child: Builder(
+        builder: (context) {
+          return Scaffold(
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+            body: Column(
+              children: [
+                _buildNavbar(),
+                Expanded(
+                  child: BlocBuilder<OrdersBloc, OrdersState>(
+                    builder: (context, state) {
+                      if (state.status == BlocStatus.loading &&
+                          state.orders.isEmpty) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
 
-                final filteredOrders = state.orders.where((order) {
-                  if (showCompleted) {
-                    return order.orderStatus == OrderStatus.ready ||
-                        order.orderStatus == OrderStatus.served;
-                  } else {
-                    return order.orderStatus == OrderStatus.created ||
-                        order.orderStatus == OrderStatus.inPreparation;
-                  }
-                }).toList();
+                      final filteredOrders = state.orders.where((order) {
+                        if (showCompleted) {
+                          return order.orderStatus == OrderStatus.ready ||
+                              order.orderStatus == OrderStatus.served;
+                        } else {
+                          return order.orderStatus == OrderStatus.created ||
+                              order.orderStatus == OrderStatus.inPreparation;
+                        }
+                      }).toList();
 
-                if (filteredOrders.isEmpty) {
-                  return Center(
-                    child: Text(
-                      showCompleted ? "No completed orders" : "No open orders",
-                      style: Theme.of(context).textTheme.headlineSmall,
-                    ),
-                  );
-                }
+                      if (filteredOrders.isEmpty) {
+                        return Center(
+                          child: Text(
+                            showCompleted
+                                ? "No completed orders"
+                                : "No open orders",
+                            style: Theme.of(context).textTheme.headlineSmall,
+                          ),
+                        );
+                      }
 
-                return LayoutBuilder(
-                  builder: (context, constraints) {
-                    final double availableHeight =
-                        (constraints.maxHeight - (kspacing * 4))
-                            .clamp(0, double.infinity)
-                            .toDouble();
+                      return LayoutBuilder(
+                        builder: (context, constraints) {
+                          final double availableHeight =
+                              (constraints.maxHeight - (kspacing * 4))
+                                  .clamp(0, double.infinity)
+                                  .toDouble();
 
-                    final columns = _buildColumns(
-                      filteredOrders,
-                      availableHeight > 0
-                          ? availableHeight
-                          : constraints.maxHeight,
-                    );
+                          final columns = _buildColumns(
+                            filteredOrders,
+                            availableHeight > 0
+                                ? availableHeight
+                                : constraints.maxHeight,
+                          );
 
-                    return Padding(
-                      padding: const EdgeInsets.all(kspacing * 2),
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            for (
-                              int columnIndex = 0;
-                              columnIndex < columns.length;
-                              columnIndex++
-                            )
-                              Padding(
-                                padding: EdgeInsets.only(
-                                  right: columnIndex == columns.length - 1
-                                      ? 0.0
-                                      : kspacing * 2,
-                                ),
-                                child: Column(
-                                  children: [
-                                    for (
-                                      int slotIndex = 0;
-                                      slotIndex < columns[columnIndex].length;
-                                      slotIndex++
-                                    )
-                                      Padding(
-                                        padding: EdgeInsets.only(
-                                          bottom:
-                                              slotIndex ==
-                                                  columns[columnIndex].length -
-                                                      1
-                                              ? 0.0
-                                              : kspacing * 2,
-                                        ),
-                                        child: SizedBox(
-                                          width: 320,
-                                          child: KdsOrderCard(
-                                            slot:
-                                                columns[columnIndex][slotIndex],
-                                          ),
-                                        ),
+                          return Padding(
+                            padding: const EdgeInsets.all(kspacing * 2),
+                            child: SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  for (
+                                    int columnIndex = 0;
+                                    columnIndex < columns.length;
+                                    columnIndex++
+                                  )
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                        right: columnIndex == columns.length - 1
+                                            ? 0.0
+                                            : kspacing * 2,
                                       ),
-                                  ],
-                                ),
+                                      child: Column(
+                                        children: [
+                                          for (
+                                            int slotIndex = 0;
+                                            slotIndex <
+                                                columns[columnIndex].length;
+                                            slotIndex++
+                                          )
+                                            Padding(
+                                              padding: EdgeInsets.only(
+                                                bottom:
+                                                    slotIndex ==
+                                                            columns[columnIndex]
+                                                                    .length -
+                                                                1
+                                                        ? 0.0
+                                                        : kspacing * 2,
+                                              ),
+                                              child: SizedBox(
+                                                width: 320,
+                                                child: KdsOrderCard(
+                                                  slot: columns[columnIndex]
+                                                      [slotIndex],
+                                                ),
+                                              ),
+                                            ),
+                                        ],
+                                      ),
+                                    ),
+                                ],
                               ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                );
-              },
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  ),
+                ),
+              ],
             ),
-          ),
-        ],
+          );
+        },
+      ),
+    );
+  }
+
+  ThemeData _buildLightTheme() {
+    final base = ThemeData.light();
+    return base.copyWith(
+      scaffoldBackgroundColor: const Color(0xFFF5F5F5),
+      dividerColor: const Color(0xFFE0E0E0),
+      colorScheme: base.colorScheme.copyWith(
+        primary: const Color(0xFF2D2D2D),
+        secondary: const Color(0xFF00897B),
+        surface: Colors.white,
+        onSurface: Colors.black87,
+      ),
+    );
+  }
+
+  ThemeData _buildDarkTheme() {
+    final base = ThemeData.dark();
+    return base.copyWith(
+      scaffoldBackgroundColor: const Color(0xFF121212),
+      dividerColor: const Color(0xFF2A2A2A),
+      colorScheme: base.colorScheme.copyWith(
+        primary: const Color(0xFF1B1B1B),
+        secondary: const Color(0xFF26A69A),
+        surface: const Color(0xFF1E1E1E),
+        onSurface: Colors.white70,
       ),
     );
   }
@@ -137,6 +177,11 @@ class _KdsScreenState extends State<KdsScreen> {
   Widget _buildNavbar() {
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
+        final bool isDark = Theme.of(context).brightness == Brightness.dark;
+        final Color navbarColor =
+            isDark ? const Color(0xFF1B1B1B) : const Color(0xFF2D2D2D);
+        final Color controlBg =
+            isDark ? const Color(0xFF2E2E2E) : const Color(0xFF4A4A4A);
         final restaurantName =
             state.userRestaurant?.restaurant.name ?? "La Botica";
         final userName =
@@ -145,7 +190,7 @@ class _KdsScreenState extends State<KdsScreen> {
             "";
 
         return Container(
-          color: const Color(0xFF2D2D2D),
+          color: navbarColor,
           padding: const EdgeInsets.symmetric(
             horizontal: kspacing * 3,
             vertical: kspacing,
@@ -160,10 +205,12 @@ class _KdsScreenState extends State<KdsScreen> {
                 ),
               ),
               const SizedBox(width: kspacing * 4),
-              _buildStationDropdown(state),
+              _buildStationDropdown(state, controlBg),
               const Spacer(),
               _buildStatusToggles(),
               const SizedBox(width: kspacing * 4),
+              _buildThemeToggle(),
+              const SizedBox(width: kspacing * 2),
               _buildSettingsButton(userName),
             ],
           ),
@@ -172,7 +219,7 @@ class _KdsScreenState extends State<KdsScreen> {
     );
   }
 
-  Widget _buildStationDropdown(AuthState state) {
+  Widget _buildStationDropdown(AuthState state, Color backgroundColor) {
     final stationName =
         state.userRestaurant?.user.roleName?.toUpperCase() ?? "STATION";
     return Container(
@@ -181,7 +228,7 @@ class _KdsScreenState extends State<KdsScreen> {
         vertical: kspacing / 2,
       ),
       decoration: BoxDecoration(
-        color: const Color(0xFF4A4A4A),
+        color: backgroundColor,
         borderRadius: BorderRadius.circular(4),
       ),
       child: Row(
@@ -200,6 +247,9 @@ class _KdsScreenState extends State<KdsScreen> {
   Widget _buildStatusToggles() {
     return BlocBuilder<OrdersBloc, OrdersState>(
       builder: (context, state) {
+        final bool isDark = Theme.of(context).brightness == Brightness.dark;
+        final Color containerColor =
+            isDark ? const Color(0xFF2E2E2E) : const Color(0xFF4A4A4A);
         final openCount = state.orders
             .where(
               (o) =>
@@ -217,7 +267,7 @@ class _KdsScreenState extends State<KdsScreen> {
 
         return Container(
           decoration: BoxDecoration(
-            color: const Color(0xFF4A4A4A),
+            color: containerColor,
             borderRadius: BorderRadius.circular(8),
           ),
           child: Row(
@@ -232,7 +282,8 @@ class _KdsScreenState extends State<KdsScreen> {
                 label: "Completed ($completedCount)",
                 isActive: showCompleted,
                 onTap: () => setState(() => showCompleted = true),
-                activeColor: Colors.white,
+                activeColor:
+                    isDark ? const Color(0xFFE0E0E0) : Colors.white,
                 activeTextColor: Colors.black87,
               ),
             ],
@@ -293,6 +344,27 @@ class _KdsScreenState extends State<KdsScreen> {
       ],
     );
   }
+
+  Widget _buildThemeToggle() {
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    return Row(
+      children: [
+        Icon(
+          isDark ? Icons.dark_mode : Icons.light_mode,
+          color: Colors.white70,
+          size: 18,
+        ),
+        const SizedBox(width: kspacing),
+        Switch(
+          value: isDarkMode,
+          onChanged: (value) => setState(() => isDarkMode = value),
+          activeColor: const Color(0xFF26A69A),
+          inactiveThumbColor: Colors.white70,
+          inactiveTrackColor: Colors.white24,
+        ),
+      ],
+    );
+  }
 }
 
 class KdsOrderCard extends StatelessWidget {
@@ -302,6 +374,7 @@ class KdsOrderCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
     final order = slot.order;
     final bool isInProgress = order.orderStatus == OrderStatus.inPreparation;
     final Color headerColor = isInProgress
@@ -314,11 +387,11 @@ class KdsOrderCard extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(8),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withOpacity(isDark ? 0.35 : 0.05),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -380,7 +453,11 @@ class KdsOrderCard extends StatelessWidget {
                   ),
                   Row(
                     children: [
-                      const Icon(Icons.person, size: 14, color: Colors.grey),
+                      Icon(
+                        Icons.person,
+                        size: 14,
+                        color: isDark ? Colors.white54 : Colors.grey,
+                      ),
                       const SizedBox(width: 4),
                       Text(
                         "Brownie Jennifer", // Hardcoded for now
@@ -395,17 +472,27 @@ class KdsOrderCard extends StatelessWidget {
           ],
           // Continued Top
           if (slot.showContinuedTop)
-            _buildContinuedIndicator("Continued...", Icons.arrow_upward),
+            _buildContinuedIndicator(
+              context,
+              "Continued...",
+              Icons.arrow_upward,
+            ),
           // Items
           Padding(
             padding: const EdgeInsets.all(kspacing),
             child: Column(
-              children: [for (final item in slot.items) _buildOrderItem(item)],
+              children: [
+                for (final item in slot.items) _buildOrderItem(context, item),
+              ],
             ),
           ),
           // Continued Bottom
           if (slot.showContinuedBottom)
-            _buildContinuedIndicator("Continued...", Icons.arrow_downward),
+            _buildContinuedIndicator(
+              context,
+              "Continued...",
+              Icons.arrow_downward,
+            ),
           // Action Buttons
           if (slot.showButton)
             if (isInProgress)
@@ -427,7 +514,13 @@ class KdsOrderCard extends StatelessWidget {
     );
   }
 
-  Widget _buildContinuedIndicator(String label, IconData icon) {
+  Widget _buildContinuedIndicator(
+    BuildContext context,
+    String label,
+    IconData icon,
+  ) {
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final Color muted = isDark ? Colors.white54 : Colors.grey;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: kspacing, vertical: 4),
       child: Row(
@@ -435,20 +528,21 @@ class KdsOrderCard extends StatelessWidget {
         children: [
           Text(
             label,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 10,
-              color: Colors.grey,
+              color: muted,
               fontStyle: FontStyle.italic,
             ),
           ),
           const SizedBox(width: 4),
-          Icon(icon, size: 12, color: Colors.grey),
+          Icon(icon, size: 12, color: muted),
         ],
       ),
     );
   }
 
-  Widget _buildOrderItem(OrderMenuItem item) {
+  Widget _buildOrderItem(BuildContext context, OrderMenuItem item) {
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: kspacing / 2),
       child: Column(
@@ -483,7 +577,10 @@ class KdsOrderCard extends StatelessWidget {
               padding: const EdgeInsets.only(left: kspacing * 3),
               child: Text(
                 "${item.notes}",
-                style: const TextStyle(fontSize: 11, color: Colors.black54),
+                style: TextStyle(
+                  fontSize: 11,
+                  color: isDark ? Colors.white60 : Colors.black54,
+                ),
               ),
             ),
         ],
@@ -538,7 +635,7 @@ List<List<_CardSlot>> _buildColumns(
   double columnHeight,
 ) {
   const double headerHeight = 40; // 8*2 padding + title/time text
-  const double subHeaderHeight = 100; // 8*2 padding + single line
+  const double subHeaderHeight = 110; // 8*2 padding + single line
   const double dividerHeight = 1;
   const double continuedHeight = 20; // 4*2 padding + 12 icon/text
   const double buttonHeight = 54; // 8*2 padding + button height
