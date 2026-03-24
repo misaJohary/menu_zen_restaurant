@@ -24,6 +24,30 @@ class MainNavigationPannelWidget extends StatelessWidget {
   final MainController controller;
   final VoidCallback onHidePressed;
 
+  Future<void> _confirmLogout(BuildContext context) async {
+    final bool? shouldLogout = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Confirmer la déconnexion'),
+        content: const Text('Voulez-vous vraiment vous déconnecter ?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Annuler'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Se déconnecter'),
+          ),
+        ],
+      ),
+    );
+
+    if (shouldLogout == true) {
+      controller.logout();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(
@@ -100,8 +124,8 @@ class MainNavigationPannelWidget extends StatelessWidget {
                           fontSize: 16,
                         ),
                       ),
-                      onTap: () {
-                        controller.logout();
+                      onTap: () async {
+                        await _confirmLogout(context);
                       },
                     ),
                   ),

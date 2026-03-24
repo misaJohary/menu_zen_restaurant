@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../managers/auths/auth_bloc.dart';
+import '../../../core/navigation/app_router.gr.dart';
 
 class MainController extends ChangeNotifier {
   final BuildContext context;
@@ -26,6 +27,6 @@ class MainController extends ChangeNotifier {
 
   logout() async {
     context.read<AuthBloc>().add(AuthLoggedOut());
-    context.router.reevaluateGuards();
+    context.router.replaceAll([const LoginRoute()]);
   }
 }

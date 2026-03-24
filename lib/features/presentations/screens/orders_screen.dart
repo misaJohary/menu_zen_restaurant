@@ -36,6 +36,31 @@ class _OrdersScreenState extends State<OrdersScreen> {
   bool showCompleted = false;
   bool isDarkMode = false;
 
+  Future<void> _confirmLogout() async {
+    final bool? shouldLogout = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Confirmer la déconnexion'),
+        content: const Text('Voulez-vous vraiment vous déconnecter ?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Annuler'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Se déconnecter'),
+          ),
+        ],
+      ),
+    );
+
+    if (shouldLogout == true) {
+      context.read<AuthBloc>().add(AuthLoggedOut());
+      context.router.replaceAll([const LoginRoute()]);
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -445,9 +470,9 @@ class _OrdersScreenState extends State<OrdersScreen> {
           const Icon(Icons.settings, color: Colors.white),
         ],
       ),
-      onSelected: (value) {
+      onSelected: (value) async {
         if (value == 'logout') {
-          context.read<AuthBloc>().add(AuthLoggedOut());
+          await _confirmLogout();
         }
       },
       itemBuilder: (BuildContext context) => [

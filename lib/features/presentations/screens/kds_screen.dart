@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:menu_zen_restaurant/core/enums/bloc_status.dart';
+import 'package:menu_zen_restaurant/core/navigation/app_router.gr.dart';
 import 'package:menu_zen_restaurant/features/presentations/managers/auths/auth_bloc.dart';
 import 'package:menu_zen_restaurant/features/presentations/managers/orders/orders_bloc.dart';
 import '../../../core/constants/constants.dart';
@@ -21,6 +22,31 @@ class KdsScreen extends StatefulWidget {
 class _KdsScreenState extends State<KdsScreen> {
   bool showCompleted = false;
   bool isDarkMode = false;
+
+  Future<void> _confirmLogout() async {
+    final bool? shouldLogout = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Confirmer la déconnexion'),
+        content: const Text('Voulez-vous vraiment vous déconnecter ?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Annuler'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Se déconnecter'),
+          ),
+        ],
+      ),
+    );
+
+    if (shouldLogout == true) {
+      context.read<AuthBloc>().add(AuthLoggedOut());
+      context.router.replaceAll([const LoginRoute()]);
+    }
+  }
 
   @override
   void initState() {
@@ -334,9 +360,9 @@ class _KdsScreenState extends State<KdsScreen> {
           const Icon(Icons.settings, color: Colors.white),
         ],
       ),
-      onSelected: (value) {
+      onSelected: (value) async {
         if (value == 'logout') {
-          context.read<AuthBloc>().add(AuthLoggedOut());
+          await _confirmLogout();
         }
       },
       itemBuilder: (BuildContext context) => [

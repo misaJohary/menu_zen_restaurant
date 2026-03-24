@@ -55,13 +55,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   return previous.status != current.status;
                 },
                 listener: (context, state) {
-                  if (state.status == BlocStatus.loaded) {
-                    context.router.reevaluateGuards();
-                    // context.router.pushAndPopUntil(
-                    //   MainRoute(),
-                    //   predicate: (_) =>
-                    //       false, // This predicate ensures all previous routes are removed
-                    // );
+                  if (state.status == BlocStatus.loaded &&
+                      state.authStatus == AuthStatus.authenticated) {
+                    context.router.replaceAll([const MainRoute()]);
                   }
                 },
               ),
