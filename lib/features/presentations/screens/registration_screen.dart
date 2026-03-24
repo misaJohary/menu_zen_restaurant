@@ -4,32 +4,29 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
-import 'package:logger/logger.dart';
 import 'package:menu_zen_restaurant/core/services/photon_geocoding_service.dart';
 import 'package:menu_zen_restaurant/features/presentations/controllers/user_registration_controller.dart';
 
 import '../../../core/constants/constants.dart';
 import '../../../core/enums/bloc_status.dart';
-import '../../domains/entities/language_entity.dart';
 import '../controllers/restaurant_more_info_controller.dart';
 import '../controllers/restaurant_registration_controller.dart';
 import 'package:menu_zen_restaurant/core/navigation/app_router.gr.dart'
     as app_router;
 
+import '../managers/auths/auth_bloc.dart';
 import '../managers/languages/languages_bloc.dart';
 import '../managers/restaurant/restaurant_bloc.dart';
 
 @RoutePage()
-class RestaurantRegistrationScreen extends StatefulWidget {
-  const RestaurantRegistrationScreen({super.key});
+class RegistrationScreen extends StatefulWidget {
+  const RegistrationScreen({super.key});
 
   @override
-  State<RestaurantRegistrationScreen> createState() =>
-      _RestaurantRegistrationScreenState();
+  State<RegistrationScreen> createState() => _RegistrationScreenState();
 }
 
-class _RestaurantRegistrationScreenState
-    extends State<RestaurantRegistrationScreen> {
+class _RegistrationScreenState extends State<RegistrationScreen> {
   @override
   void initState() {
     super.initState();
@@ -46,36 +43,68 @@ class _RestaurantRegistrationScreenState
       ],
       builder: (context, child, _) {
         final tabsRouter = AutoTabsRouter.of(context);
-        return BlocListener<RestaurantBloc, RestaurantState>(
-          listenWhen: (previous, current) =>
-              previous.restaurantFilled != current.restaurantFilled ||
-              previous.userFilled != current.userFilled ||
-              previous.restaurantMoreInfoFilled !=
-                  current.restaurantMoreInfoFilled,
-          listener: (context, state) {
-            switch ((
-              state.restaurantFilled,
-              state.restaurantMoreInfoFilled,
-              state.userFilled,
-            )) {
-              case (true, true, true):
-                // Both forms complete - create restaurant
-                context.read<RestaurantBloc>().add(RestaurantCreated());
-                break;
-              case (true, false, false):
-                // Restaurant filled, user not - go to user tab
-                tabsRouter.setActiveIndex(1);
-                break;
-              case (true, true, false):
-                // Restaurant filled, user not - go to user tab
-                tabsRouter.setActiveIndex(2);
-                break;
-              default:
-                // Neither filled - could stay on current or go to first tab
-                // tabsRouter.setActiveIndex(0); // if needed
-                break;
-            }
-          },
+        return MultiBlocListener(
+          listeners: [
+            BlocListener<RestaurantBloc, RestaurantState>(
+              listenWhen: (previous, current) =>
+                  previous.restaurantFilled != current.restaurantFilled ||
+                  previous.userFilled != current.userFilled ||
+                  previous.restaurantMoreInfoFilled !=
+                      current.restaurantMoreInfoFilled,
+              listener: (context, state) {
+                switch ((
+                  state.restaurantFilled,
+                  state.restaurantMoreInfoFilled,
+                  state.userFilled,
+                )) {
+                  case (true, true, true):
+                    // Both forms complete - create restaurant
+                    context.read<RestaurantBloc>().add(RestaurantCreated());
+                    break;
+                  case (true, false, false):
+                    // Restaurant filled, user not - go to user tab
+                    tabsRouter.setActiveIndex(1);
+                    break;
+                  case (true, true, false):
+                    // Restaurant filled, user not - go to user tab
+                    tabsRouter.setActiveIndex(2);
+                    break;
+                  default:
+                    // Neither filled - could stay on current or go to first tab
+                    // tabsRouter.setActiveIndex(0); // if needed
+                    break;
+                }
+              },
+            ),
+            BlocListener<RestaurantBloc, RestaurantState>(
+              listenWhen: (previous, current) =>
+                  previous.status != current.status,
+              listener: (context, state) {
+                if (state.status == BlocStatus.loaded) {
+                  context.read<AuthBloc>().add(AuthUserGot());
+                }
+              },
+            ),
+            BlocListener<AuthBloc, AuthState>(
+              listenWhen: (previous, current) {
+                return previous.status != current.status;
+              },
+              listener: (context, state) {
+                if (state.status == BlocStatus.loaded) {
+                  context.router.reevaluateGuards();
+                  // context.router.pushAndPopUntil(
+                  //   MainRoute(),
+                  //   predicate: (_) =>
+                  //       false, // This predicate ensures all previous routes are removed
+                  // );
+                }else if(state.status == BlocStatus.failed){
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Erreur lors de la connexion')),
+                  );
+                }
+              },
+            ),
+          ],
           child: Scaffold(body: child),
         );
       },
@@ -376,7 +405,11 @@ class _UserFormState extends State<UserForm> {
                 name: 'password',
                 decoration: const InputDecoration(labelText: 'Mot de passe'),
                 validator: FormBuilderValidators.compose([
-                  FormBuilderValidators.password(minSpecialCharCount: 0, minUppercaseCount: 0, minNumberCount: 0),
+                  FormBuilderValidators.password(
+                    minSpecialCharCount: 0,
+                    minUppercaseCount: 0,
+                    minNumberCount: 0,
+                  ),
                   FormBuilderValidators.required(),
                 ]),
               ),

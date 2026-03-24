@@ -6,20 +6,28 @@ class UserEntity extends Equatable {
   final String? email;
   final String? firstname;
   final String? lastname;
+  final String? fullName;
   final String username;
   final String? phone;
   final String? password;
-  final Role roles;
+  final Role? role;
+  final int? roleId;
+  final String? roleName;
+  final bool? mustChangePassword;
 
   const UserEntity({
     this.id,
     this.email,
     this.firstname,
     this.lastname,
+    this.fullName,
     required this.username,
     this.phone,
     this.password,
-    required this.roles,
+    this.role,
+    this.roleId,
+    this.roleName,
+    this.mustChangePassword,
   });
 
   @override
@@ -28,10 +36,14 @@ class UserEntity extends Equatable {
     email,
     firstname,
     lastname,
+    fullName,
     username,
     phone,
     password,
-    roles,
+    role,
+    roleId,
+    roleName,
+    mustChangePassword,
   ];
 }
 
@@ -41,4 +53,6 @@ enum Role {
   admin,
   server,
   cashier,
+  cook,
 }
+

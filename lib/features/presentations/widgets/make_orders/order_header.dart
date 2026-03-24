@@ -41,7 +41,7 @@ class _OrderHeaderState extends State<OrderHeader> {
                 buildWhen: (previous, current) =>
                     previous.userRestaurant != current.userRestaurant,
                 builder: (context, state) => Text(
-                  state.userRestaurant?.restaurant.name ?? 'Click Menu Zen',
+                  state.userRestaurant?.restaurant?.name ?? 'Click Menu Zen',
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     color: Theme.of(context).primaryColor,
                     fontWeight: FontWeight.w600,

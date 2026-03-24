@@ -30,7 +30,7 @@ class BoardTitleWidget extends StatelessWidget {
         description!,
         style: Theme.of(
           context,
-        ).textTheme.bodyLarge!.copyWith(color: grey, fontSize: 22),
+        ).textTheme.bodyLarge!.copyWith(color: grey, fontSize: 14),
       ) : null,
       trailing: ElevatedButton.icon(
         onPressed: onButtonPressed,

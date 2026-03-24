@@ -24,3 +24,21 @@ class AuthUserGot extends AuthEvent {
   @override
   List<Object?> get props => [];
 }
+
+class AuthUserUpdated extends AuthEvent {
+  final UserModel user;
+
+  const AuthUserUpdated(this.user);
+
+  @override
+  List<Object?> get props => [user];
+}
+
+class AuthRestaurantUpdated extends AuthEvent {
+  final RestaurantModel restaurant;
+
+  const AuthRestaurantUpdated(this.restaurant);
+
+  @override
+  List<Object?> get props => [restaurant];
+}

@@ -118,7 +118,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             ElevatedButton(
                               onPressed: () {
                                 context.router.push(
-                                  RestaurantRegistrationRoute(),
+                                  RegistrationRoute(),
                                 );
                               },
                               style: ElevatedButton.styleFrom(

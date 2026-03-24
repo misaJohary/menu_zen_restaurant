@@ -9,6 +9,8 @@ import 'package:menu_zen_restaurant/features/domains/entities/revenues_entity.da
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 import '../../../core/enums/bloc_status.dart';
+import '../../domains/entities/user_entity.dart';
+import '../managers/auths/auth_bloc.dart';
 import '../managers/stats/stats_bloc.dart';
 import '../widgets/custom_container.dart';
 
@@ -48,7 +50,10 @@ class _RevenueCardState extends State<RevenueCard> {
   @override
   void initState() {
     super.initState();
-    context.read<StatsBloc>().add(StatsRevenueGot());
+    final authState = context.read<AuthBloc>().state;
+    if (authState.userRestaurant?.user.role != Role.cook) {
+      context.read<StatsBloc>().add(StatsRevenueGot());
+    }
   }
 
   @override
@@ -159,7 +164,10 @@ class _OrderCountCardState extends State<OrderCountCard> {
   @override
   void initState() {
     super.initState();
-    context.read<StatsBloc>().add(StatsTodayOrderCountGot());
+    final authState = context.read<AuthBloc>().state;
+    if (authState.userRestaurant?.user.role != Role.cook) {
+      context.read<StatsBloc>().add(StatsTodayOrderCountGot());
+    }
   }
 
   @override
@@ -238,7 +246,10 @@ class _TopMenuCardState extends State<TopMenuCard> {
   @override
   void initState() {
     super.initState();
-    context.read<StatsBloc>().add(StatsTopMenuItemsGot());
+    final authState = context.read<AuthBloc>().state;
+    if (authState.userRestaurant?.user.role != Role.cook) {
+      context.read<StatsBloc>().add(StatsTopMenuItemsGot());
+    }
   }
 
   @override

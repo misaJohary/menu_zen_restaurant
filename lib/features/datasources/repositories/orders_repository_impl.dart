@@ -50,11 +50,22 @@ class OrdersRepositoryImpl implements OrdersRepository {
   }
 
   @override
+  Future<MultiResult<Failure, OrderMenuItemModel>> updateOrderMenuItemStatus(
+    int itemId,
+    String status,
+  ) async {
+    return executeWithErrorHandling(() async {
+      return await rest.updateOrderMenuItemStatus(itemId, {'status': status});
+    });
+  }
+
+  @override
   Future<MultiResult<Failure, dynamic>> deleteOrder(int orderId) async {
     return executeWithErrorHandling(() async {
       return await rest.deleteOrder(orderId);
     });
   }
+
 
   @override
   Future<MultiResult<Failure, OrderModel>> updateOrder(

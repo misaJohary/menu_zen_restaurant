@@ -1,9 +1,15 @@
 import 'dart:convert';
 import 'dart:developer';
 
-import 'package:dio/dio.dart';
-import 'package:injectable/injectable.dart';
+import 'dart:convert';
+import 'dart:developer';
 
+import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
+import 'package:injectable/injectable.dart';
+import 'package:logger/logger.dart';
+
+import '../navigation/app_router.dart';
 import '../services/db_service.dart';
 
 class LoggingInterceptors extends Interceptor {
@@ -32,6 +38,7 @@ class LoggingInterceptors extends Interceptor {
   }
 }
 
+
 class RequestInterceptor extends Interceptor {
   final DbService db;
   final Dio dio;
@@ -53,6 +60,25 @@ class RequestInterceptor extends Interceptor {
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) async {
+    if (err.response?.statusCode == 403) {
+      final context = AppRouter.navKey.currentContext;
+      if (context != null) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Accès Refusé'),
+            content: const Text(
+                'Vous n\'avez pas la permission d\'effectuer cette action.'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+        );
+      }
+    }
     return handler.next(err);
   }
 }

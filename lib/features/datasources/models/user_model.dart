@@ -10,12 +10,19 @@ class UserModel extends UserEntity {
     super.id,
     super.firstname,
     super.lastname,
+    @JsonKey(name: 'full_name') super.fullName,
     super.email,
     super.phone,
     required super.username,
     super.password,
-    required super.roles,
+    @JsonKey(name: 'role_name') super.role,
+    @JsonKey(name: 'role_id') super.roleId,
+    @JsonKey(includeFromJson: false, includeToJson: false) super.roleName,
+    @JsonKey(name: 'must_change_password') super.mustChangePassword,
   });
+
+
+
 
   /// Constructor from UserEntity
   UserModel.fromEntity(UserEntity entity)
@@ -23,11 +30,15 @@ class UserModel extends UserEntity {
     id: entity.id,
     firstname: entity.firstname,
     lastname: entity.lastname,
+    fullName: entity.fullName,
     email: entity.email,
     phone: entity.phone,
     username: entity.username,
     password: entity.password,
-    roles: entity.roles,
+    role: entity.role,
+    roleId: entity.roleId,
+    roleName: entity.roleName,
+    mustChangePassword: entity.mustChangePassword,
   );
 
   ///copyWith
@@ -35,23 +46,32 @@ class UserModel extends UserEntity {
     int? id,
     String? firstname,
     String? lastname,
+    String? fullName,
     String? email,
     String? phone,
     String? username,
     String? password,
-    Role? roles,
+    Role? role,
+    int? roleId,
+    String? roleName,
+    bool? mustChangePassword,
   }) {
     return UserModel(
       id: id ?? this.id,
       firstname: firstname ?? this.firstname,
       lastname: lastname ?? this.lastname,
+      fullName: fullName ?? this.fullName,
       email: email ?? this.email,
       phone: phone ?? this.phone,
       username: username ?? this.username,
       password: password ?? this.password,
-      roles: roles ?? this.roles,
+      role: role ?? this.role,
+      roleId: roleId ?? this.roleId,
+      roleName: roleName ?? this.roleName,
+      mustChangePassword: mustChangePassword ?? this.mustChangePassword,
     );
   }
+
 
   factory UserModel.fromJson(Map<String, dynamic> json) =>
       _$UserModelFromJson(json);

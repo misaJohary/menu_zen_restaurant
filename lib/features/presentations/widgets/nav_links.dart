@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/constants/constants.dart';
 import '../../../core/navigation/app_router.gr.dart';
+import '../../domains/entities/user_entity.dart';
 
 class NavLink extends StatelessWidget {
   const NavLink({
@@ -34,10 +35,12 @@ class NavLink extends StatelessWidget {
         ),
       ),
       child: ListTile(
+        dense: true,
+        visualDensity: const VisualDensity(vertical: -4),
         title: Text(
           label ?? '',
           style: Theme.of(context).textTheme.titleMedium!.copyWith(
-            color: isSelected ? Colors.green : grey, fontSize: 22,
+            color: isSelected ? Colors.green : grey, fontSize: 16,
           ),
         ),
         onTap: () {
@@ -48,7 +51,7 @@ class NavLink extends StatelessWidget {
   }
 }
 
-List<Widget> navLinks(String currentRoute) => [
+List<Widget> navLinks(String currentRoute, Role? role) => [
   NavLink(
     label: 'Dashboard',
     icon: Icon(Icons.dashboard_rounded),
@@ -79,10 +82,12 @@ List<Widget> navLinks(String currentRoute) => [
     isSelected: currentRoute == TablesRoute.name,
     destination: const TablesRoute(),
   ),
-  // NavLink(
-  //   label: 'Orders',
-  //   icon: Icon(Icons.restaurant_menu_rounded),
-  //   isSelected: currentRoute == OrderRoute.name,
-  //   destination: const OrderRoute(),
-  // ),
+  if (role == Role.admin || role == Role.superAdmin)
+    NavLink(
+      label: 'Utilisateurs',
+      icon: Icon(Icons.people_alt_rounded),
+      isSelected: currentRoute == UsersRoute.name,
+      destination: const UsersRoute(),
+    ),
 ];
+

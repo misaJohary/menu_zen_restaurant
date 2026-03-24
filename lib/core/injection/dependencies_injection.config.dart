@@ -61,6 +61,7 @@ import '../../features/presentations/managers/restaurant/restaurant_bloc.dart'
     as _i864;
 import '../../features/presentations/managers/stats/stats_bloc.dart' as _i406;
 import '../../features/presentations/managers/tables/table_bloc.dart' as _i419;
+import '../../features/presentations/managers/users/users_bloc.dart' as _i121;
 import '../http_connexion/rest_client.dart' as _i306;
 import '../navigation/guards/auth_guards.dart' as _i1010;
 import '../services/db_service.dart' as _i420;
@@ -205,6 +206,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i788.AuthBloc>(
       () => _i788.AuthBloc(gh<_i643.AuthRepository>()),
+    );
+    gh.factory<_i121.UsersBloc>(
+      () => _i121.UsersBloc(gh<_i643.AuthRepository>()),
     );
     gh.factory<_i419.TableBloc>(
       () => _i419.TableBloc(tablesRepository: gh<_i929.TablesRepository>()),

@@ -13,10 +13,13 @@ import '../../features/datasources/models/menu_item_update_model.dart';
 import '../../features/datasources/models/menu_model.dart';
 import '../../features/datasources/models/order_menu_item_model.dart';
 import '../../features/datasources/models/order_model.dart';
+import '../../features/datasources/models/restaurant_model.dart';
 import '../../features/datasources/models/revenues_model.dart';
+import '../../features/datasources/models/role_model.dart';
 import '../../features/datasources/models/table_model.dart';
 import '../../features/datasources/models/token.dart';
 import '../../features/datasources/models/top_menu_item_model.dart';
+import '../../features/datasources/models/user_model.dart';
 
 part 'rest_client.g.dart';
 
@@ -38,10 +41,38 @@ abstract class RestClient {
   @GET('/user')
   Future<UserRestaurantModel> getUser();
 
+  @PATCH('/user')
+  Future<UserModel> updateUser(@Body() UserModel params);
+
+  @POST('/users')
+  Future<UserModel> createUser(@Body() UserModel params);
+
+  @GET('/users/')
+  Future<List<UserModel>> getUsers();
+
+  @PATCH('/users/{user_id}')
+  Future<UserModel> updateAnyUser(
+    @Path('user_id') int userId,
+    @Body() UserModel params,
+  );
+
+  @DELETE('/users/{user_id}')
+  Future<int> deleteUser(@Path('user_id') int userId);
+
+  @GET('/admin/roles')
+  Future<List<RoleModel>> getRoles();
+
+  @GET('/admin/permissions')
+  Future<List<String>> getPermissions();
+
+
   @POST('/restaurants')
   Future<UserRestaurantModel> createRestaurant(
     @Body() UserRestaurantModel params,
   );
+
+  @PATCH('/restaurant')
+  Future<RestaurantModel> updateRestaurant(@Body() RestaurantModel params);
 
   @GET('/menus')
   Future<List<MenuModel>> getMenus();
@@ -88,12 +119,12 @@ abstract class RestClient {
 
   @GET('/orders')
   Future<List<OrderModel>> getOrders(
-      @Queries() Map<String, dynamic> queries
-  //     {
-  //   @Query('today_only') bool? todayOnly,
-  //   @Query('skip') int? page,
-  //   @Query('limit') int? limit,
-  // }
+    @Queries() Map<String, dynamic> queries,
+    //     {
+    //   @Query('today_only') bool? todayOnly,
+    //   @Query('skip') int? page,
+    //   @Query('limit') int? limit,
+    // }
   );
 
   @DELETE('/orders/{id}')
@@ -107,6 +138,13 @@ abstract class RestClient {
     @Path() int id,
     @Body() Map<String, String> orderStatus,
   );
+
+  @PATCH('/orders/items/{id}/status')
+  Future<OrderMenuItemModel> updateOrderMenuItemStatus(
+    @Path() int id,
+    @Body() Map<String, String> status,
+  );
+
 
   @PATCH('/menu-items/{id}')
   Future<MenuItemModel> updateMenuItems(

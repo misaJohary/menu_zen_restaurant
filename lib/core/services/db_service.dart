@@ -59,7 +59,7 @@ class DbServiceImp implements DbService {
   @override
   Future<int?> getRestaurantId() async {
     final userRest = await getUserRestaurant();
-    return userRest?.restaurant.id;
+    return userRest?.restaurant?.id;
   }
 
   @override

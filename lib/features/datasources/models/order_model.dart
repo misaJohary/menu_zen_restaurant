@@ -37,6 +37,8 @@ class OrderModel extends OrderEntity {
         unitPrice: menu.unitPrice,
         menuItemId: menu.menuItem.id,
         menuItem: MenuItemModel.fromEntity(menu.menuItem),
+        status: menu.status,
+        notes: menu.notes,
       );
     }).toList();
     return OrderModel(

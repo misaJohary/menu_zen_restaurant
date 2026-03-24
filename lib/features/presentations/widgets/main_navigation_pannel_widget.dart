@@ -8,6 +8,10 @@ import '../../../core/navigation/app_router.gr.dart';
 import 'logo.dart';
 import 'nav_links.dart';
 
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../domains/entities/user_entity.dart';
+import '../managers/auths/auth_bloc.dart';
+
 class MainNavigationPannelWidget extends StatelessWidget {
   const MainNavigationPannelWidget({
     super.key,
@@ -22,81 +26,91 @@ class MainNavigationPannelWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final menuGap = kspacing;
-    return SafeArea(
-      bottom: false,
-      child: CustomContainer(
-        width: 300,
-        height: double.infinity,
-        margin: const EdgeInsets.all(8.0),
-        padding: EdgeInsets.symmetric(vertical: kspacing * 2),
-        child: Theme(
-          data: ThemeData(
-            iconButtonTheme: IconButtonThemeData(
-              style: IconButton.styleFrom(
-                foregroundColor: Colors.white,
-                iconSize: 30,
+    return BlocBuilder<AuthBloc, AuthState>(
+      builder: (context, state) {
+        final role = state.userRestaurant?.user.role;
+        const menuGap = 2.0;
+        return SafeArea(
+          bottom: false,
+          child: CustomContainer(
+            width: 350,
+            height: double.infinity,
+            margin: const EdgeInsets.all(8.0),
+            padding: EdgeInsets.symmetric(vertical: kspacing * 2),
+            child: Theme(
+              data: ThemeData(
+                iconButtonTheme: IconButtonThemeData(
+                  style: IconButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    iconSize: 30,
+                  ),
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                   Text('ROLE: ${role.toString()}', style: TextStyle(color: Colors.white)),
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: kspacing * 3,
+                      vertical: kspacing * 2,
+                    ),
+                    child: Logo(),
+                  ),
+
+
+                  ...navLinks(currentRoute, role).map(
+                    (link) => Padding(
+                      padding: EdgeInsets.only(bottom: menuGap),
+                      child: link,
+                    ),
+                  ),
+                  const Spacer(),
+                  NavLink(
+                    label: 'Commande',
+                    icon: const CircleAvatar(child: Text('M')),
+                    destination: const OrdersRoute(),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: kspacing * 3),
+                    child: ListTile(
+                      dense: true,
+                      visualDensity: const VisualDensity(vertical: -4),
+                      title: Text(
+                        'Profil',
+                        style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                          color: grey,
+                          fontSize: 16,
+                        ),
+                      ),
+                      trailing: const CircleAvatar(child: Text('M')),
+                      onTap: () => context.router.push(const ProfileRoute()),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: kspacing * 3),
+                    child: ListTile(
+                      dense: true,
+                      visualDensity: const VisualDensity(vertical: -4),
+                      trailing: const Icon(Icons.logout),
+                      title: Text(
+                        'Se déconnecter',
+                        style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                          color: grey,
+                          fontSize: 16,
+                        ),
+                      ),
+                      onTap: () {
+                        controller.logout();
+                      },
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: kspacing * 3,
-                  vertical: kspacing * 5,
-                ),
-                child: Logo(),
-              ),
-
-              ...navLinks(currentRoute).map(
-                (link) => Padding(
-                  padding: EdgeInsets.only(bottom: menuGap),
-                  child: link,
-                ),
-              ),
-              Spacer(),
-              NavLink(
-                label: 'Commande',
-                icon: CircleAvatar(child: Text('M')),
-                destination: OrdersRoute(),
-                //destination: const MakeOrderRoute(),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: kspacing * 3),
-                child: ListTile(
-                  title: Text(
-                    'Profil',
-                    style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                      color: grey,
-                      fontSize: 18,
-                    ),
-                  ),
-                  trailing: CircleAvatar(child: Text('M')),
-                  onTap: () => context.router.push(ProfileRoute()),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: kspacing * 3),
-                child: ListTile(
-                  trailing: Icon(Icons.logout),
-                  title: Text(
-                    'Se déconnecter',
-                    style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                      color: grey,
-                      fontSize: 18,
-                    ),
-                  ),
-                  onTap: () {
-                    controller.logout();
-                  },
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

@@ -10,6 +10,8 @@ abstract class OrdersRepository{
   Future<MultiResult<Failure, OrderModel>> createOrder(OrderModel order);
   Future<MultiResult<Failure, List<OrderModel>>> getOrders(OrderParams params);
   Future<MultiResult<Failure, OrderModel>> updateStatusOrder(int orderId, OrderStatus orderStatus);
+  Future<MultiResult<Failure, OrderMenuItemModel>> updateOrderMenuItemStatus(int itemId, String status);
   Future<MultiResult<Failure, dynamic>> deleteOrder(int orderId);
+
   Future<MultiResult<Failure, OrderModel>> updateOrder(int orderId, OrderModel order);
 }

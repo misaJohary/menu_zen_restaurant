@@ -74,7 +74,7 @@ class OrderItem extends StatelessWidget {
                         ? Text(DateFormat('HH:MM').format(order.createdAt!))
                         : null,
                     trailing: SizedBox(
-                      width: 150,
+                      width: 160,
                       height: 80,
                       child: DropdownButtonFormField<OrderStatus>(
                         decoration: InputDecoration(

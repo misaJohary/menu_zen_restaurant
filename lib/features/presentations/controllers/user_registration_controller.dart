@@ -35,9 +35,9 @@ class UserRegistrationController extends ChangeNotifier {
       final json = currentState!.fields.map(
         (key, value) => MapEntry(key, value.value),
       );
-      json['roles'] = 'admin';
+      json['role_name'] = 'admin';
+      json['full_name'] = json['name'];
       final user = UserModel.fromJson(json);
-      Logger().e(user);
       context.read<RestaurantBloc>().add(RestaurantUserInfoFilled(user));
     }
   }

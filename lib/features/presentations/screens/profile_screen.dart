@@ -10,6 +10,8 @@ import '../../domains/entities/user_entity.dart';
 import '../../domains/entities/user_restaurant_entity.dart';
 import '../managers/auths/auth_bloc.dart';
 import '../widgets/custom_container.dart';
+import '../../datasources/models/restaurant_model.dart';
+import '../../datasources/models/user_model.dart';
 
 @RoutePage()
 class ProfileScreen extends StatefulWidget {
@@ -102,6 +104,8 @@ class _ProfileView extends StatelessWidget {
         return 'Serveur';
       case Role.cashier:
         return 'Caissier';
+      case Role.cook:
+        return 'Cuisinier';
     }
   }
 
@@ -115,6 +119,8 @@ class _ProfileView extends StatelessWidget {
         return Colors.green.shade100;
       case Role.cashier:
         return Colors.orange.shade100;
+      case Role.cook:
+        return Colors.red.shade100;
     }
   }
 
@@ -128,6 +134,8 @@ class _ProfileView extends StatelessWidget {
         return Colors.green.shade800;
       case Role.cashier:
         return Colors.orange.shade800;
+      case Role.cook:
+        return Colors.red.shade800;
     }
   }
 
@@ -213,13 +221,12 @@ class _UserInfoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final fullName = '${user.firstname ?? ''} ${user.lastname ?? ''}'
-            .trim()
-            .isEmpty
-        ? user.username
-        : '${user.firstname ?? ''} ${user.lastname ?? ''}'.trim();
-    final initials = fullName.isNotEmpty
-        ? fullName.split(' ').map((n) => n[0]).take(2).join().toUpperCase()
+    final actualFullName = user.fullName ??
+            '${user.firstname ?? ''} ${user.lastname ?? ''}'.trim();
+    final displayName = actualFullName.isNotEmpty ? actualFullName : user.username;
+    
+    final initials = displayName.isNotEmpty
+        ? displayName.split(' ').map((n) => n[0]).take(2).join().toUpperCase()
         : user.username[0].toUpperCase();
 
     return CustomContainer(
@@ -264,7 +271,7 @@ class _UserInfoCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      fullName,
+                      displayName,
                       style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                             fontWeight: FontWeight.bold,
                           ),
@@ -276,13 +283,13 @@ class _UserInfoCard extends StatelessWidget {
                         vertical: kspacing,
                       ),
                       decoration: BoxDecoration(
-                        color: getRoleColor(user.roles),
+                        color: getRoleColor(user.role ?? Role.admin),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
-                        getRoleDisplayName(user.roles),
+                        getRoleDisplayName(user.role ?? Role.admin),
                         style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                              color: getRoleTextColor(user.roles),
+                              color: getRoleTextColor(user.role ?? Role.admin),
                               fontWeight: FontWeight.w600,
                             ),
                       ),
@@ -293,8 +300,20 @@ class _UserInfoCard extends StatelessWidget {
             ],
           ),
           SizedBox(height: kspacing * 4),
+          SizedBox(height: kspacing * 4),
           // User Details
-          _SectionTitle(title: 'Informations Personnelles'),
+          _SectionTitle(
+            title: 'Informations Personnelles',
+            onEdit: () {
+              showDialog(
+                context: context,
+                builder: (_) => _EditUserDialog(
+                  user: UserModel.fromEntity(user),
+                  bloc: context.read<AuthBloc>(),
+                ),
+              );
+            },
+          ),
           SizedBox(height: kspacing * 2),
           _InfoTile(
             icon: Icons.person_outline,
@@ -448,8 +467,20 @@ class _RestaurantInfoCard extends StatelessWidget {
             ),
           ],
           SizedBox(height: kspacing * 4),
+          SizedBox(height: kspacing * 4),
           // Restaurant Details
-          _SectionTitle(title: 'Informations du Restaurant'),
+          _SectionTitle(
+            title: 'Informations du Restaurant',
+            onEdit: () {
+              showDialog(
+                context: context,
+                builder: (_) => _EditRestaurantDialog(
+                  restaurant: RestaurantModel.fromEntity(restaurant),
+                  bloc: context.read<AuthBloc>(),
+                ),
+              );
+            },
+          ),
           SizedBox(height: kspacing * 2),
           if (restaurant.description != null)
             _InfoTile(
@@ -530,9 +561,13 @@ class _RestaurantInfoCard extends StatelessWidget {
 }
 
 class _SectionTitle extends StatelessWidget {
-  const _SectionTitle({required this.title});
+  const _SectionTitle({
+    required this.title,
+    this.onEdit,
+  });
 
   final String title;
+  final VoidCallback? onEdit;
 
   @override
   Widget build(BuildContext context) {
@@ -553,6 +588,14 @@ class _SectionTitle extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
         ),
+        if (onEdit != null) ...[
+          const Spacer(),
+          IconButton(
+            onPressed: onEdit,
+            icon: const Icon(Icons.edit_outlined),
+            color: primaryColor,
+          ),
+        ],
       ],
     );
   }
@@ -605,6 +648,175 @@ class _InfoTile extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _EditUserDialog extends StatefulWidget {
+  const _EditUserDialog({required this.user, required this.bloc});
+
+  final UserModel user;
+  final AuthBloc bloc;
+
+  @override
+  State<_EditUserDialog> createState() => _EditUserDialogState();
+}
+
+class _EditUserDialogState extends State<_EditUserDialog> {
+  late TextEditingController _firstnameCtrl;
+  late TextEditingController _lastnameCtrl;
+  late TextEditingController _phoneCtrl;
+
+  @override
+  void initState() {
+    super.initState();
+    _firstnameCtrl = TextEditingController(text: widget.user.firstname);
+    _lastnameCtrl = TextEditingController(text: widget.user.lastname);
+    _phoneCtrl = TextEditingController(text: widget.user.phone);
+  }
+
+  @override
+  void dispose() {
+    _firstnameCtrl.dispose();
+    _lastnameCtrl.dispose();
+    _phoneCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Modifier le profil'),
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: _firstnameCtrl,
+              decoration: const InputDecoration(labelText: 'Prénom'),
+            ),
+            SizedBox(height: kspacing),
+            TextField(
+              controller: _lastnameCtrl,
+              decoration: const InputDecoration(labelText: 'Nom'),
+            ),
+            SizedBox(height: kspacing),
+            TextField(
+              controller: _phoneCtrl,
+              decoration: const InputDecoration(labelText: 'Téléphone'),
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Annuler'),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            final updatedUser = widget.user.copyWith(
+              firstname: _firstnameCtrl.text,
+              lastname: _lastnameCtrl.text,
+              phone: _phoneCtrl.text,
+            );
+            widget.bloc.add(AuthUserUpdated(updatedUser));
+            Navigator.pop(context);
+          },
+          child: const Text('Enregistrer'),
+        ),
+      ],
+    );
+  }
+}
+
+class _EditRestaurantDialog extends StatefulWidget {
+  const _EditRestaurantDialog({
+    required this.restaurant,
+    required this.bloc,
+  });
+
+  final RestaurantModel restaurant;
+  final AuthBloc bloc;
+
+  @override
+  State<_EditRestaurantDialog> createState() => _EditRestaurantDialogState();
+}
+
+class _EditRestaurantDialogState extends State<_EditRestaurantDialog> {
+  late TextEditingController _phoneCtrl;
+  late TextEditingController _emailCtrl;
+  late TextEditingController _descriptionCtrl;
+  late TextEditingController _cityCtrl;
+
+  @override
+  void initState() {
+    super.initState();
+    _phoneCtrl = TextEditingController(text: widget.restaurant.phone);
+    _emailCtrl = TextEditingController(text: widget.restaurant.email);
+    _descriptionCtrl = TextEditingController(text: widget.restaurant.description);
+    _cityCtrl = TextEditingController(text: widget.restaurant.city);
+  }
+
+  @override
+  void dispose() {
+    _phoneCtrl.dispose();
+    _emailCtrl.dispose();
+    _descriptionCtrl.dispose();
+    _cityCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Modifier le restaurant'),
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: _phoneCtrl,
+              decoration: const InputDecoration(labelText: 'Téléphone du restaurant'),
+            ),
+            SizedBox(height: kspacing),
+            TextField(
+              controller: _emailCtrl,
+              decoration: const InputDecoration(labelText: 'Email du restaurant'),
+            ),
+            SizedBox(height: kspacing),
+            TextField(
+              controller: _cityCtrl,
+              decoration: const InputDecoration(labelText: 'Ville'),
+            ),
+            SizedBox(height: kspacing),
+            TextField(
+              controller: _descriptionCtrl,
+              decoration: const InputDecoration(labelText: 'Description'),
+              maxLines: 3,
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Annuler'),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            final updatedRestaurant = widget.restaurant.copyWith(
+              phone: _phoneCtrl.text,
+              email: _emailCtrl.text,
+              city: _cityCtrl.text,
+              description: _descriptionCtrl.text,
+            );
+            widget.bloc.add(AuthRestaurantUpdated(updatedRestaurant));
+            Navigator.pop(context);
+          },
+          child: const Text('Enregistrer'),
+        ),
+      ],
     );
   }
 }
