@@ -377,9 +377,15 @@ class KdsOrderCard extends StatelessWidget {
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
     final order = slot.order;
     final bool isInProgress = order.orderStatus == OrderStatus.inPreparation;
-    final Color headerColor = isInProgress
-        ? const Color(0xFFF36D21)
-        : const Color(0xFF4A4A4A);
+    final bool isServed = order.orderStatus == OrderStatus.served;
+    final bool isPaid =
+        order.paymentStatus == PaymentStatus.paid ||
+        order.paymentStatus == PaymentStatus.prepaid;
+    final Color headerColor = isServed
+        ? primaryColor
+        : isInProgress
+            ? const Color(0xFFF36D21)
+            : const Color(0xFF4A4A4A);
     final String timeStr = order.createdAt != null
         ? DateFormat('hh:mm a').format(order.createdAt!)
         : '--:--';
@@ -510,6 +516,36 @@ class KdsOrderCard extends StatelessWidget {
                 const Color(0xFF2D2D2D),
                 OrderStatus.inPreparation,
               ),
+          if (isServed)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(
+                kspacing,
+                0,
+                kspacing,
+                kspacing,
+              ),
+              child: Align(
+                alignment: Alignment.bottomRight,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: kspacing * 1.5,
+                    vertical: kspacing / 2,
+                  ),
+                  decoration: BoxDecoration(
+                    color: primaryColor,
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Text(
+                    isPaid ? "Payé" : "Servi",
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 11,
+                    ),
+                  ),
+                ),
+              ),
+            ),
         ],
       ),
     );
