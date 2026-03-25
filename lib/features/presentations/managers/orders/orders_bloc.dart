@@ -25,6 +25,7 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
     on<OrderStatusUpdated>(_onOrderStatusUpdated);
     on<OrderStatusRemoteUpdated>(_onOrderStatusRemoteUpdated);
     on<OrderMenuItemStatusUpdated>(_onOrderMenuItemStatusUpdated);
+    on<OrderMenuItemStatusRemoteUpdated>(_onOrderMenuItemStatusRemoteUpdated);
     on<OrderDeleted>(_onOrderDeleted);
     on<OrderRemoteDeleted>(_onOrderRemoteDeleted);
 
@@ -194,6 +195,39 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
     } else {
       emit(state.copyWith(updateStatus: BlocStatus.failed));
     }
+  }
+
+  _onOrderMenuItemStatusRemoteUpdated(
+    OrderMenuItemStatusRemoteUpdated event,
+    Emitter<OrdersState> emit,
+  ) {
+    final orderIndex = state.orders.indexWhere(
+      (element) => element.id == event.orderId,
+    );
+    if (orderIndex == -1) {
+      add(OrderFetched());
+      return;
+    }
+    final order = state.orders[orderIndex];
+    final items = List<OrderMenuItem>.from(order.orderMenuItems);
+    final itemIndex = items.indexWhere(
+      (item) => item.id == event.orderMenuItemId,
+    );
+    if (itemIndex == -1) {
+      add(OrderFetched());
+      return;
+    }
+
+    items[itemIndex] = items[itemIndex].copyWith(status: event.status);
+    final updatedOrder = order.copyWith(orderMenuItems: items);
+
+    emit(
+      state.copyWith(
+        orders: List.of(state.orders)
+          ..removeAt(orderIndex)
+          ..insert(orderIndex, updatedOrder),
+      ),
+    );
   }
 
   _onOrderCreated(OrderCreated event, Emitter<OrdersState> emit) async {

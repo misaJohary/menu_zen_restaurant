@@ -98,6 +98,9 @@ class _OrdersScreenState extends State<OrdersScreen> {
             case 'order_updated':
               _handleOrderUpdated(context, message);
               break;
+            case 'update_order_menu_item_status':
+              _handleUpdateOrderMenuItemStatus(context, data);
+              break;
           }
         },
         onError: (error) => (),
@@ -119,6 +122,16 @@ class _OrdersScreenState extends State<OrdersScreen> {
       OrderStatusRemoteUpdated(
         message['order_id'],
         OrderStatus.fromString(message['new_status']),
+      ),
+    );
+  }
+
+  void _handleUpdateOrderMenuItemStatus(BuildContext context, message) {
+    context.read<OrdersBloc>().add(
+      OrderMenuItemStatusRemoteUpdated(
+        message['order_id'],
+        message['item_id'],
+        message['new_status'],
       ),
     );
   }
