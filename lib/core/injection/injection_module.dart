@@ -1,15 +1,15 @@
 import 'package:injectable/injectable.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:menu_zen_restaurant/core/services/db_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dio/dio.dart';
 
 import '../http_connexion/interceptors.dart';
+import '../config/base_url_config.dart';
 
 @module
 abstract class RegisterModule {
   @Named("BaseUrl")
-  String get baseUrl => dotenv.env['BASE_URL']!;
+  String get baseUrl => BaseUrlConfig.current;
 
   //@preResolve
   @lazySingleton

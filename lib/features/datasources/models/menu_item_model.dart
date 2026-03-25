@@ -1,10 +1,10 @@
 import 'dart:convert';
 
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:logger/logger.dart';
 import 'package:menu_zen_restaurant/features/datasources/models/menu_item_translation_model.dart';
 import 'package:menu_zen_restaurant/features/domains/entities/menu_item_entity.dart';
+import 'package:menu_zen_restaurant/core/config/base_url_config.dart';
 
 import '../../domains/entities/category_entity.dart';
 import '../../domains/entities/menu_entity.dart';
@@ -58,7 +58,7 @@ class MenuItemModel extends MenuItemEntity {
   factory MenuItemModel.fromJson(Map<String, dynamic> json) {
     if (json['picture'] != null) {
       final pic = json['picture'];
-      json['picture'] = '${dotenv.env['BASE_URL']!}/$pic';
+      json['picture'] = '${BaseUrlConfig.current}/$pic';
     }
     return _$MenuItemModelFromJson(json);
   }

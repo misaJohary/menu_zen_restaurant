@@ -11,7 +11,7 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 class RestaurantWebSocketService {
   WebSocketChannel? _channel;
   final DbService dbService;
-  final String baseUrl;
+  String baseUrl;
 
   RestaurantWebSocketService({
     required this.dbService,
@@ -52,6 +52,10 @@ class RestaurantWebSocketService {
   }
 
   WebSocketChannel? get channel => _channel;
+
+  void updateBaseUrl(String value) {
+    baseUrl = value;
+  }
 
   void _reconnect() {
     Future.delayed(Duration(seconds: 3), () => connect());

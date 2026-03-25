@@ -1,6 +1,6 @@
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:menu_zen_restaurant/features/domains/entities/top_menu_item_entity.dart';
+import 'package:menu_zen_restaurant/core/config/base_url_config.dart';
 
 part 'top_menu_item_model.g.dart';
 
@@ -19,7 +19,7 @@ class TopMenuItemModel extends TopMenuItemEntity {
   factory TopMenuItemModel.fromJson(Map<String, dynamic> json) {
     if (json['picture'] != null) {
       final pic = json['picture'];
-      json['picture'] = '${dotenv.env['BASE_URL']!}/$pic';
+      json['picture'] = '${BaseUrlConfig.current}/$pic';
     }
     return _$TopMenuItemModelFromJson(json);
   }
