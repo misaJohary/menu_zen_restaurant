@@ -110,33 +110,27 @@ class _OrdersScreenState extends State<OrdersScreen> {
 
   void _handleNewOrder(BuildContext context, message) {
     context.read<OrdersBloc>().add(
-          OrderAdded(OrderModel.fromJson(json.decode(message['order']))),
-        );
+      OrderAdded(OrderModel.fromJson(json.decode(message['order']))),
+    );
   }
 
   void _handleUpdateOrderStatus(BuildContext context, message) {
     context.read<OrdersBloc>().add(
-          OrderStatusRemoteUpdated(
-            message['order_id'],
-            OrderStatus.fromString(message['new_status']),
-          ),
-        );
+      OrderStatusRemoteUpdated(
+        message['order_id'],
+        OrderStatus.fromString(message['new_status']),
+      ),
+    );
   }
 
   void _handleOrderDeleted(BuildContext context, message) {
-    context.read<OrdersBloc>().add(
-          OrderRemoteDeleted(
-            message['order_id'],
-          ),
-        );
+    context.read<OrdersBloc>().add(OrderRemoteDeleted(message['order_id']));
   }
 
   void _handleOrderUpdated(BuildContext context, message) {
     context.read<OrdersBloc>().add(
-          OrderRemoteUpdated(
-            OrderModel.fromJson(json.decode(message['order'])),
-          ),
-        );
+      OrderRemoteUpdated(OrderModel.fromJson(json.decode(message['order']))),
+    );
   }
 
   void _handleEdit(OrderEntity order) {
@@ -246,17 +240,17 @@ class _OrdersScreenState extends State<OrdersScreen> {
                                               padding: EdgeInsets.only(
                                                 bottom:
                                                     slotIndex ==
-                                                            columns[columnIndex]
-                                                                    .length -
-                                                                1
-                                                        ? 0.0
-                                                        : kspacing * 2,
+                                                        columns[columnIndex]
+                                                                .length -
+                                                            1
+                                                    ? 0.0
+                                                    : kspacing * 2,
                                               ),
                                               child: SizedBox(
                                                 width: 320,
                                                 child: _OrdersOrderCard(
-                                                  slot: columns[columnIndex]
-                                                      [slotIndex],
+                                                  slot:
+                                                      columns[columnIndex][slotIndex],
                                                   onEdit: _handleEdit,
                                                   onDelete: _handleDelete,
                                                   onServe: _handleServe,
@@ -315,10 +309,12 @@ class _OrdersScreenState extends State<OrdersScreen> {
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
         final bool isDark = Theme.of(context).brightness == Brightness.dark;
-        final Color navbarColor =
-            isDark ? const Color(0xFF1B1B1B) : const Color(0xFF2D2D2D);
-        final Color controlBg =
-            isDark ? const Color(0xFF2E2E2E) : const Color(0xFF4A4A4A);
+        final Color navbarColor = isDark
+            ? const Color(0xFF1B1B1B)
+            : const Color(0xFF2D2D2D);
+        final Color controlBg = isDark
+            ? const Color(0xFF2E2E2E)
+            : const Color(0xFF4A4A4A);
         final restaurantName =
             state.userRestaurant?.restaurant.name ?? "La Botica";
         final userName =
@@ -385,8 +381,9 @@ class _OrdersScreenState extends State<OrdersScreen> {
     return BlocBuilder<OrdersBloc, OrdersState>(
       builder: (context, state) {
         final bool isDark = Theme.of(context).brightness == Brightness.dark;
-        final Color containerColor =
-            isDark ? const Color(0xFF2E2E2E) : const Color(0xFF4A4A4A);
+        final Color containerColor = isDark
+            ? const Color(0xFF2E2E2E)
+            : const Color(0xFF4A4A4A);
         final openCount = state.orders
             .where(
               (o) =>
@@ -476,7 +473,10 @@ class _OrdersScreenState extends State<OrdersScreen> {
         }
       },
       itemBuilder: (BuildContext context) => [
-        const PopupMenuItem<String>(value: 'logout', child: Text('Déconnexion')),
+        const PopupMenuItem<String>(
+          value: 'logout',
+          child: Text('Déconnexion'),
+        ),
       ],
     );
   }
@@ -594,7 +594,10 @@ class _OrdersOrderCard extends StatelessWidget {
                     order.rTable?.name ?? order.clientName ?? "À emporter",
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  _buildStatusPill(statusLabel, _statusColor(order.orderStatus)),
+                  _buildStatusPill(
+                    statusLabel,
+                    _statusColor(order.orderStatus),
+                  ),
                 ],
               ),
             ),
@@ -698,9 +701,7 @@ class _OrdersOrderCard extends StatelessWidget {
               if (isStarted || isReady) ...[
                 const SizedBox(width: kspacing),
                 Icon(
-                  isReady
-                      ? Icons.check_circle
-                      : Icons.radio_button_unchecked,
+                  isReady ? Icons.check_circle : Icons.radio_button_unchecked,
                   size: 16,
                   color: isReady
                       ? readyColor
@@ -838,7 +839,7 @@ List<List<_CardSlot>> _buildColumns(
   double columnHeight,
 ) {
   const double headerHeight = 40;
-  const double subHeaderHeight = 110;
+  const double subHeaderHeight = 100;
   const double dividerHeight = 1;
   const double continuedHeight = 20;
   const double buttonHeight = 54;
@@ -863,9 +864,11 @@ List<List<_CardSlot>> _buildColumns(
 
     while (remaining.isNotEmpty) {
       double available = columnHeight - usedHeight - cardGap;
-      final double headerBlockHeight =
-          isFirstSlice ? (headerHeight + subHeaderHeight + dividerHeight) : 0;
-      final double minNeeded = headerBlockHeight +
+      final double headerBlockHeight = isFirstSlice
+          ? (headerHeight + subHeaderHeight + dividerHeight)
+          : 0;
+      final double minNeeded =
+          headerBlockHeight +
           (isFirstSlice ? 0 : continuedHeight) +
           itemHeight(remaining.first) +
           continuedHeight;
@@ -877,7 +880,8 @@ List<List<_CardSlot>> _buildColumns(
       }
 
       final List<OrderMenuItem> slice = [];
-      double sliceHeight = headerBlockHeight + (isFirstSlice ? 0 : continuedHeight);
+      double sliceHeight =
+          headerBlockHeight + (isFirstSlice ? 0 : continuedHeight);
       bool willContinue = false;
 
       for (int i = 0; i < remaining.length; i++) {

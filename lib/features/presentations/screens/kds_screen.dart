@@ -96,15 +96,15 @@ class _KdsScreenState extends State<KdsScreen> {
 
                       return LayoutBuilder(
                         builder: (context, constraints) {
-                          final double availableHeight =
+                          final double contentHeight =
                               (constraints.maxHeight - (kspacing * 4))
                                   .clamp(0, double.infinity)
                                   .toDouble();
 
                           final columns = _buildColumns(
                             filteredOrders,
-                            availableHeight > 0
-                                ? availableHeight
+                            contentHeight > 0
+                                ? contentHeight
                                 : constraints.maxHeight,
                           );
 
@@ -138,17 +138,17 @@ class _KdsScreenState extends State<KdsScreen> {
                                               padding: EdgeInsets.only(
                                                 bottom:
                                                     slotIndex ==
-                                                            columns[columnIndex]
-                                                                    .length -
-                                                                1
-                                                        ? 0.0
-                                                        : kspacing * 2,
+                                                        columns[columnIndex]
+                                                                .length -
+                                                            1
+                                                    ? 0.0
+                                                    : kspacing * 2,
                                               ),
                                               child: SizedBox(
                                                 width: 320,
                                                 child: KdsOrderCard(
-                                                  slot: columns[columnIndex]
-                                                      [slotIndex],
+                                                  slot:
+                                                      columns[columnIndex][slotIndex],
                                                 ),
                                               ),
                                             ),
@@ -204,10 +204,12 @@ class _KdsScreenState extends State<KdsScreen> {
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
         final bool isDark = Theme.of(context).brightness == Brightness.dark;
-        final Color navbarColor =
-            isDark ? const Color(0xFF1B1B1B) : const Color(0xFF2D2D2D);
-        final Color controlBg =
-            isDark ? const Color(0xFF2E2E2E) : const Color(0xFF4A4A4A);
+        final Color navbarColor = isDark
+            ? const Color(0xFF1B1B1B)
+            : const Color(0xFF2D2D2D);
+        final Color controlBg = isDark
+            ? const Color(0xFF2E2E2E)
+            : const Color(0xFF4A4A4A);
         final restaurantName =
             state.userRestaurant?.restaurant.name ?? "La Botica";
         final userName =
@@ -274,8 +276,9 @@ class _KdsScreenState extends State<KdsScreen> {
     return BlocBuilder<OrdersBloc, OrdersState>(
       builder: (context, state) {
         final bool isDark = Theme.of(context).brightness == Brightness.dark;
-        final Color containerColor =
-            isDark ? const Color(0xFF2E2E2E) : const Color(0xFF4A4A4A);
+        final Color containerColor = isDark
+            ? const Color(0xFF2E2E2E)
+            : const Color(0xFF4A4A4A);
         final openCount = state.orders
             .where(
               (o) =>
@@ -308,8 +311,7 @@ class _KdsScreenState extends State<KdsScreen> {
                 label: "Terminées ($completedCount)",
                 isActive: showCompleted,
                 onTap: () => setState(() => showCompleted = true),
-                activeColor:
-                    isDark ? const Color(0xFFE0E0E0) : Colors.white,
+                activeColor: isDark ? const Color(0xFFE0E0E0) : Colors.white,
                 activeTextColor: Colors.black87,
               ),
             ],
@@ -366,7 +368,10 @@ class _KdsScreenState extends State<KdsScreen> {
         }
       },
       itemBuilder: (BuildContext context) => [
-        const PopupMenuItem<String>(value: 'logout', child: Text('Déconnexion')),
+        const PopupMenuItem<String>(
+          value: 'logout',
+          child: Text('Déconnexion'),
+        ),
       ],
     );
   }
@@ -410,8 +415,8 @@ class KdsOrderCard extends StatelessWidget {
     final Color headerColor = isServed
         ? primaryColor
         : isInProgress
-            ? const Color(0xFFF36D21)
-            : const Color(0xFF4A4A4A);
+        ? const Color(0xFFF36D21)
+        : const Color(0xFF4A4A4A);
     final String timeStr = order.createdAt != null
         ? DateFormat('hh:mm a').format(order.createdAt!)
         : '--:--';
@@ -504,11 +509,7 @@ class KdsOrderCard extends StatelessWidget {
           ],
           // Continued Top
           if (slot.showContinuedTop)
-            _buildContinuedIndicator(
-              context,
-              "Suite...",
-              Icons.arrow_upward,
-            ),
+            _buildContinuedIndicator(context, "Suite...", Icons.arrow_upward),
           // Items
           Padding(
             padding: const EdgeInsets.all(kspacing),
@@ -521,11 +522,7 @@ class KdsOrderCard extends StatelessWidget {
           ),
           // Continued Bottom
           if (slot.showContinuedBottom)
-            _buildContinuedIndicator(
-              context,
-              "Suite...",
-              Icons.arrow_downward,
-            ),
+            _buildContinuedIndicator(context, "Suite...", Icons.arrow_downward),
           // Action Buttons
           if (slot.showButton)
             if (isInProgress)
@@ -612,11 +609,11 @@ class KdsOrderCard extends StatelessWidget {
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
     final bool isStarted = order.orderStatus == OrderStatus.inPreparation;
     final bool isReady = item.status == 'ready';
-    final bool canToggle =
-        isStarted && order.id != null && item.id != null;
+    final bool canToggle = isStarted && order.id != null && item.id != null;
     final String nextStatus = isReady ? 'init' : 'ready';
-    final TextDecoration? decoration =
-        isReady ? TextDecoration.lineThrough : null;
+    final TextDecoration? decoration = isReady
+        ? TextDecoration.lineThrough
+        : null;
     final Color readyColor = const Color(0xFFF36D21);
     final Color? textColor = isReady ? readyColor : null;
     return Padding(
@@ -626,11 +623,7 @@ class KdsOrderCard extends StatelessWidget {
         onTap: canToggle
             ? () {
                 context.read<OrdersBloc>().add(
-                  OrderMenuItemStatusUpdated(
-                    order.id!,
-                    item.id!,
-                    nextStatus,
-                  ),
+                  OrderMenuItemStatusUpdated(order.id!, item.id!, nextStatus),
                 );
               }
             : null,
@@ -650,33 +643,31 @@ class KdsOrderCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: kspacing * 1.5),
-              Expanded(
-                child: Text(
-                  item.menuItem.translations.isNotEmpty
-                      ? item.menuItem.translations.first.name
-                      : 'Nom',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 13,
-                    decoration: decoration,
-                    color: textColor,
+                Expanded(
+                  child: Text(
+                    item.menuItem.translations.isNotEmpty
+                        ? item.menuItem.translations.first.name
+                        : 'Nom',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 13,
+                      decoration: decoration,
+                      color: textColor,
+                    ),
                   ),
                 ),
-              ),
-              if (isStarted) ...[
-                const SizedBox(width: kspacing),
-                Icon(
-                  isReady
-                      ? Icons.check_circle
-                      : Icons.radio_button_unchecked,
-                  size: 16,
-                  color: isReady
-                      ? readyColor
-                      : (isDark ? Colors.white38 : Colors.black38),
-                ),
+                if (isStarted) ...[
+                  const SizedBox(width: kspacing),
+                  Icon(
+                    isReady ? Icons.check_circle : Icons.radio_button_unchecked,
+                    size: 16,
+                    color: isReady
+                        ? readyColor
+                        : (isDark ? Colors.white38 : Colors.black38),
+                  ),
+                ],
               ],
-            ],
-          ),
+            ),
             if (item.notes != null && item.notes!.isNotEmpty)
               Padding(
                 padding: const EdgeInsets.only(left: kspacing * 3),
@@ -684,8 +675,9 @@ class KdsOrderCard extends StatelessWidget {
                   "${item.notes}",
                   style: TextStyle(
                     fontSize: 11,
-                    color:
-                        isReady ? readyColor : (isDark ? Colors.white60 : Colors.black54),
+                    color: isReady
+                        ? readyColor
+                        : (isDark ? Colors.white60 : Colors.black54),
                     decoration: decoration,
                   ),
                 ),
@@ -743,7 +735,7 @@ List<List<_CardSlot>> _buildColumns(
   double columnHeight,
 ) {
   const double headerHeight = 40; // 8*2 padding + title/time text
-  const double subHeaderHeight = 110; // 8*2 padding + single line
+  const double subHeaderHeight = 100; // 8*2 padding + single line
   const double dividerHeight = 1;
   const double continuedHeight = 20; // 4*2 padding + 12 icon/text
   const double buttonHeight = 54; // 8*2 padding + button height
@@ -768,9 +760,11 @@ List<List<_CardSlot>> _buildColumns(
 
     while (remaining.isNotEmpty) {
       double available = columnHeight - usedHeight - cardGap;
-      final double headerBlockHeight =
-          isFirstSlice ? (headerHeight + subHeaderHeight + dividerHeight) : 0;
-      final double minNeeded = headerBlockHeight +
+      final double headerBlockHeight = isFirstSlice
+          ? (headerHeight + subHeaderHeight + dividerHeight)
+          : 0;
+      final double minNeeded =
+          headerBlockHeight +
           (isFirstSlice ? 0 : continuedHeight) +
           itemHeight(remaining.first) +
           continuedHeight;
@@ -782,7 +776,8 @@ List<List<_CardSlot>> _buildColumns(
       }
 
       final List<OrderMenuItem> slice = [];
-      double sliceHeight = headerBlockHeight + (isFirstSlice ? 0 : continuedHeight);
+      double sliceHeight =
+          headerBlockHeight + (isFirstSlice ? 0 : continuedHeight);
       bool willContinue = false;
 
       for (int i = 0; i < remaining.length; i++) {
@@ -798,6 +793,11 @@ List<List<_CardSlot>> _buildColumns(
           willContinue = true;
           break;
         }
+      }
+
+      if (slice.isEmpty) {
+        slice.add(remaining.first);
+        willContinue = remaining.length > 1;
       }
 
       if (!willContinue) {
