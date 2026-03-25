@@ -3,6 +3,7 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:menu_zen_restaurant/core/extensions/string_extension.dart';
 import 'package:menu_zen_restaurant/features/domains/entities/order_menu_item.dart';
 import 'package:menu_zen_restaurant/features/domains/entities/table_entity.dart';
+import 'package:menu_zen_restaurant/features/domains/entities/user_entity.dart';
 
 class OrderEntity extends Equatable {
   final int? id;
@@ -12,6 +13,7 @@ class OrderEntity extends Equatable {
   final List<OrderMenuItem> orderMenuItems;
   final int restaurantTableId;
   final TableEntity? rTable;
+  final UserEntity? server;
   final DateTime? createdAt;
   final int totalAmount;
 
@@ -20,6 +22,7 @@ class OrderEntity extends Equatable {
     required this.orderStatus,
     required this.paymentStatus,
     this.rTable,
+    this.server,
     this.clientName,
     this.orderMenuItems = const [],
     required this.restaurantTableId,
@@ -36,6 +39,7 @@ class OrderEntity extends Equatable {
     List<OrderMenuItem>? orderMenuItems,
     int? restaurantTableId,
     TableEntity? rTable,
+    UserEntity? server,
     DateTime? createdAt,
     int? totalAmount,
   }) {
@@ -47,6 +51,7 @@ class OrderEntity extends Equatable {
       orderMenuItems: orderMenuItems ?? this.orderMenuItems,
       restaurantTableId: restaurantTableId ?? this.restaurantTableId,
       rTable: rTable ?? this.rTable,
+      server: server ?? this.server,
       createdAt: createdAt ?? this.createdAt,
       totalAmount: totalAmount ?? this.totalAmount,
     );
@@ -61,6 +66,7 @@ class OrderEntity extends Equatable {
     orderMenuItems,
     restaurantTableId,
     rTable,
+    server,
     createdAt,
     totalAmount,
   ];

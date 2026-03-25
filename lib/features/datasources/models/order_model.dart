@@ -7,6 +7,7 @@ import 'menu_item_model.dart';
 import 'menu_item_translation_model.dart';
 import 'menu_model.dart';
 import 'order_menu_item_model.dart';
+import 'user_model.dart';
 
 part 'order_model.g.dart';
 
@@ -18,17 +19,32 @@ class OrderModel extends OrderEntity {
   @override
   final TableModel? rTable;
 
+  @override
+  final UserModel? server;
+
   const OrderModel({
-    super.id,
-    super.clientName,
+    int? id,
+    String? clientName,
     required this.orderMenuItems,
     required this.rTable,
-    required super.orderStatus,
-    required super.paymentStatus,
-    required super.restaurantTableId,
-    super.createdAt,
-    required super.totalAmount,
-  });
+    this.server,
+    required OrderStatus orderStatus,
+    required PaymentStatus paymentStatus,
+    required int restaurantTableId,
+    DateTime? createdAt,
+    required int totalAmount,
+  }) : super(
+         id: id,
+         clientName: clientName,
+         orderMenuItems: orderMenuItems,
+         restaurantTableId: restaurantTableId,
+         rTable: rTable,
+         server: server,
+         orderStatus: orderStatus,
+         paymentStatus: paymentStatus,
+         createdAt: createdAt,
+         totalAmount: totalAmount,
+       );
 
   factory OrderModel.fromEntity(OrderEntity entity) {
     final orderMenuItems = entity.orderMenuItems.map((menu) {
@@ -46,6 +62,7 @@ class OrderModel extends OrderEntity {
       clientName: entity.clientName,
       orderStatus: entity.orderStatus,
       rTable: entity.rTable != null ? TableModel.fromEntity(entity.rTable!) : null,
+      server: entity.server != null ? UserModel.fromEntity(entity.server!) : null,
       paymentStatus: entity.paymentStatus,
       orderMenuItems: orderMenuItems,
       restaurantTableId: entity.restaurantTableId,

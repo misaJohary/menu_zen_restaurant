@@ -497,7 +497,9 @@ class KdsOrderCard extends StatelessWidget {
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        "Brownie Jennifer", // Hardcoded for now
+                        order.server?.fullName ??
+                            order.server?.username ??
+                            "Serveur",
                         style: Theme.of(context).textTheme.bodyMedium,
                       ),
                     ],
