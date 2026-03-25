@@ -191,11 +191,11 @@ class _OrdersScreenState extends State<OrdersScreen> {
 
                       final filteredOrders = state.orders.where((order) {
                         if (showCompleted) {
-                          return order.orderStatus == OrderStatus.ready ||
-                              order.orderStatus == OrderStatus.served;
+                          return order.orderStatus == OrderStatus.served;
                         }
                         return order.orderStatus == OrderStatus.created ||
-                            order.orderStatus == OrderStatus.inPreparation;
+                            order.orderStatus == OrderStatus.inPreparation ||
+                            order.orderStatus == OrderStatus.ready;
                       }).toList();
 
                       if (filteredOrders.isEmpty) {
@@ -401,15 +401,12 @@ class _OrdersScreenState extends State<OrdersScreen> {
             .where(
               (o) =>
                   o.orderStatus == OrderStatus.created ||
-                  o.orderStatus == OrderStatus.inPreparation,
+                  o.orderStatus == OrderStatus.inPreparation ||
+                  o.orderStatus == OrderStatus.ready,
             )
             .length;
         final completedCount = state.orders
-            .where(
-              (o) =>
-                  o.orderStatus == OrderStatus.ready ||
-                  o.orderStatus == OrderStatus.served,
-            )
+            .where((o) => o.orderStatus == OrderStatus.served)
             .length;
 
         return Container(
@@ -534,9 +531,22 @@ class _OrdersOrderCard extends StatelessWidget {
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
     final order = slot.order;
     final bool isInProgress = order.orderStatus == OrderStatus.inPreparation;
+    final bool isReady = order.orderStatus == OrderStatus.ready;
+    final String tableLabel = order.rTable?.name?.trim() ?? '';
+    final String clientLabel = order.clientName?.trim() ?? '';
+    final String headerTitle = tableLabel.isNotEmpty && clientLabel.isNotEmpty
+        ? "$tableLabel ($clientLabel)"
+        : tableLabel.isNotEmpty
+        ? tableLabel
+        : clientLabel.isNotEmpty
+        ? clientLabel
+        : "À emporter";
     final Color headerColor = isInProgress
-        ? const Color(0xFFF36D21)
+        ? const Color(0xFF4A4A4A)
+        : isReady
+        ? const Color(0xFF4A4A4A)
         : const Color(0xFF4A4A4A);
+    //0xFFF36D21
     final String timeStr = order.createdAt != null
         ? DateFormat('hh:mm a').format(order.createdAt!)
         : '--:--';
@@ -591,7 +601,11 @@ class _OrdersOrderCard extends StatelessWidget {
                     ],
                   ),
                   Icon(
-                    isInProgress ? Icons.soup_kitchen : Icons.print,
+                    isInProgress
+                        ? Icons.soup_kitchen
+                        : isReady
+                        ? Icons.restaurant
+                        : Icons.print,
                     color: Colors.white,
                     size: 24,
                   ),
@@ -604,7 +618,7 @@ class _OrdersOrderCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    order.rTable?.name ?? order.clientName ?? "À emporter",
+                    headerTitle,
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                   _buildStatusPill(
@@ -630,7 +644,7 @@ class _OrdersOrderCard extends StatelessWidget {
           if (slot.showContinuedBottom)
             _buildContinuedIndicator(context, "Suite...", Icons.arrow_downward),
           if (slot.showButton)
-            if (isInProgress)
+            if (isInProgress || isReady)
               _buildActionButton(
                 context,
                 "Terminer",
@@ -823,7 +837,7 @@ Color _statusColor(OrderStatus status) {
     case OrderStatus.inPreparation:
       return const Color(0xFFF36D21);
     case OrderStatus.ready:
-      return const Color(0xFFFFA000);
+      return primaryColor;
     case OrderStatus.served:
       return const Color(0xFF2E7D32);
     default:
