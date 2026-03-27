@@ -1,4 +1,7 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:auto_route/annotations.dart';
+import '../../../core/navigation/app_router.gr.dart';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -124,67 +127,60 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   Widget _buildHeader(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          "Dashboard",
-          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
-              ),
-        ),
-        Row(
+    return BlocBuilder<AuthBloc, AuthState>(
+      builder: (context, state) {
+        final user = state.userRestaurant?.user;
+        final actualFullName = user != null
+            ? (user.fullName ??
+                '${user.firstname ?? ''} ${user.lastname ?? ''}'.trim())
+            : '';
+        final displayName =
+            actualFullName.isNotEmpty ? actualFullName : (user?.username ?? '');
+
+        final initials = displayName.isNotEmpty
+            ? displayName
+                .split(' ')
+                .where((e) => e.isNotEmpty)
+                .map((n) => n[0])
+                .take(2)
+                .join()
+                .toUpperCase()
+            : (user?.username.isNotEmpty == true
+                ? user!.username[0].toUpperCase()
+                : '');
+
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const CircleAvatar(
-              radius: 20,
-              backgroundImage: NetworkImage(
-                'https://i.pravatar.cc/150?u=user123',
-              ),
-            ),
-            const SizedBox(width: kspacing),
-            Container(
-              padding: const EdgeInsets.all(kspacing),
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(Icons.search, size: 20, color: Colors.grey),
-            ),
-            const SizedBox(width: kspacing),
-            Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: kspacing * 1.5,
-                vertical: kspacing,
-              ),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Row(
-                children: [
-                  Image.network(
-                    'https://upload.wikimedia.org/wikipedia/en/thumb/c/c3/Flag_of_France.svg/1200px-Flag_of_France.svg.png',
-                    width: 20,
-                    height: 15,
-                    fit: BoxFit.cover,
+            Text(
+              "Dashboard",
+              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
                   ),
-                  const SizedBox(width: kspacing),
-                  const Text(
-                    "French",
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
+            ),
+            InkWell(
+              onTap: () => context.router.push(const ProfileRoute()),
+              borderRadius: BorderRadius.circular(20),
+              child: MouseRegion(
+                cursor: SystemMouseCursors.click,
+                child: CircleAvatar(
+                  radius: 20,
+                  backgroundColor: primaryColor,
+                  child: Text(
+                    initials,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const Icon(Icons.check, size: 14, color: Colors.green),
-                  const Icon(Icons.keyboard_arrow_down, size: 18),
-                ],
+                ),
               ),
             ),
           ],
-        ),
-      ],
+        );
+      },
     );
   }
 
