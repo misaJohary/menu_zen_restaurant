@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:auto_route/auto_route.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -28,6 +30,7 @@ class _LoginScreenState extends State<LoginScreen> {
   bool? _isConnected;
   bool _isChecking = false;
   String _currentBaseUrl = '';
+  bool _obscurePassword = true;
 
   @override
   void initState() {
@@ -113,9 +116,9 @@ class _LoginScreenState extends State<LoginScreen> {
     final uri = Uri.tryParse(normalized);
     if (uri == null || !uri.hasScheme || uri.host.isEmpty) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please enter a valid URL.')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Please enter a valid URL.')));
       return;
     }
     await _applyBaseUrl(normalized);
@@ -143,6 +146,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Stack(
         children: [
           Center(
@@ -157,7 +161,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     listener: (context, state) {
                       if (state.authStatus == AuthStatus.authenticated) {
                         context.read<AuthBloc>().add(AuthUserGot());
-                      } else if (state.authStatus == AuthStatus.unauthenticated) {
+                      } else if (state.authStatus ==
+                          AuthStatus.unauthenticated) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text('Login failed, please try again'),
@@ -182,62 +187,295 @@ class _LoginScreenState extends State<LoginScreen> {
                   key: controller.formKey,
                   child: Row(
                     children: [
-                      Expanded(child: Center(child: Logo(isBig: true))),
-                      //Spacer(),
+                      // Left side with images
+                      Expanded(
+                        child: Container(
+                          color: Colors.white,
+                          child: Stack(
+                            fit: StackFit.expand,
+                            children: [
+                              Image.asset(
+                                'assets/images/background_green.png',
+                                fit: BoxFit.contain,
+                              ),
+
+                              Center(
+                                child: SizedBox(
+                                  width: 400,
+                                  height: 600,
+                                  child: Stack(
+                                    clipBehavior: Clip.none,
+                                    children: [
+                                      Positioned(
+                                        top: 0,
+                                        right: -90,
+                                        child: Image.asset(
+                                          'assets/images/riz_au_poulet.png',
+                                          width: 300,
+                                        ),
+                                      ),
+                                      Positioned(
+                                        top: 200,
+                                        left: -80,
+                                        child: Image.asset(
+                                          'assets/images/plat_2.png',
+                                          width: 330,
+                                        ),
+                                      ),
+                                      Positioned(
+                                        bottom: 30,
+                                        right: -10,
+                                        child: Image.asset(
+                                          'assets/images/salade_de_legume.png',
+                                          width: 180,
+                                        ),
+                                      ),
+                                      Positioned(
+                                        top: 10,
+                                        left: -70,
+                                        child: Image.asset(
+                                          'assets/images/leaf_1.png',
+                                          width: 70,
+                                        ),
+                                      ),
+                                      Positioned(
+                                        bottom: -80,
+                                        right: -70,
+                                        child: Image.asset(
+                                          'assets/images/leaf_1.png',
+                                          width: 70,
+                                        ),
+                                      ),
+                                      Positioned(
+                                        bottom: 20,
+                                        left: -70,
+                                        child: Transform.rotate(
+                                          angle: math.pi / 6,
+                                          child: Image.asset(
+                                            'assets/images/leaf_1.png',
+                                            width: 40,
+                                          ),
+                                        ),
+                                      ),
+                                      Positioned(
+                                        top: -50,
+                                        right: -80,
+                                        child: Transform.rotate(
+                                          angle: math.pi / 6,
+                                          child: Image.asset(
+                                            'assets/images/leaf_1.png',
+                                            width: 40,
+                                          ),
+                                        ),
+                                      ),
+                                      // Positioned(top: 80, right: 120, child: Image.asset('assets/images/leaf_2.png', width: 30)),
+                                      // Positioned(bottom: 220, left: 100, child: Image.asset('assets/images/leaf_3.png', width: 40)),
+                                      // Positioned(bottom: -30, right: -10, child: Image.asset('assets/images/leaf_4.png', width: 50)),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      // Right side with form
                       Expanded(
                         child: Center(
                           child: SizedBox(
-                            width: 400,
+                            width: 380,
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
-                                //SizedBox(height: kspacing*5,),
+                                Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Logo(isBig: true),
+                                ),
+                                SizedBox(height: 60),
+                                Text(
+                                  'Nom d\'utilisateur',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                                SizedBox(height: 8),
                                 FormBuilderTextField(
                                   name: 'username',
                                   decoration: InputDecoration(
-                                    labelText: 'Nom d\'utilisateur',
+                                    hintText: 'rakoto.nomenjanahary',
+                                    hintStyle: TextStyle(
+                                      color: Colors.grey.shade400,
+                                      fontSize: 14,
+                                    ),
+                                    contentPadding: EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                      vertical: 16,
+                                    ),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                      borderSide: BorderSide(
+                                        color: Colors.grey.shade300,
+                                      ),
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                      borderSide: BorderSide(
+                                        color: Colors.grey.shade300,
+                                      ),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                      borderSide: BorderSide(
+                                        color: primaryColor,
+                                        width: 2,
+                                      ),
+                                    ),
                                   ),
-                                  keyboardType: TextInputType.emailAddress,
+                                  keyboardType: TextInputType.text,
                                   validator: FormBuilderValidators.compose([
                                     FormBuilderValidators.required(),
                                   ]),
                                 ),
+                                SizedBox(height: 24),
+                                Text(
+                                  'Mot de passe',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                                SizedBox(height: 8),
                                 FormBuilderTextField(
                                   name: 'password',
+                                  obscureText: _obscurePassword,
                                   decoration: InputDecoration(
-                                    labelText: 'Mot de passe',
+                                    hintText: '* * * * * * *',
+                                    hintStyle: TextStyle(
+                                      color: Colors.grey.shade400,
+                                      fontSize: 14,
+                                    ),
+                                    contentPadding: EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                      vertical: 16,
+                                    ),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                      borderSide: BorderSide(
+                                        color: Colors.grey.shade300,
+                                      ),
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                      borderSide: BorderSide(
+                                        color: Colors.grey.shade300,
+                                      ),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                      borderSide: BorderSide(
+                                        color: primaryColor,
+                                        width: 2,
+                                      ),
+                                    ),
+                                    suffixIcon: IconButton(
+                                      icon: Icon(
+                                        _obscurePassword
+                                            ? Icons.visibility_off
+                                            : Icons.visibility,
+                                        color: Colors.grey,
+                                      ),
+                                      onPressed: () {
+                                        setState(() {
+                                          _obscurePassword = !_obscurePassword;
+                                        });
+                                      },
+                                    ),
                                   ),
-                                  obscureText: true,
                                   validator: FormBuilderValidators.required(),
                                 ),
-                                SizedBox(height: kspacing * 3),
+                                SizedBox(height: 8),
+                                Align(
+                                  alignment: Alignment.centerRight,
+                                  child: InkWell(
+                                    onTap: () {},
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 8,
+                                      ),
+                                      child: Text(
+                                        'Mot de passe oublié ?',
+                                        style: TextStyle(
+                                          color: primaryColor,
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 13,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(height: 32),
                                 BlocBuilder<AuthBloc, AuthState>(
                                   builder: (context, state) {
                                     if (state.status == BlocStatus.loading) {
-                                      return CircularProgressIndicator();
+                                      return Center(
+                                        child: CircularProgressIndicator(),
+                                      );
                                     }
                                     return ElevatedButton(
                                       onPressed: controller.validate,
                                       style: ElevatedButton.styleFrom(
-                                        minimumSize: Size(600, 60),
+                                        backgroundColor: primaryColor,
+                                        foregroundColor: Colors.white,
+                                        minimumSize: Size(double.infinity, 50),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            25,
+                                          ),
+                                        ),
+                                        elevation: 0,
                                       ),
-                                      child: Text('Se connecter'),
+                                      child: Text(
+                                        'SE CONNECTER',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 14,
+                                        ),
+                                      ),
                                     );
                                   },
                                 ),
-                                SizedBox(height: kspacing * 3),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    context.router.push(
-                                      RegistrationRoute(),
-                                    );
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    minimumSize: Size(600, 60),
-                                    backgroundColor: Colors.black54,
-                                  ),
-                                  child: Text('S\'inscrire'),
+                                SizedBox(height: 32),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      "Vous n'avez pas encore de compte ? ",
+                                      style: TextStyle(
+                                        color: Colors.grey.shade500,
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                    InkWell(
+                                      onTap: () {
+                                        context.router.push(
+                                          RegistrationRoute(),
+                                        );
+                                      },
+                                      child: Text(
+                                        "S'inscrire",
+                                        style: TextStyle(
+                                          color: primaryColor,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 13,
+                                          decoration: TextDecoration.underline,
+                                          decorationColor: primaryColor,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
@@ -293,8 +531,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       _isChecking
                           ? 'Checking connection...'
                           : (_isConnected ?? false)
-                              ? 'Connected'
-                              : 'Disconnected',
+                          ? 'Connected'
+                          : 'Disconnected',
                       style: TextStyle(fontWeight: FontWeight.w600),
                     ),
                   ],

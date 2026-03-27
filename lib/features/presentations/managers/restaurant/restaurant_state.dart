@@ -7,6 +7,7 @@ class RestaurantState extends Equatable {
     this.userFilled = false,
     this.userRestaurant,
     this.status = BlocStatus.init,
+    this.navigationNonce = 0,
   });
 
   final UserRestaurantEntity? userRestaurant;
@@ -14,6 +15,7 @@ class RestaurantState extends Equatable {
   final bool restaurantFilled;
   final bool restaurantMoreInfoFilled;
   final bool userFilled;
+  final int navigationNonce;
 
   RestaurantState copyWith({
     UserRestaurantEntity? userRestaurant,
@@ -21,6 +23,7 @@ class RestaurantState extends Equatable {
     bool? restaurantFilled,
     bool? restaurantMoreInfoFilled,
     bool? userFilled,
+    int? navigationNonce,
   }) {
     return RestaurantState(
       userRestaurant: userRestaurant ?? this.userRestaurant,
@@ -28,6 +31,7 @@ class RestaurantState extends Equatable {
       restaurantFilled: restaurantFilled ?? this.restaurantFilled,
       restaurantMoreInfoFilled: restaurantMoreInfoFilled ?? this.restaurantMoreInfoFilled,
       userFilled: userFilled ?? this.userFilled,
+      navigationNonce: navigationNonce ?? this.navigationNonce,
     );
   }
 
@@ -38,5 +42,6 @@ class RestaurantState extends Equatable {
     restaurantFilled,
     restaurantMoreInfoFilled,
     userFilled,
+    navigationNonce,
   ];
 }

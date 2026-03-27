@@ -35,6 +35,9 @@ dependencies:
   web_socket_channel: ^3.0.3
   syncfusion_flutter_charts:
   lottie: ^3.3.1
+  audioplayers: ^6.6.0
+  google_fonts: ^8.0.2
+  flutter_svg: ^2.2.4
 
 dev_dependencies:
   flutter_test:
@@ -56,6 +59,9 @@ flutter:
      - .env.staging
      - assets/images/.
      - assets/lotties/.
+     - assets/sounds/
+     - assets/icons/.
+
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

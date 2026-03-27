@@ -6,6 +6,7 @@ import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:menu_zen_restaurant/core/services/photon_geocoding_service.dart';
 import 'package:menu_zen_restaurant/features/presentations/controllers/user_registration_controller.dart';
+import 'package:menu_zen_restaurant/features/presentations/widgets/logo.dart';
 
 import '../../../core/constants/constants.dart';
 import '../../../core/enums/bloc_status.dart';
@@ -26,11 +27,99 @@ class RegistrationScreen extends StatefulWidget {
   State<RegistrationScreen> createState() => _RegistrationScreenState();
 }
 
+class DashedLinePainter extends CustomPainter {
+  final Color color;
+
+  DashedLinePainter({required this.color});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    double dashHeight = 4, dashSpace = 4, startY = 0;
+    final paint = Paint()
+      ..color = color
+      ..strokeWidth = 1.5;
+    while (startY < size.height) {
+      canvas.drawLine(Offset(0, startY), Offset(0, startY + dashHeight), paint);
+      startY += dashHeight + dashSpace;
+    }
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) => false;
+}
+
 class _RegistrationScreenState extends State<RegistrationScreen> {
   @override
   void initState() {
     super.initState();
     context.read<LanguagesBloc>().add(LanguagesFetched());
+  }
+
+  Widget _buildStepperItem({
+    required String title,
+    required bool isActive,
+    required String number,
+    required bool isLast,
+  }) {
+    return IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Column(
+            children: [
+              Container(
+                width: 32,
+                height: 32,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: isActive ? primaryColor : Colors.grey.shade300,
+                ),
+                child: Center(
+                  child: isActive
+                      ? const Icon(Icons.check, color: Colors.white, size: 20)
+                      : Text(number,
+                          style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold)),
+                ),
+              ),
+              if (!isLast)
+                Expanded(
+                  child: Container(
+                    width: 2,
+                    margin: const EdgeInsets.symmetric(vertical: 4),
+                    child: CustomPaint(
+                      painter: DashedLinePainter(
+                          color: isActive ? primaryColor : Colors.grey.shade300),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 6),
+                  child: Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      color: isActive ? primaryColor : Colors.grey.shade600,
+                    ),
+                  ),
+                ),
+                if (!isLast) const SizedBox(height: 60),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -47,35 +136,19 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           listeners: [
             BlocListener<RestaurantBloc, RestaurantState>(
               listenWhen: (previous, current) =>
-                  previous.restaurantFilled != current.restaurantFilled ||
-                  previous.userFilled != current.userFilled ||
-                  previous.restaurantMoreInfoFilled !=
-                      current.restaurantMoreInfoFilled,
+                  previous.navigationNonce != current.navigationNonce,
               listener: (context, state) {
-                switch ((
-                  state.restaurantFilled,
-                  state.restaurantMoreInfoFilled,
-                  state.userFilled,
-                )) {
-                  case (true, true, true):
-                    // Both forms complete - create restaurant
-                    context.read<RestaurantBloc>().add(RestaurantCreated());
-                    break;
-                  case (true, false, false):
-                    // Restaurant filled, user not - go to user tab
-                    tabsRouter.setActiveIndex(1);
-                    break;
-                  case (true, true, false):
-                    // Restaurant filled, user not - go to user tab
-                    tabsRouter.setActiveIndex(2);
-                    break;
-                  default:
-                    // Neither filled - could stay on current or go to first tab
-                    // tabsRouter.setActiveIndex(0); // if needed
-                    break;
+                final index = tabsRouter.activeIndex;
+                if (index == 0 && state.restaurantFilled) {
+                  tabsRouter.setActiveIndex(1);
+                } else if (index == 1 && state.restaurantMoreInfoFilled) {
+                  tabsRouter.setActiveIndex(2);
+                } else if (index == 2 && state.userFilled) {
+                  context.read<RestaurantBloc>().add(const RestaurantCreated());
                 }
               },
             ),
+
             BlocListener<RestaurantBloc, RestaurantState>(
               listenWhen: (previous, current) =>
                   previous.status != current.status,
@@ -92,12 +165,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               listener: (context, state) {
                 if (state.status == BlocStatus.loaded) {
                   context.router.reevaluateGuards();
-                  // context.router.pushAndPopUntil(
-                  //   MainRoute(),
-                  //   predicate: (_) =>
-                  //       false, // This predicate ensures all previous routes are removed
-                  // );
-                }else if(state.status == BlocStatus.failed){
+                } else if (state.status == BlocStatus.failed) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text('Erreur lors de la connexion')),
                   );
@@ -105,11 +173,129 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               },
             ),
           ],
-          child: Scaffold(body: child),
+          child: Scaffold(
+            backgroundColor: const Color(0xFFF2F8E8),
+            body: Row(
+              children: [
+                Container(
+                  margin: const EdgeInsets.all(24),
+                  padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 40),
+                  width: 380,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(24),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.05),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ]
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Logo(isBig: false),
+                      const SizedBox(height: 60),
+                      const Text('Créer un compte',
+                          style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black)),
+                      const SizedBox(height: 60),
+                      _buildStepperItem(
+                        title: 'Informations restaurant',
+                        isActive: tabsRouter.activeIndex >= 0,
+                        number: '01',
+                        isLast: false,
+                      ),
+                      _buildStepperItem(
+                        title: 'Catégories & Langues',
+                        isActive: tabsRouter.activeIndex >= 1,
+                        number: 'O2',
+                        isLast: false,
+                      ),
+                      _buildStepperItem(
+                        title: 'Informations utilisateurs',
+                        isActive: tabsRouter.activeIndex >= 2,
+                        number: 'O3',
+                        isLast: true,
+                      ),
+                      const Spacer(),
+                      InkWell(
+                        onTap: () => context.router.replaceAll([app_router.LoginRoute()]),
+                        child: Row(
+                          children: [
+                            Icon(Icons.login_outlined, color: primaryColor),
+                            const SizedBox(width: 8),
+                            Text('SE CONNECTER',
+                                style: TextStyle(
+                                    color: primaryColor,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14)),
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: Container(
+                    margin: const EdgeInsets.only(top: 24, bottom: 24, right: 24),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(24),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.05),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ]
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(24),
+                      child: child,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
         );
       },
     );
   }
+}
+
+Widget _buildLabel(String text) {
+  return Padding(
+    padding: const EdgeInsets.only(bottom: 8),
+    child: Text(
+      text,
+      style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: Colors.black87),
+    ),
+  );
+}
+
+InputDecoration _defaultInputDecoration({String? hintText}) {
+  return InputDecoration(
+    hintText: hintText,
+    hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 14, fontWeight: FontWeight.normal),
+    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(8),
+      borderSide: BorderSide(color: Colors.grey.shade300),
+    ),
+    enabledBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(8),
+      borderSide: BorderSide(color: Colors.grey.shade300),
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(8),
+      borderSide: BorderSide(color: primaryColor, width: 2),
+    ),
+  );
 }
 
 @RoutePage()
@@ -132,61 +318,110 @@ class _RestaurantCustomizeFormState extends State<RestaurantCustomizeForm> {
 
   @override
   Widget build(BuildContext context) {
-    return FormBuilder(
-      key: controller.formKey,
-      child: Center(
-        child: SizedBox(
-          width: MediaQuery.sizeOf(context).width * .5,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              FormBuilderDropdown(
-                name: 'type',
-                decoration: const InputDecoration(labelText: 'Catégorie'),
-                validator: FormBuilderValidators.required(),
-                items: RestaurantType.values.map((type) {
-                  return DropdownMenuItem(
-                    value: type,
-                    child: Text(type.toString()),
-                  );
-                }).toList(),
-              ),
-              SizedBox(height: 12),
-              BlocBuilder<LanguagesBloc, LanguagesState>(
-                builder: (context, langState) {
-                  final selectedLang = langState.languages;
-                  return FormBuilderFilterChips<String>(
-                    name: 'languages',
-                    initialValue: ['fr'],
-                    spacing: 8,
-                    decoration: InputDecoration(
-                      label: Text("Languages du menu"),
-                    ),
-                    options: selectedLang.map((lang) {
-                      return FormBuilderChipOption(
-                        value: lang.code,
-                        child: Text(lang.name),
-                      );
-                    }).toList(),
-                  );
-                },
-              ),
-              SizedBox(height: 24),
-              ElevatedButton(
-                onPressed: controller.validate,
-                style: ElevatedButton.styleFrom(
-                  minimumSize: const Size(double.infinity, 50),
-                  backgroundColor: Colors.blue,
-                  foregroundColor: Colors.white,
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(40.0),
+      child: FormBuilder(
+        key: controller.formKey,
+        child: Center(
+          child: SizedBox(
+            width: 700,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Sélectionner la catégorie et la langue utilise pour le menu',
+                  style: TextStyle(fontSize: 20, color: Colors.grey.shade500, fontWeight: FontWeight.w400),
                 ),
-                child: Text('Suivant'),
-              ),
-            ],
+                const SizedBox(height: 30),
+                _buildLabel('Catégorie'),
+                FormBuilderDropdown(
+                  name: 'type',
+                  decoration: _defaultInputDecoration(hintText: 'Sélectionner catégorie(s)'),
+                  validator: FormBuilderValidators.required(),
+                  items: RestaurantType.values.map((type) {
+                    return DropdownMenuItem(
+                      value: type,
+                      child: Text(type.toString()),
+                    );
+                  }).toList(),
+                ),
+                const SizedBox(height: 32),
+                _buildLabel('Langue du menu'),
+                BlocBuilder<LanguagesBloc, LanguagesState>(
+                  builder: (context, langState) {
+                    final selectedLang = langState.languages;
+                    return FormBuilderFilterChips<String>(
+                      name: 'languages',
+                      initialValue: ['fr'],
+                      spacing: 12,
+                      runSpacing: 12,
+                      decoration: const InputDecoration(border: InputBorder.none),
+                      options: selectedLang.map((lang) {
+                        return FormBuilderChipOption(
+                          value: lang.code,
+                          avatar: _getAvatarForLang(lang.code),
+                          child: Text('  ${lang.name}  ', style: const TextStyle(fontWeight: FontWeight.w500)),
+                        );
+                      }).toList(),
+                      //selectedRowColor: primaryColor.withOpacity(0.1),
+                      selectedColor: Colors.white,
+                      backgroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(24),
+                        side: BorderSide(color: Colors.grey.shade300),
+                      ),
+                      checkmarkColor: primaryColor,
+                    );
+                  },
+                ),
+                const SizedBox(height: 300),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                         AutoTabsRouter.of(context).setActiveIndex(0);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: const Size(200, 50),
+                        backgroundColor: primaryColor.withOpacity(0.2),
+                        foregroundColor: primaryColor,
+                        shadowColor: Colors.transparent,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(25),
+                        ),
+                      ),
+                      child: const Text('PRÉCÉDENT', style: TextStyle(fontWeight: FontWeight.bold)),
+                    ),
+                    const SizedBox(width: 24),
+                    ElevatedButton(
+                      onPressed: controller.validate,
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: const Size(200, 50),
+                        backgroundColor: primaryColor,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(25),
+                        ),
+                      ),
+                      child: const Text('SUIVANT', style: TextStyle(fontWeight: FontWeight.bold)),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 40),
+              ],
+            ),
           ),
         ),
       ),
     );
+  }
+
+  Widget? _getAvatarForLang(String code) {
+    if (code.toLowerCase().startsWith('en')) return const Text('🇺🇸');
+    if (code.toLowerCase().startsWith('fr')) return const Text('🇫🇷');
+    if (code.toLowerCase().startsWith('zh')) return const Text('🇨🇳');
+    return null;
   }
 }
 
@@ -209,119 +444,130 @@ class _RestaurantFormState extends State<RestaurantForm> {
 
   @override
   Widget build(BuildContext context) {
-    return FormBuilder(
-      key: controller.formKey,
-      child: Center(
-        child: SizedBox(
-          width: MediaQuery.sizeOf(context).width * .5,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(
-                'Veuillez entrer les informations de votre restaurant',
-                style: Theme.of(context).textTheme.headlineSmall,
-              ),
-              SizedBox(height: 24),
-              FormBuilderTextField(
-                autofocus: true,
-                name: 'name',
-                decoration: const InputDecoration(
-                  labelText: 'Nom de l\'établissement',
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(40.0),
+      child: FormBuilder(
+        key: controller.formKey,
+        child: Center(
+          child: SizedBox(
+            width: 700,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Veuillez entrer les informations de votre restaurant',
+                  style: TextStyle(fontSize: 20, color: Colors.grey.shade500, fontWeight: FontWeight.w400),
                 ),
-                validator: FormBuilderValidators.compose([
-                  FormBuilderValidators.required(),
-                  FormBuilderValidators.maxLength(
-                    20,
-                    errorText: 'Name must be less than 20 characters',
-                  ),
-                ]),
-              ),
-              FormBuilderTextField(
-                name: 'description',
-
-                decoration: const InputDecoration(labelText: 'Description'),
-                validator: FormBuilderValidators.compose([
-                  FormBuilderValidators.maxLength(
-                    100,
-                    errorText: 'Name must be less than 100 characters',
-                  ),
-                ]),
-              ),
-
-              FormBuilderTextField(
-                name: 'email',
-                decoration: const InputDecoration(labelText: 'Email'),
-                validator: FormBuilderValidators.compose([
-                  FormBuilderValidators.email(),
-                ]),
-              ),
-              FormBuilderTextField(
-                name: 'phone',
-                initialValue: '+261',
-                decoration: const InputDecoration(labelText: 'Téléphone'),
-                validator: FormBuilderValidators.compose([
-                  FormBuilderValidators.phoneNumber(),
-                  FormBuilderValidators.required(),
-                ]),
-              ),
-              TypeAheadField<PhotonFeature>(
-                debounceDuration: const Duration(milliseconds: 1000),
-                emptyBuilder: (context) {
-                  return const ListTile(title: Text('No results found'));
-                },
-                hideOnError: true,
-                suggestionsCallback: (search) async {
-                  final response = await controller.searchAddress(search);
-                  return response.features;
-                },
-                builder: (context, controller, focusNode) {
-                  return FormBuilderTextField(
-                    name: 'city',
-                    controller: controller,
-                    focusNode: focusNode,
-                    autofocus: true,
-                    validator: FormBuilderValidators.compose([
-                      FormBuilderValidators.required(),
-                    ]),
-                    decoration: InputDecoration(labelText: 'Ville'),
-                  );
-                },
-                itemBuilder: (context, city) {
-                  return ListTile(
-                    title: Text(city.properties.name ?? ''),
-                    subtitle: Text(city.properties.city ?? ''),
-                  );
-                },
-                onSelected: (city) {
-                  controller.setCurrentSelectedAddress(city);
-                  controller.formKey.currentState?.fields['ville']?.didChange(
-                    [
-                          city.properties.name,
-                          city.properties.city,
-                          city.properties.state,
-                          city.properties.country,
-                          city.properties.postcode,
-                        ]
-                        .where((value) => value != null && value.isNotEmpty)
-                        .join(', '),
-                  );
-                },
-              ),
-              SizedBox(height: 24),
-
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  minimumSize: const Size(double.infinity, 50),
-                  backgroundColor: Colors.blue,
-                  foregroundColor: Colors.white,
+                const SizedBox(height: 30),
+                _buildLabel('Nom de l\'établissement'),
+                FormBuilderTextField(
+                  autofocus: true,
+                  name: 'name',
+                  decoration: _defaultInputDecoration(hintText: 'Menu Zen Restaurant'),
+                  validator: FormBuilderValidators.compose([
+                    FormBuilderValidators.required(),
+                    FormBuilderValidators.maxLength(
+                      20,
+                      errorText: 'Name must be less than 20 characters',
+                    ),
+                  ]),
                 ),
-                child: Text('Suivant'),
-                onPressed: () {
-                  controller.validate();
-                },
-              ),
-            ],
+                const SizedBox(height: 24),
+                _buildLabel('Description'),
+                FormBuilderTextField(
+                  name: 'description',
+                  maxLines: 4,
+                  decoration: _defaultInputDecoration(hintText: 'Description....'),
+                  validator: FormBuilderValidators.compose([
+                    FormBuilderValidators.maxLength(
+                      100,
+                      errorText: 'Name must be less than 100 characters',
+                    ),
+                  ]),
+                ),
+                const SizedBox(height: 24),
+                _buildLabel('Email'),
+                FormBuilderTextField(
+                  name: 'email',
+                  decoration: _defaultInputDecoration(hintText: 'menuzen@gmail.com'),
+                  validator: FormBuilderValidators.compose([
+                    FormBuilderValidators.email(),
+                  ]),
+                ),
+                const SizedBox(height: 24),
+                _buildLabel('Téléphone'),
+                FormBuilderTextField(
+                  name: 'phone',
+                  initialValue: '+261 ',
+                  decoration: _defaultInputDecoration(hintText: '+261 | '),
+                  validator: FormBuilderValidators.compose([
+                    FormBuilderValidators.phoneNumber(),
+                    FormBuilderValidators.required(),
+                  ]),
+                ),
+                const SizedBox(height: 24),
+                _buildLabel('Ville'),
+                TypeAheadField<PhotonFeature>(
+                  debounceDuration: const Duration(milliseconds: 1000),
+                  emptyBuilder: (context) {
+                    return const ListTile(title: Text('No results found'));
+                  },
+                  hideOnError: true,
+                  suggestionsCallback: (search) async {
+                    final response = await controller.searchAddress(search);
+                    return response.features;
+                  },
+                  builder: (context, controllerTypeAhead, focusNode) {
+                    return FormBuilderTextField(
+                      name: 'city',
+                      controller: controllerTypeAhead,
+                      focusNode: focusNode,
+                      validator: FormBuilderValidators.compose([
+                        FormBuilderValidators.required(),
+                      ]),
+                      decoration: _defaultInputDecoration(hintText: 'Toliara'),
+                    );
+                  },
+                  itemBuilder: (context, city) {
+                    return ListTile(
+                      title: Text(city.properties.name ?? ''),
+                      subtitle: Text(city.properties.city ?? ''),
+                    );
+                  },
+                  onSelected: (city) {
+                    controller.setCurrentSelectedAddress(city);
+                    controller.formKey.currentState?.fields['ville']?.didChange(
+                      [
+                            city.properties.name,
+                            city.properties.city,
+                            city.properties.state,
+                            city.properties.country,
+                            city.properties.postcode,
+                          ]
+                          .where((value) => value != null && value.isNotEmpty)
+                          .join(', '),
+                    );
+                  },
+                ),
+                const SizedBox(height: 48),
+                Align(
+                  alignment: Alignment.center,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: const Size(250, 50),
+                      backgroundColor: primaryColor,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(25),
+                      ),
+                    ),
+                    onPressed: controller.validate,
+                    child: const Text('SUIVANT', style: TextStyle(fontWeight: FontWeight.bold)),
+                  ),
+                ),
+                const SizedBox(height: 40),
+              ],
+            ),
           ),
         ),
       ),
@@ -339,6 +585,8 @@ class UserForm extends StatefulWidget {
 
 class _UserFormState extends State<UserForm> {
   late UserRegistrationController controller;
+  bool _obscurePassword = true;
+  bool _obscureConfirmPassword = true;
 
   @override
   void initState() {
@@ -348,112 +596,166 @@ class _UserFormState extends State<UserForm> {
 
   @override
   Widget build(BuildContext context) {
-    return FormBuilder(
-      key: controller.formKey,
-      child: Center(
-        child: SizedBox(
-          width: MediaQuery.sizeOf(context).width * .5,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(
-                'Veuillez entrer votre information en tant que gérant du restaurant',
-                style: Theme.of(context).textTheme.headlineSmall,
-              ),
-              SizedBox(height: 24),
-              FormBuilderTextField(
-                name: 'username',
-                decoration: const InputDecoration(
-                  labelText: 'Nom d\'utilisateur',
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(40.0),
+      child: FormBuilder(
+        key: controller.formKey,
+        child: Center(
+          child: SizedBox(
+            width: 700,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Veuillez entrer votre information en tant que gérant du restaurant',
+                  style: TextStyle(fontSize: 20, color: Colors.grey.shade500, fontWeight: FontWeight.w400),
                 ),
-                validator: FormBuilderValidators.compose([
-                  FormBuilderValidators.required(),
-                  FormBuilderValidators.maxLength(
-                    20,
-                    errorText: 'Name must be less than 20 characters',
-                  ),
-                ]),
-              ),
-              FormBuilderTextField(
-                name: 'name',
-                decoration: const InputDecoration(labelText: 'Nom complet'),
-                validator: FormBuilderValidators.compose([
-                  FormBuilderValidators.maxLength(
-                    50,
-                    errorText: 'Name must be less than 100 characters',
-                  ),
-                ]),
-              ),
-              FormBuilderTextField(
-                name: 'email',
-                decoration: const InputDecoration(labelText: 'Email'),
-                validator: FormBuilderValidators.compose([
-                  FormBuilderValidators.email(),
-                ]),
-              ),
-              FormBuilderTextField(
-                name: 'phone',
-                initialValue: '+261',
-                decoration: const InputDecoration(labelText: 'Téléphone'),
-                validator: FormBuilderValidators.compose([
-                  FormBuilderValidators.phoneNumber(),
-                  FormBuilderValidators.required(),
-                ]),
-              ),
-              FormBuilderTextField(
-                name: 'password',
-                decoration: const InputDecoration(labelText: 'Mot de passe'),
-                validator: FormBuilderValidators.compose([
-                  FormBuilderValidators.password(
-                    minSpecialCharCount: 0,
-                    minUppercaseCount: 0,
-                    minNumberCount: 0,
-                  ),
-                  FormBuilderValidators.required(),
-                ]),
-              ),
-              FormBuilderTextField(
-                name: 'confirm_password',
-                decoration: const InputDecoration(
-                  labelText: 'Confirmation de Mot de passe',
+                const SizedBox(height: 30),
+                _buildLabel('Nom d\'utilisateur'),
+                FormBuilderTextField(
+                  name: 'username',
+                  decoration: _defaultInputDecoration(hintText: 'amel.jane'),
+                  validator: FormBuilderValidators.compose([
+                    FormBuilderValidators.required(),
+                    FormBuilderValidators.maxLength(
+                      20,
+                      errorText: 'Name must be less than 20 characters',
+                    ),
+                  ]),
                 ),
-                validator: (pass) {
-                  if (pass !=
-                      controller
-                          .formKey
-                          .currentState
-                          ?.fields['password']
-                          ?.value) {
-                    return 'Les mots de passe ne correspondent pas';
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: 24),
-              BlocBuilder<RestaurantBloc, RestaurantState>(
-                builder: (context, state) {
-                  switch (state.status) {
-                    case BlocStatus.loading:
+                const SizedBox(height: 24),
+                _buildLabel('Nom complet'),
+                FormBuilderTextField(
+                  name: 'name',
+                  decoration: _defaultInputDecoration(hintText: 'Jane Amel'),
+                  validator: FormBuilderValidators.compose([
+                    FormBuilderValidators.maxLength(
+                      50,
+                      errorText: 'Name must be less than 100 characters',
+                    ),
+                  ]),
+                ),
+                const SizedBox(height: 24),
+                _buildLabel('Email'),
+                FormBuilderTextField(
+                  name: 'email',
+                  decoration: _defaultInputDecoration(hintText: 'amel@gmail.com'),
+                  validator: FormBuilderValidators.compose([
+                    FormBuilderValidators.email(),
+                  ]),
+                ),
+                const SizedBox(height: 24),
+                _buildLabel('Téléphone'),
+                FormBuilderTextField(
+                  name: 'phone',
+                  initialValue: '+261 ',
+                  decoration: _defaultInputDecoration(hintText: '+261 | '),
+                  validator: FormBuilderValidators.compose([
+                    FormBuilderValidators.phoneNumber(),
+                    FormBuilderValidators.required(),
+                  ]),
+                ),
+                const SizedBox(height: 24),
+                _buildLabel('Mot de passe'),
+                FormBuilderTextField(
+                  name: 'password',
+                  obscureText: _obscurePassword,
+                  decoration: _defaultInputDecoration(hintText: '********').copyWith(
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                        color: Colors.grey,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _obscurePassword = !_obscurePassword;
+                        });
+                      },
+                    ),
+                  ),
+                  validator: FormBuilderValidators.compose([
+                    FormBuilderValidators.password(
+                      minSpecialCharCount: 0,
+                      minUppercaseCount: 0,
+                      minNumberCount: 0,
+                    ),
+                    FormBuilderValidators.required(),
+                  ]),
+                ),
+                const SizedBox(height: 24),
+                _buildLabel('Confirmation de Mot de passe'),
+                FormBuilderTextField(
+                  name: 'confirm_password',
+                  obscureText: _obscureConfirmPassword,
+                  decoration: _defaultInputDecoration(hintText: '********').copyWith(
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _obscureConfirmPassword ? Icons.visibility_off : Icons.visibility,
+                        color: Colors.grey,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _obscureConfirmPassword = !_obscureConfirmPassword;
+                        });
+                      },
+                    ),
+                  ),
+                  validator: (pass) {
+                    if (pass !=
+                        controller
+                            .formKey
+                            .currentState
+                            ?.fields['password']
+                            ?.value) {
+                      return 'Les mots de passe ne correspondent pas';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 48),
+                BlocBuilder<RestaurantBloc, RestaurantState>(
+                  builder: (context, state) {
+                    if (state.status == BlocStatus.loading) {
                       return const Center(child: CircularProgressIndicator());
-                    case BlocStatus.loaded:
-                      return const SizedBox.shrink();
-                    default:
-                      return ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          minimumSize: const Size(double.infinity, 50),
-                          backgroundColor: Colors.blue,
-                          foregroundColor: Colors.white,
+                    }
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ElevatedButton(
+                          onPressed: () {
+                            AutoTabsRouter.of(context).setActiveIndex(1);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            minimumSize: const Size(200, 50),
+                            backgroundColor: primaryColor.withOpacity(0.2),
+                            foregroundColor: primaryColor,
+                            shadowColor: Colors.transparent,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(25),
+                            ),
+                          ),
+                          child: const Text('PRÉCÉDENT', style: TextStyle(fontWeight: FontWeight.bold)),
                         ),
-                        child: Text('ENREGISTRER'),
-                        onPressed: () {
-                          controller.validate();
-                        },
-                      );
-                  }
-                },
-              ),
-            ],
+                        const SizedBox(width: 24),
+                        ElevatedButton(
+                          onPressed: controller.validate,
+                          style: ElevatedButton.styleFrom(
+                            minimumSize: const Size(200, 50),
+                            backgroundColor: primaryColor,
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(25),
+                            ),
+                          ),
+                          child: const Text('ENREGISTRER', style: TextStyle(fontWeight: FontWeight.bold)),
+                        ),
+                      ],
+                    );
+                  },
+                ),
+                const SizedBox(height: 40),
+              ],
+            ),
           ),
         ),
       ),

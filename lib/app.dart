@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:menu_zen_restaurant/features/presentations/managers/orders/order_menu_item/order_menu_item_bloc.dart';
 import 'package:menu_zen_restaurant/features/presentations/managers/orders/orders_bloc.dart';
 import 'package:menu_zen_restaurant/features/presentations/managers/stats/stats_bloc.dart';
@@ -42,20 +43,23 @@ class App extends StatelessWidget {
         title: 'Menu Zen',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
+          fontFamily: GoogleFonts.poppins().fontFamily,
           colorScheme: ColorScheme.fromSeed(seedColor: primaryColor),
           primaryColor: primaryColor,
           scaffoldBackgroundColor: const Color(0xFFFAFAFA),
-          textTheme: const TextTheme(
-            displayLarge: TextStyle(fontSize: 48, fontWeight: FontWeight.bold, color: Colors.black87),
-            displayMedium: TextStyle(fontSize: 36, fontWeight: FontWeight.bold, color: Colors.black87),
-            displaySmall: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black87),
-            headlineLarge: TextStyle(fontSize: 22, fontWeight: FontWeight.w600, color: Colors.black87),
-            headlineMedium: TextStyle(fontSize: 20, fontWeight: FontWeight.w600, color: Colors.black87),
-            headlineSmall: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Colors.black87),
-            titleLarge: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.black87),
-            titleMedium: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.black87),
-            bodyLarge: TextStyle(fontSize: 14, color: Colors.black87),
-            bodyMedium: TextStyle(fontSize: 12, color: Colors.black54),
+          textTheme: GoogleFonts.poppinsTextTheme(
+            const TextTheme(
+              displayLarge: TextStyle(fontSize: 48, fontWeight: FontWeight.bold, color: Colors.black87),
+              displayMedium: TextStyle(fontSize: 36, fontWeight: FontWeight.bold, color: Colors.black87),
+              displaySmall: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black87),
+              headlineLarge: TextStyle(fontSize: 22, fontWeight: FontWeight.w600, color: Colors.black87),
+              headlineMedium: TextStyle(fontSize: 20, fontWeight: FontWeight.w600, color: Colors.black87),
+              headlineSmall: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Colors.black87),
+              titleLarge: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.black87),
+              titleMedium: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.black87),
+              bodyLarge: TextStyle(fontSize: 14, color: Colors.black87),
+              bodyMedium: TextStyle(fontSize: 12, color: Colors.black54),
+            ),
           ),
           elevatedButtonTheme: ElevatedButtonThemeData(
             style: ElevatedButton.styleFrom(
