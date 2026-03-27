@@ -1,3 +1,7 @@
+import 'dart:async';
+import 'dart:convert';
+
+import 'package:audioplayers/audioplayers.dart';
 import 'package:auto_route/annotations.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +11,11 @@ import 'package:menu_zen_restaurant/core/enums/bloc_status.dart';
 import 'package:menu_zen_restaurant/core/navigation/app_router.gr.dart';
 import 'package:menu_zen_restaurant/features/presentations/managers/auths/auth_bloc.dart';
 import 'package:menu_zen_restaurant/features/presentations/managers/orders/orders_bloc.dart';
+
 import '../../../core/constants/constants.dart';
+import '../../../core/injection/dependencies_injection.dart';
+import '../../../core/services/ws_service.dart';
+import '../../datasources/models/order_model.dart';
 import '../../domains/entities/order_entity.dart';
 import '../../domains/entities/order_menu_item.dart';
 
@@ -20,8 +28,13 @@ class KdsScreen extends StatefulWidget {
 }
 
 class _KdsScreenState extends State<KdsScreen> {
+  late final RestaurantWebSocketService _wsService;
+  StreamSubscription<dynamic>? _wsSubscription;
+
   bool showCompleted = false;
   bool isDarkMode = false;
+
+  final AudioPlayer _audioPlayer = AudioPlayer();
 
   Future<void> _confirmLogout() async {
     final bool? shouldLogout = await showDialog<bool>(
@@ -52,6 +65,86 @@ class _KdsScreenState extends State<KdsScreen> {
   void initState() {
     super.initState();
     context.read<OrdersBloc>().add(OrderFetched());
+    _initializeWebSocket();
+  }
+
+  @override
+  void dispose() {
+    _wsSubscription?.cancel();
+    _audioPlayer.dispose();
+    super.dispose();
+  }
+
+  Future<void> _initializeWebSocket() async {
+    _wsService = getIt<RestaurantWebSocketService>();
+
+    try {
+      final channel = await _wsService.connect();
+      _wsSubscription = channel?.stream.listen(
+        (message) {
+          final data = jsonDecode(message);
+          switch (data['type']) {
+            case 'connection_established':
+              break;
+            case 'update_order_status':
+              _handleUpdateOrderStatus(context, data);
+              break;
+            case 'new_order':
+              _handleNewOrder(context, data);
+              break;
+            case 'order_deleted':
+              _handleOrderDeleted(context, data);
+              break;
+            case 'order_updated':
+              _handleOrderUpdated(context, message);
+              break;
+            case 'update_order_menu_item_status':
+              _handleUpdateOrderMenuItemStatus(context, data);
+              break;
+          }
+        },
+        onError: (error) => (),
+        onDone: () => (),
+      );
+    } catch (e) {
+      return;
+    }
+  }
+
+  void _handleNewOrder(BuildContext context, message) {
+    _audioPlayer.play(AssetSource('sounds/new_order.ogg'));
+    context.read<OrdersBloc>().add(
+      OrderAdded(OrderModel.fromJson(json.decode(message['order']))),
+    );
+  }
+
+  void _handleUpdateOrderStatus(BuildContext context, message) {
+    context.read<OrdersBloc>().add(
+      OrderStatusRemoteUpdated(
+        message['order_id'],
+        OrderStatus.fromString(message['new_status']),
+      ),
+    );
+  }
+
+  void _handleUpdateOrderMenuItemStatus(BuildContext context, message) {
+    context.read<OrdersBloc>().add(
+      OrderMenuItemStatusRemoteUpdated(
+        message['order_id'],
+        message['item_id'],
+        message['new_status'],
+      ),
+    );
+  }
+
+  void _handleOrderDeleted(BuildContext context, message) {
+    context.read<OrdersBloc>().add(OrderRemoteDeleted(message['order_id']));
+  }
+
+  void _handleOrderUpdated(BuildContext context, message) {
+    context.read<OrdersBloc>().add(
+      OrderRemoteUpdated(OrderModel.fromJson(json.decode(message['order']))),
+    );
   }
 
   @override
@@ -223,24 +316,27 @@ class _KdsScreenState extends State<KdsScreen> {
             horizontal: kspacing * 3,
             vertical: kspacing,
           ),
-          child: Row(
-            children: [
-              Text(
-                restaurantName,
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
+          child: SafeArea(
+            bottom: false,
+            child: Row(
+              children: [
+                Text(
+                  restaurantName,
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ),
-              const SizedBox(width: kspacing * 4),
-              _buildStationDropdown(state, controlBg),
-              const Spacer(),
-              _buildStatusToggles(),
-              const SizedBox(width: kspacing * 4),
-              _buildThemeToggle(),
-              const SizedBox(width: kspacing * 2),
-              _buildSettingsButton(userName),
-            ],
+                const SizedBox(width: kspacing * 4),
+                _buildStationDropdown(state, controlBg),
+                const Spacer(),
+                _buildStatusToggles(),
+                const SizedBox(width: kspacing * 4),
+                _buildThemeToggle(),
+                const SizedBox(width: kspacing * 2),
+                _buildSettingsButton(userName),
+              ],
+            ),
           ),
         );
       },
