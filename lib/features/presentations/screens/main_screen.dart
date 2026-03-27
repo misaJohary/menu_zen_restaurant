@@ -51,6 +51,8 @@ class _MainScreenState extends State<MainScreen> {
                       WidgetsBinding.instance.addPostFrameCallback((_) {
                         if (isCook) {
                           context.router.replaceAll([const KdsRoute()]);
+                        } else if (isCashier) {
+                          context.router.replaceAll([const CashierRoute()]);
                         } else {
                           context.router.replaceAll([const OrdersRoute()]);
                         }
@@ -86,38 +88,12 @@ class _MainScreenState extends State<MainScreen> {
               ],
             ),
           ),
-          //Divider(indent: 500, endIndent: 500),
-          //Image.asset('assets/images/divider.png', width: 150,),
-          RichText(
-            text: TextSpan(
-              text: 'Powered by ',
-              style: Theme.of(context).textTheme.labelMedium,
-              children: [
-                TextSpan(
-                  text: 'Click Menu',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: Theme.of(context).primaryColor,
-                  ),
-                ),
-                TextSpan(
-                  text: ' ZEN ',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-                WidgetSpan(
-                  child: Image.asset('assets/images/leaf.png', width: 15),
-                ),
-              ],
-            ),
-          ),
-          SizedBox(height: kspacing * 4),
-          //Text('Powered By CLICK MENU ZEN')),
         ],
       ),
     );
   }
 }
+
 
 class MyObserver extends AutoRouterObserver {
   final MainController controller;

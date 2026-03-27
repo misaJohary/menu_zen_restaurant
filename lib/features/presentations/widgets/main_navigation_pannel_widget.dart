@@ -53,88 +53,53 @@ class MainNavigationPannelWidget extends StatelessWidget {
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
         final role = state.userRestaurant?.user.role;
-        const menuGap = 2.0;
-        return SafeArea(
-          bottom: false,
-          child: CustomContainer(
-            width: 350,
-            height: double.infinity,
-            margin: const EdgeInsets.all(8.0),
-            padding: EdgeInsets.symmetric(vertical: kspacing * 2),
-            child: Theme(
-              data: ThemeData(
-                iconButtonTheme: IconButtonThemeData(
-                  style: IconButton.styleFrom(
-                    foregroundColor: Colors.white,
-                    iconSize: 30,
+        return Container(
+          width: 280,
+          color: Colors.white,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: kspacing * 3,
+                  vertical: kspacing * 5,
+                ),
+                child: const Logo(),
+              ),
+              const SizedBox(height: kspacing * 2),
+              ...navLinks(currentRoute, role),
+              const Spacer(),
+              Padding(
+                padding: EdgeInsets.all(kspacing * 3),
+                child: ElevatedButton.icon(
+                  onPressed: () async {
+                    await _confirmLogout(context);
+                  },
+                  icon: const Icon(Icons.logout, color: Colors.white),
+                  label: const Text(
+                    'DÉCONNEXION',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1.1,
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: primaryColor,
+                    minimumSize: const Size(double.infinity, 50),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    elevation: 0,
                   ),
                 ),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                   Text('ROLE: ${role.toString()}', style: TextStyle(color: Colors.white)),
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: kspacing * 3,
-                      vertical: kspacing * 2,
-                    ),
-                    child: Logo(),
-                  ),
-
-
-                  ...navLinks(currentRoute, role).map(
-                    (link) => Padding(
-                      padding: EdgeInsets.only(bottom: menuGap),
-                      child: link,
-                    ),
-                  ),
-                  const Spacer(),
-                  NavLink(
-                    label: 'Commande',
-                    icon: const CircleAvatar(child: Text('M')),
-                    destination: const OrdersRoute(),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: kspacing * 3),
-                    child: ListTile(
-                      dense: true,
-                      visualDensity: const VisualDensity(vertical: -4),
-                      title: Text(
-                        'Profil',
-                        style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                          color: grey,
-                          fontSize: 16,
-                        ),
-                      ),
-                      trailing: const CircleAvatar(child: Text('M')),
-                      onTap: () => context.router.push(const ProfileRoute()),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: kspacing * 3),
-                    child: ListTile(
-                      dense: true,
-                      visualDensity: const VisualDensity(vertical: -4),
-                      trailing: const Icon(Icons.logout),
-                      title: Text(
-                        'Se déconnecter',
-                        style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                          color: grey,
-                          fontSize: 16,
-                        ),
-                      ),
-                      onTap: () async {
-                        await _confirmLogout(context);
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            ),
+              const SizedBox(height: kspacing * 2),
+            ],
           ),
         );
       },
     );
   }
 }
+
