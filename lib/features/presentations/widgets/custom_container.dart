@@ -24,7 +24,7 @@ class CustomContainer extends StatelessWidget {
       height: height,
       width: width,
       margin: margin ?? EdgeInsets.all(kspacing),
-      padding: padding ?? EdgeInsets.all(kspacing*2),
+      padding: padding ?? EdgeInsets.all(kspacing * 2),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(10),

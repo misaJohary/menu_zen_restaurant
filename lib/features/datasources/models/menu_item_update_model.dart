@@ -23,7 +23,14 @@ class MenuItemUpdateModel extends Equatable {
   });
 
   @override
-  List<Object?> get props => [id, price, picture, categoryId, active, translations];
+  List<Object?> get props => [
+    id,
+    price,
+    picture,
+    categoryId,
+    active,
+    translations,
+  ];
 
   Map<String, dynamic> toJson() => _$MenuItemUpdateModelToJson(this);
 }

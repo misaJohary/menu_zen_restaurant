@@ -50,7 +50,8 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<MultiResult<Failure, UserRestaurantEntity>> updateUser(
-      UserModel user) async {
+    UserModel user,
+  ) async {
     return executeWithErrorHandling(() async {
       final res = await rest.updateUser(user);
       final fullData = await rest.getUser();
@@ -61,7 +62,8 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<MultiResult<Failure, RestaurantModel>> updateRestaurant(
-      RestaurantModel restaurant) async {
+    RestaurantModel restaurant,
+  ) async {
     return executeWithErrorHandling(() async {
       final res = await rest.updateRestaurant(restaurant);
       // Refresh full data to keep consistency
@@ -70,6 +72,7 @@ class AuthRepositoryImpl implements AuthRepository {
       return res;
     });
   }
+
   @override
   Future<MultiResult<Failure, List<UserModel>>> getUsers() async {
     return executeWithErrorHandling(() async {
@@ -113,4 +116,3 @@ class AuthRepositoryImpl implements AuthRepository {
     });
   }
 }
-

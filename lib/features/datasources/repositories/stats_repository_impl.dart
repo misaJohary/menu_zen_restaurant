@@ -11,7 +11,7 @@ import '../../../core/http_connexion/rest_client.dart';
 import '../../domains/entities/list_top_menu_item.dart';
 
 @LazySingleton(as: StatsRepository)
-class StatsRepositoryImpl implements StatsRepository{
+class StatsRepositoryImpl implements StatsRepository {
   final RestClient rest;
 
   StatsRepositoryImpl(this.rest);

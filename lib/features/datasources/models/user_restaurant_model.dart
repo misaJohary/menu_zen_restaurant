@@ -23,15 +23,15 @@ class UserRestaurantModel extends UserRestaurantEntity {
     required RestaurantModel restaurant,
     this.token,
   }) : _user = user,
-        _restaurant = restaurant,
-        super(user: user, restaurant: restaurant);
+       _restaurant = restaurant,
+       super(user: user, restaurant: restaurant);
 
   /// Constructor from UserRestaurantEntity
   UserRestaurantModel.fromEntity(UserRestaurantEntity entity)
-      : _user = UserModel.fromEntity(entity.user),
-        _restaurant = RestaurantModel.fromEntity(entity.restaurant),
-        token = null,
-        super(user: entity.user, restaurant: entity.restaurant);
+    : _user = UserModel.fromEntity(entity.user),
+      _restaurant = RestaurantModel.fromEntity(entity.restaurant),
+      token = null,
+      super(user: entity.user, restaurant: entity.restaurant);
 
   factory UserRestaurantModel.fromJson(Map<String, dynamic> json) =>
       _$UserRestaurantModelFromJson(json);

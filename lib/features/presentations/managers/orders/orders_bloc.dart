@@ -28,13 +28,9 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
     on<OrderMenuItemStatusRemoteUpdated>(_onOrderMenuItemStatusRemoteUpdated);
     on<OrderDeleted>(_onOrderDeleted);
     on<OrderRemoteDeleted>(_onOrderRemoteDeleted);
-
   }
 
-  _onOrderRemoteDeleted(
-    OrderRemoteDeleted event,
-    Emitter<OrdersState> emit,
-  ) {
+  _onOrderRemoteDeleted(OrderRemoteDeleted event, Emitter<OrdersState> emit) {
     emit(
       state.copyWith(
         orders: List.of(state.orders)
@@ -43,10 +39,7 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
     );
   }
 
-  _onOrderRemoteUpdated(
-    OrderRemoteUpdated event,
-    Emitter<OrdersState> emit,
-  ) {
+  _onOrderRemoteUpdated(OrderRemoteUpdated event, Emitter<OrdersState> emit) {
     final index = state.orders.indexWhere(
       (element) => element.id == event.orderEntity.id,
     );
@@ -55,10 +48,7 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
         state.copyWith(
           orders: List.of(state.orders)
             ..removeAt(index)
-            ..insert(
-              index,
-              OrderModel.fromEntity(event.orderEntity),
-            ),
+            ..insert(index, OrderModel.fromEntity(event.orderEntity)),
         ),
       );
     } else {

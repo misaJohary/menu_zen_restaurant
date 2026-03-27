@@ -5,7 +5,6 @@ import 'package:logger/logger.dart';
 
 abstract class BaseController<TBloc extends BlocBase, TModel, TEntity>
     extends ChangeNotifier {
-
   BaseController({required this.context});
 
   final formKey = GlobalKey<FormBuilderState>();
@@ -64,7 +63,10 @@ abstract class BaseController<TBloc extends BlocBase, TModel, TEntity>
         );
 
         if (_isEditMode && _currentModel != null) {
-          final updatedModel = copyModelWithId(model, getModelId(_currentModel!));
+          final updatedModel = copyModelWithId(
+            model,
+            getModelId(_currentModel!),
+          );
           return updateItem(updatedModel as TEntity);
         }
 

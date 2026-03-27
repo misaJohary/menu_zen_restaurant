@@ -28,7 +28,7 @@ class OrderMenuItemBloc extends Bloc<OrderMenuItemEvent, OrderMenuItemState> {
     Emitter<OrderMenuItemState> emit,
   ) async {
     //if (state.orderMenuItems.isEmpty) {
-      await _onOrderMenuItemFetched(OrderMenuItemFetched(), emit);
+    await _onOrderMenuItemFetched(OrderMenuItemFetched(), emit);
     //}
 
     final List<OrderMenuItem> orders = List.from(state.orderMenuItems);

@@ -19,10 +19,10 @@ class RestaurantMoreInfoController extends ChangeNotifier {
     try {
       final currentState = formKey.currentState;
       if (currentState?.saveAndValidate() ?? false) {
-        final Map<String, dynamic> datas = currentState!.fields.map((key, value) => MapEntry(key, value.value));
-        context.read<RestaurantBloc>().add(
-          RestaurantMoreInfoFilled(datas),
+        final Map<String, dynamic> datas = currentState!.fields.map(
+          (key, value) => MapEntry(key, value.value),
         );
+        context.read<RestaurantBloc>().add(RestaurantMoreInfoFilled(datas));
       }
     } catch (error) {
       Logger().e(error.toString());

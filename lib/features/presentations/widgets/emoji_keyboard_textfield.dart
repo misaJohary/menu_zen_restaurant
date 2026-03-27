@@ -23,52 +23,191 @@ class _EmojiKeyboardTextFieldState extends State<EmojiKeyboardTextField> {
 
   final Map<String, List<String>> foodEmojis = {
     'Main Dishes': [
-      '🍕', '🍔', '🌭', '🥪', '🌮', '🌯',
-      '🥙', '🧆', '🥘', '🍝', '🍜', '🍲',
-      '🍛', '🍱', '🍙', '🍘', '🍚', '🥟',
-      '🍳', '🥞', '🧇', '🥓', '🍗', '🍖'
+      '🍕',
+      '🍔',
+      '🌭',
+      '🥪',
+      '🌮',
+      '🌯',
+      '🥙',
+      '🧆',
+      '🥘',
+      '🍝',
+      '🍜',
+      '🍲',
+      '🍛',
+      '🍱',
+      '🍙',
+      '🍘',
+      '🍚',
+      '🥟',
+      '🍳',
+      '🥞',
+      '🧇',
+      '🥓',
+      '🍗',
+      '🍖',
     ],
     'Fruits': [
-      '🍎', '🍏', '🍊', '🍋', '🍌', '🍉',
-      '🍇', '🍓', '🫐', '🍈', '🍒', '🍑',
-      '🥭', '🍍', '🥥', '🥝', '🍅', '🫒'
+      '🍎',
+      '🍏',
+      '🍊',
+      '🍋',
+      '🍌',
+      '🍉',
+      '🍇',
+      '🍓',
+      '🫐',
+      '🍈',
+      '🍒',
+      '🍑',
+      '🥭',
+      '🍍',
+      '🥥',
+      '🥝',
+      '🍅',
+      '🫒',
     ],
     'Vegetables': [
-      '🥑', '🍆', '🥔', '🥕', '🌽', '🌶️',
-      '🥬', '🥒', '🫑', '🥦', '🧄', '🧅',
-      '🍄', '🥜', '🌰', '🫘', '🫛'
+      '🥑',
+      '🍆',
+      '🥔',
+      '🥕',
+      '🌽',
+      '🌶️',
+      '🥬',
+      '🥒',
+      '🫑',
+      '🥦',
+      '🧄',
+      '🧅',
+      '🍄',
+      '🥜',
+      '🌰',
+      '🫘',
+      '🫛',
     ],
     'Desserts': [
-      '🍰', '🎂', '🧁', '🥧', '🍮', '🍭',
-      '🍬', '🍫', '🍿', '🍩', '🍪', '🌰',
-      '🍯', '🧊', '🍨', '🍧', '🥠', '🍡'
+      '🍰',
+      '🎂',
+      '🧁',
+      '🥧',
+      '🍮',
+      '🍭',
+      '🍬',
+      '🍫',
+      '🍿',
+      '🍩',
+      '🍪',
+      '🌰',
+      '🍯',
+      '🧊',
+      '🍨',
+      '🍧',
+      '🥠',
+      '🍡',
     ],
     'Beverages': [
-      '☕', '🍵', '🧃', '🥤', '🧋', '🍼',
-      '🥛', '🍺', '🍻', '🥂', '🍷', '🥃',
-      '🍸', '🍹', '🍾', '🧊', '💧', '🫖'
+      '☕',
+      '🍵',
+      '🧃',
+      '🥤',
+      '🧋',
+      '🍼',
+      '🥛',
+      '🍺',
+      '🍻',
+      '🥂',
+      '🍷',
+      '🥃',
+      '🍸',
+      '🍹',
+      '🍾',
+      '🧊',
+      '💧',
+      '🫖',
     ],
     'Fast Food': [
-      '🍕', '🍔', '🍟', '🌭', '🥪', '🌮',
-      '🌯', '🥙', '🍿', '🥤', '🍦', '🍩'
+      '🍕',
+      '🍔',
+      '🍟',
+      '🌭',
+      '🥪',
+      '🌮',
+      '🌯',
+      '🥙',
+      '🍿',
+      '🥤',
+      '🍦',
+      '🍩',
     ],
     'Healthy': [
-      '🥗', '🥑', '🥦', '🥕', '🍅', '🥒',
-      '🫑', '🥬', '🧄', '🧅', '🥝', '🫐',
-      '🥛', '🥤', '💧', '🌱', '🥜', '🫘'
+      '🥗',
+      '🥑',
+      '🥦',
+      '🥕',
+      '🍅',
+      '🥒',
+      '🫑',
+      '🥬',
+      '🧄',
+      '🧅',
+      '🥝',
+      '🫐',
+      '🥛',
+      '🥤',
+      '💧',
+      '🌱',
+      '🥜',
+      '🫘',
     ],
     'Breakfast': [
-      '🥐', '🍞', '🥖', '🥨', '🥯', '🧈',
-      '🥞', '🧇', '🍳', '🥓', '🥚', '🍯',
-      '🥣', '🥤', '☕', '🥛', '🧃', '🍊'
-    ]
+      '🥐',
+      '🍞',
+      '🥖',
+      '🥨',
+      '🥯',
+      '🧈',
+      '🥞',
+      '🧇',
+      '🍳',
+      '🥓',
+      '🥚',
+      '🍯',
+      '🥣',
+      '🥤',
+      '☕',
+      '🥛',
+      '🧃',
+      '🍊',
+    ],
   };
 
   final List<String> popularEmojis = [
-    '🍕', '🍔', '🥗', '🍰', '☕', '🍜',
-    '🥘', '🍳', '🥐', '🍿', '🥑', '🌮',
-    '🍝', '🍲', '🧁', '🥤', '🍎', '🥦',
-    '🍓', '🧀', '🥓', '🍯', '🍪', '🥛'
+    '🍕',
+    '🍔',
+    '🥗',
+    '🍰',
+    '☕',
+    '🍜',
+    '🥘',
+    '🍳',
+    '🥐',
+    '🍿',
+    '🥑',
+    '🌮',
+    '🍝',
+    '🍲',
+    '🧁',
+    '🥤',
+    '🍎',
+    '🥦',
+    '🍓',
+    '🧀',
+    '🥓',
+    '🍯',
+    '🍪',
+    '🥛',
   ];
 
   @override
@@ -79,7 +218,10 @@ class _EmojiKeyboardTextFieldState extends State<EmojiKeyboardTextField> {
     }
   }
 
-  void _handleEmojiSelect(String emoji, void Function(void Function()) setState) {
+  void _handleEmojiSelect(
+    String emoji,
+    void Function(void Function()) setState,
+  ) {
     setState(() {
       selectedEmoji = emoji;
       showKeyboard = false;
@@ -93,7 +235,10 @@ class _EmojiKeyboardTextFieldState extends State<EmojiKeyboardTextField> {
   Widget _buildTextField() {
     return GestureDetector(
       onTap: () {
-        showModalBottomSheet(context: context, builder: (context)=> _buildEmojiKeyboard());
+        showModalBottomSheet(
+          context: context,
+          builder: (context) => _buildEmojiKeyboard(),
+        );
         // setState(() {
         //   showKeyboard = !showKeyboard;
         // });
@@ -122,12 +267,16 @@ class _EmojiKeyboardTextFieldState extends State<EmojiKeyboardTextField> {
                     : '$selectedEmoji Food Category',
                 style: TextStyle(
                   fontSize: 16,
-                  color: selectedEmoji.isEmpty ? Colors.grey.shade600 : Colors.black,
+                  color: selectedEmoji.isEmpty
+                      ? Colors.grey.shade600
+                      : Colors.black,
                 ),
               ),
             ),
             Icon(
-              showKeyboard ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+              showKeyboard
+                  ? Icons.keyboard_arrow_up
+                  : Icons.keyboard_arrow_down,
               color: Colors.grey.shade600,
             ),
           ],
@@ -141,9 +290,7 @@ class _EmojiKeyboardTextFieldState extends State<EmojiKeyboardTextField> {
       builder: (context, setState) {
         return Container(
           height: 50,
-          decoration: BoxDecoration(
-            color: Colors.grey.shade50,
-          ),
+          decoration: BoxDecoration(color: Colors.grey.shade50),
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Row(
@@ -156,18 +303,28 @@ class _EmojiKeyboardTextFieldState extends State<EmojiKeyboardTextField> {
                     });
                   },
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
                     decoration: BoxDecoration(
                       color: isActive ? Colors.white : Colors.transparent,
                       border: isActive
-                          ? const Border(bottom: BorderSide(color: Colors.orange, width: 2))
+                          ? const Border(
+                              bottom: BorderSide(
+                                color: Colors.orange,
+                                width: 2,
+                              ),
+                            )
                           : null,
                     ),
                     child: Text(
                       category,
                       style: TextStyle(
                         color: isActive ? Colors.orange : Colors.grey.shade600,
-                        fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
+                        fontWeight: isActive
+                            ? FontWeight.bold
+                            : FontWeight.normal,
                         fontSize: 12,
                       ),
                     ),
@@ -177,7 +334,7 @@ class _EmojiKeyboardTextFieldState extends State<EmojiKeyboardTextField> {
             ),
           ),
         );
-      }
+      },
     );
   }
 
@@ -207,17 +364,14 @@ class _EmojiKeyboardTextFieldState extends State<EmojiKeyboardTextField> {
                     color: Colors.transparent,
                   ),
                   child: Center(
-                    child: Text(
-                      emoji,
-                      style: const TextStyle(fontSize: 20),
-                    ),
+                    child: Text(emoji, style: const TextStyle(fontSize: 20)),
                   ),
                 ),
               );
             },
           ),
         );
-      }
+      },
     );
   }
 
@@ -254,10 +408,7 @@ class _EmojiKeyboardTextFieldState extends State<EmojiKeyboardTextField> {
                     color: Colors.orange.shade50,
                   ),
                   child: Center(
-                    child: Text(
-                      emoji,
-                      style: const TextStyle(fontSize: 16),
-                    ),
+                    child: Text(emoji, style: const TextStyle(fontSize: 16)),
                   ),
                 ),
               );

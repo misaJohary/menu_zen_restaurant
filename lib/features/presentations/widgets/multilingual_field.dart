@@ -9,7 +9,3 @@ class MultilingualField {
     this.maxLines = 1,
   });
 }
-
-
-
-

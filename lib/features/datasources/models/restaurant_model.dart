@@ -24,22 +24,22 @@ class RestaurantModel extends RestaurantEntity {
 
   /// Constructor from RestaurantEntity
   RestaurantModel.fromEntity(RestaurantEntity entity)
-      : super(
-    id: entity.id,
-    name: entity.name,
-    description: entity.description,
-    logo: entity.logo,
-    cover: entity.cover,
-    pictures: entity.pictures,
-    socialMedia: entity.socialMedia,
-    phone: entity.phone,
-    email: entity.email,
-    city: entity.city,
-    lat: entity.lat,
-    long: entity.long,
-    type: entity.type,
-    languages: entity.languages,
-  );
+    : super(
+        id: entity.id,
+        name: entity.name,
+        description: entity.description,
+        logo: entity.logo,
+        cover: entity.cover,
+        pictures: entity.pictures,
+        socialMedia: entity.socialMedia,
+        phone: entity.phone,
+        email: entity.email,
+        city: entity.city,
+        lat: entity.lat,
+        long: entity.long,
+        type: entity.type,
+        languages: entity.languages,
+      );
 
   /// Copywith constructor
   RestaurantModel copyWith({

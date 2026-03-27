@@ -49,7 +49,9 @@ class _UsersScreenState extends State<UsersScreen> {
                       return const LoadingWidget();
                     case BlocStatus.loaded:
                       if (state.users.isEmpty) {
-                        return const Center(child: Text('Aucun utilisateur trouvé'));
+                        return const Center(
+                          child: Text('Aucun utilisateur trouvé'),
+                        );
                       }
                       return ListView.separated(
                         itemCount: state.users.length,
@@ -61,17 +63,26 @@ class _UsersScreenState extends State<UsersScreen> {
                               child: Text(user.username[0].toUpperCase()),
                             ),
                             title: Text(user.fullName ?? user.username),
-                            subtitle: Text('Rôle: ${user.roleName ?? user.role.toString()}'),
+                            subtitle: Text(
+                              'Rôle: ${user.roleName ?? user.role.toString()}',
+                            ),
                             trailing: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 IconButton(
-                                  icon: const Icon(Icons.edit, color: Colors.blue),
+                                  icon: const Icon(
+                                    Icons.edit,
+                                    color: Colors.blue,
+                                  ),
                                   onPressed: () => _showEditUserDialog(user),
                                 ),
                                 IconButton(
-                                  icon: const Icon(Icons.delete, color: Colors.red),
-                                  onPressed: () => _showDeleteConfirmation(user),
+                                  icon: const Icon(
+                                    Icons.delete,
+                                    color: Colors.red,
+                                  ),
+                                  onPressed: () =>
+                                      _showDeleteConfirmation(user),
                                 ),
                               ],
                             ),
@@ -79,7 +90,11 @@ class _UsersScreenState extends State<UsersScreen> {
                         },
                       );
                     case BlocStatus.failed:
-                      return Center(child: Text('Erreur: ${state.failure?.message ?? "Erreur inconnue"}'));
+                      return Center(
+                        child: Text(
+                          'Erreur: ${state.failure?.message ?? "Erreur inconnue"}',
+                        ),
+                      );
                     default:
                       return const Center(child: Text('Initialisation...'));
                   }
@@ -147,11 +162,7 @@ class _UserFormDialog extends StatefulWidget {
   final UserModel? user;
   final Function(UserModel) onSave;
 
-  const _UserFormDialog({
-    required this.title,
-    this.user,
-    required this.onSave,
-  });
+  const _UserFormDialog({required this.title, this.user, required this.onSave});
 
   @override
   State<_UserFormDialog> createState() => _UserFormDialogState();
@@ -189,7 +200,9 @@ class _UserFormDialogState extends State<_UserFormDialog> {
             children: [
               TextFormField(
                 controller: _usernameCtrl,
-                decoration: const InputDecoration(labelText: 'Nom d\'utilisateur'),
+                decoration: const InputDecoration(
+                  labelText: 'Nom d\'utilisateur',
+                ),
                 validator: (v) => v?.isEmpty == true ? 'Requis' : null,
               ),
               TextFormField(
@@ -241,7 +254,9 @@ class _UserFormDialogState extends State<_UserFormDialog> {
                 id: widget.user?.id,
                 username: _usernameCtrl.text,
                 fullName: _fullNameCtrl.text,
-                password: _passwordCtrl.text.isEmpty ? null : _passwordCtrl.text,
+                password: _passwordCtrl.text.isEmpty
+                    ? null
+                    : _passwordCtrl.text,
                 roleId: _selectedRoleId,
               );
               widget.onSave(user);

@@ -47,7 +47,8 @@ class _MainScreenState extends State<MainScreen> {
                     final isStaff = isCook || isCashier || isServer;
 
                     // Auto redirect staff to their respective page if they are on dashboard
-                    if (isStaff && controller.currentRoute == 'DashboardRoute') {
+                    if (isStaff &&
+                        controller.currentRoute == 'DashboardRoute') {
                       WidgetsBinding.instance.addPostFrameCallback((_) {
                         if (isCook) {
                           context.router.replaceAll([const KdsRoute()]);
@@ -93,7 +94,6 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 }
-
 
 class MyObserver extends AutoRouterObserver {
   final MainController controller;

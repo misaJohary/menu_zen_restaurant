@@ -20,11 +20,7 @@ class MenuEntity extends Equatable {
   final List<MenuTranslation> translations;
   final bool? active;
 
-  const MenuEntity({
-    this.id,
-    this.translations= const [],
-    this.active = true,
-  });
+  const MenuEntity({this.id, this.translations = const [], this.active = true});
 
   ///create copyWith
   ///

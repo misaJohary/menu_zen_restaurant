@@ -5,7 +5,3 @@ import '../entities/language_entity.dart';
 abstract class LanguagesRepository {
   Future<MultiResult<Failure, List<LanguageEntity>>> getLanguages();
 }
-
-
-
-

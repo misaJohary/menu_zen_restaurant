@@ -23,71 +23,64 @@ class UsersBloc extends Bloc<UsersEvent, UsersState> {
   }
 
   Future<void> _onUsersFetched(
-      UsersFetched event, Emitter<UsersState> emit) async {
+    UsersFetched event,
+    Emitter<UsersState> emit,
+  ) async {
     emit(state.copyWith(status: BlocStatus.loading));
     final res = await repo.getUsers();
     if (res.isSuccess) {
-      emit(state.copyWith(
-        status: BlocStatus.loaded,
-        users: res.getSuccess,
-      ));
+      emit(state.copyWith(status: BlocStatus.loaded, users: res.getSuccess));
     } else {
-      emit(state.copyWith(
-        status: BlocStatus.failed,
-        failure: res.getError,
-      ));
+      emit(state.copyWith(status: BlocStatus.failed, failure: res.getError));
     }
   }
 
   Future<void> _onUserCreated(
-      UserCreated event, Emitter<UsersState> emit) async {
+    UserCreated event,
+    Emitter<UsersState> emit,
+  ) async {
     emit(state.copyWith(status: BlocStatus.loading));
     final res = await repo.createUser(event.user);
     if (res.isSuccess) {
       add(const UsersFetched());
     } else {
-      emit(state.copyWith(
-        status: BlocStatus.failed,
-        failure: res.getError,
-      ));
+      emit(state.copyWith(status: BlocStatus.failed, failure: res.getError));
     }
   }
 
   Future<void> _onUserUpdated(
-      UserUpdated event, Emitter<UsersState> emit) async {
+    UserUpdated event,
+    Emitter<UsersState> emit,
+  ) async {
     emit(state.copyWith(status: BlocStatus.loading));
     final res = await repo.updateAnyUser(event.user);
     if (res.isSuccess) {
       add(const UsersFetched());
     } else {
-      emit(state.copyWith(
-        status: BlocStatus.failed,
-        failure: res.getError,
-      ));
+      emit(state.copyWith(status: BlocStatus.failed, failure: res.getError));
     }
   }
 
   Future<void> _onUserDeleted(
-      UserDeleted event, Emitter<UsersState> emit) async {
+    UserDeleted event,
+    Emitter<UsersState> emit,
+  ) async {
     emit(state.copyWith(status: BlocStatus.loading));
     final res = await repo.deleteUser(event.userId);
     if (res.isSuccess) {
       add(const UsersFetched());
     } else {
-      emit(state.copyWith(
-        status: BlocStatus.failed,
-        failure: res.getError,
-      ));
+      emit(state.copyWith(status: BlocStatus.failed, failure: res.getError));
     }
   }
 
   Future<void> _onRolesFetched(
-      RolesFetched event, Emitter<UsersState> emit) async {
+    RolesFetched event,
+    Emitter<UsersState> emit,
+  ) async {
     final res = await repo.getRoles();
     if (res.isSuccess) {
-      emit(state.copyWith(
-        roles: res.getSuccess,
-      ));
+      emit(state.copyWith(roles: res.getSuccess));
     }
   }
 }

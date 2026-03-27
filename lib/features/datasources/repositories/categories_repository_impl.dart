@@ -24,7 +24,9 @@ class CategoriesRepositoryImpl implements CategoriesRepository {
   }
 
   @override
-  Future<MultiResult<Failure, CategoryEntity>> addCategory(CategoryModel params) async {
+  Future<MultiResult<Failure, CategoryEntity>> addCategory(
+    CategoryModel params,
+  ) async {
     return executeWithErrorHandling(() async {
       final res = await rest.createCategories(params);
       return res;
@@ -32,7 +34,9 @@ class CategoriesRepositoryImpl implements CategoriesRepository {
   }
 
   @override
-  Future<MultiResult<Failure, CategoryEntity>> updateCategory(CategoryModel params) async {
+  Future<MultiResult<Failure, CategoryEntity>> updateCategory(
+    CategoryModel params,
+  ) async {
     return executeWithErrorHandling(() async {
       if (params.id != null) {
         final res = await rest.updateCategories(params.id!, params);

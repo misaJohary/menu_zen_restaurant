@@ -89,15 +89,13 @@ class _OrderMenuItemsBodyState extends State<OrderMenuItemsBody> {
 
                                   return Column(
                                     mainAxisAlignment: .start,
-                                    crossAxisAlignment:
-                                        .start,
+                                    crossAxisAlignment: .start,
                                     children: [
                                       menuItem.picture != null
                                           ? ClipRRect(
-                                              borderRadius:
-                                                  .circular(
-                                                    kspacing * 2,
-                                                  ),
+                                              borderRadius: .circular(
+                                                kspacing * 2,
+                                              ),
                                               child: CachedNetworkImage(
                                                 width: double.infinity,
                                                 height: 160,
@@ -120,8 +118,7 @@ class _OrderMenuItemsBodyState extends State<OrderMenuItemsBody> {
                                       ),
                                       SizedBox(height: kspacing),
                                       Row(
-                                        mainAxisAlignment:
-                                            .spaceBetween,
+                                        mainAxisAlignment: .spaceBetween,
                                         children: [
                                           Text(
                                             '${menuItem.price.formatMoney} Ar',
@@ -136,10 +133,9 @@ class _OrderMenuItemsBodyState extends State<OrderMenuItemsBody> {
                                             decoration: BoxDecoration(
                                               color: Color(0xFFF5F5F5),
 
-                                              borderRadius:
-                                                  .circular(
-                                                    kspacing * 2,
-                                                  ),
+                                              borderRadius: .circular(
+                                                kspacing * 2,
+                                              ),
                                             ),
                                             child: Row(
                                               children: [
@@ -161,9 +157,7 @@ class _OrderMenuItemsBodyState extends State<OrderMenuItemsBody> {
                                                   ),
                                                 ),
                                                 Padding(
-                                                  padding: const .all(
-                                                    kspacing,
-                                                  ),
+                                                  padding: const .all(kspacing),
                                                   child: Text(
                                                     orderMenu[index].quantity
                                                         .toString(),

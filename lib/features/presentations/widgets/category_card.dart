@@ -8,11 +8,7 @@ import 'package:menu_zen_restaurant/features/presentations/managers/languages/la
 import '../../../core/constants/constants.dart';
 
 class CategoryCard extends StatelessWidget {
-  const CategoryCard({
-    super.key,
-    required this.category,
-    required this.onEdit,
-  });
+  const CategoryCard({super.key, required this.category, required this.onEdit});
 
   final CategoryEntity category;
   final VoidCallback onEdit;
@@ -26,10 +22,12 @@ class CategoryCard extends StatelessWidget {
           selectedLang,
           (t) => t.name,
         );
-        final categoryDescription = category.translations.getOptionalField(
-          selectedLang,
-          (t) => t.description,
-        ) ?? '';
+        final categoryDescription =
+            category.translations.getOptionalField(
+              selectedLang,
+              (t) => t.description,
+            ) ??
+            '';
 
         // Extract emoji if it's there
         final regex = RegExp(
@@ -123,5 +121,4 @@ class CategoryCard extends StatelessWidget {
       },
     );
   }
-
 }

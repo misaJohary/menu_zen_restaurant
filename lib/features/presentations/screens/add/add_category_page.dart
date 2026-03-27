@@ -58,18 +58,32 @@ class _AddCategoryPageState extends State<AddCategoryPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.category == null ? 'Ajouter une catégorie' : 'Modifier une catégorie'),
+        title: Text(
+          widget.category == null
+              ? 'Ajouter une catégorie'
+              : 'Modifier une catégorie',
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(kspacing * 2),
         child: AddItemWidget(
           key: _addItemWidgetKey,
           formKey: controller.formKey,
-          title: widget.category == null ? 'Nouvelle Catégorie' : 'Éditer Catégorie',
+          title: widget.category == null
+              ? 'Nouvelle Catégorie'
+              : 'Éditer Catégorie',
           initialTranslations: _getInitialTranslations(),
           multilingualFields: const [
-            MultilingualField(name: 'name', label: 'Nom de la Categorie', maxLines: 1),
-            MultilingualField(name: 'description', label: 'Description', maxLines: 3),
+            MultilingualField(
+              name: 'name',
+              label: 'Nom de la Categorie',
+              maxLines: 1,
+            ),
+            MultilingualField(
+              name: 'description',
+              label: 'Description',
+              maxLines: 3,
+            ),
           ],
           formBuilderFields: [
             FormBuilderTextField(
@@ -93,7 +107,9 @@ class _AddCategoryPageState extends State<AddCategoryPage> {
             builder: (context, state) {
               return ElevatedButton(
                 onPressed: _onSubmit,
-                child: Text(widget.category == null ? 'Ajouter' : 'Mettre à jour'),
+                child: Text(
+                  widget.category == null ? 'Ajouter' : 'Mettre à jour',
+                ),
               );
             },
           ),
@@ -106,7 +122,3 @@ class _AddCategoryPageState extends State<AddCategoryPage> {
     );
   }
 }
-
-
-
-

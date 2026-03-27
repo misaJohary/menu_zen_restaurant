@@ -29,7 +29,8 @@ class RestaurantState extends Equatable {
       userRestaurant: userRestaurant ?? this.userRestaurant,
       status: status ?? this.status,
       restaurantFilled: restaurantFilled ?? this.restaurantFilled,
-      restaurantMoreInfoFilled: restaurantMoreInfoFilled ?? this.restaurantMoreInfoFilled,
+      restaurantMoreInfoFilled:
+          restaurantMoreInfoFilled ?? this.restaurantMoreInfoFilled,
       userFilled: userFilled ?? this.userFilled,
       navigationNonce: navigationNonce ?? this.navigationNonce,
     );

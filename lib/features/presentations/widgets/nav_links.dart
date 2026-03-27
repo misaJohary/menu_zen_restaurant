@@ -25,7 +25,10 @@ class NavLink extends StatelessWidget {
     return Stack(
       children: [
         Container(
-          margin: const EdgeInsets.symmetric(horizontal: kspacing * 2, vertical: 4),
+          margin: const EdgeInsets.symmetric(
+            horizontal: kspacing * 2,
+            vertical: 4,
+          ),
           child: ListTile(
             dense: true,
             visualDensity: const VisualDensity(vertical: -1),
@@ -41,10 +44,10 @@ class NavLink extends StatelessWidget {
             title: Text(
               label ?? '',
               style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                    color: isSelected ? primaryColor : grey,
-                    fontSize: 16,
-                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                  ),
+                color: isSelected ? primaryColor : grey,
+                fontSize: 16,
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+              ),
             ),
             onTap: () {
               context.router.push(destination);
@@ -73,50 +76,47 @@ class NavLink extends StatelessWidget {
 }
 
 List<Widget> navLinks(String currentRoute, Role? role) => [
-      NavLink(
-        label: 'Dashboard',
-        iconPath: 'assets/icons/dashboard.svg',
-        isSelected: currentRoute == DashboardRoute.name,
-        destination: const DashboardRoute(),
-      ),
-      NavLink(
-        label: 'Menus',
-        iconPath: 'assets/icons/menus.svg',
-        isSelected: currentRoute == MenuRoute.name,
-        destination: const MenuRoute(),
-      ),
-      NavLink(
-        label: 'Catégories',
-        iconPath: 'assets/icons/categories.svg',
-        isSelected: currentRoute == CategoriesRoute.name,
-        destination: const CategoriesRoute(),
-      ),
-      NavLink(
-        label: 'Food',
-        iconPath: 'assets/icons/food.svg',
-        isSelected: currentRoute == MenuItemRoute.name,
-        destination: const MenuItemRoute(),
-      ),
-      NavLink(
-        label: 'Tables',
-        iconPath: 'assets/icons/tables.svg',
-        isSelected: currentRoute == TablesRoute.name,
-        destination: const TablesRoute(),
-      ),
-      NavLink(
-        label: 'Commande',
-        iconPath: 'assets/icons/commandes.svg',
-        isSelected: currentRoute == OrdersRoute.name,
-        destination: const OrdersRoute(),
-      ),
-      if (role == Role.admin || role == Role.superAdmin)
-        NavLink(
-          label: 'Utilisateurs',
-          iconPath: 'assets/icons/commandes.svg', // Fallback for Users
-          isSelected: currentRoute == UsersRoute.name,
-          destination: const UsersRoute(),
-        ),
-    ];
-
-
-
+  NavLink(
+    label: 'Dashboard',
+    iconPath: 'assets/icons/dashboard.svg',
+    isSelected: currentRoute == DashboardRoute.name,
+    destination: const DashboardRoute(),
+  ),
+  NavLink(
+    label: 'Menus',
+    iconPath: 'assets/icons/menus.svg',
+    isSelected: currentRoute == MenuRoute.name,
+    destination: const MenuRoute(),
+  ),
+  NavLink(
+    label: 'Catégories',
+    iconPath: 'assets/icons/categories.svg',
+    isSelected: currentRoute == CategoriesRoute.name,
+    destination: const CategoriesRoute(),
+  ),
+  NavLink(
+    label: 'Food',
+    iconPath: 'assets/icons/food.svg',
+    isSelected: currentRoute == MenuItemRoute.name,
+    destination: const MenuItemRoute(),
+  ),
+  NavLink(
+    label: 'Tables',
+    iconPath: 'assets/icons/tables.svg',
+    isSelected: currentRoute == TablesRoute.name,
+    destination: const TablesRoute(),
+  ),
+  NavLink(
+    label: 'Commande',
+    iconPath: 'assets/icons/commandes.svg',
+    isSelected: currentRoute == OrdersRoute.name,
+    destination: const OrdersRoute(),
+  ),
+  if (role == Role.admin || role == Role.superAdmin)
+    NavLink(
+      label: 'Utilisateurs',
+      iconPath: 'assets/icons/commandes.svg', // Fallback for Users
+      isSelected: currentRoute == UsersRoute.name,
+      destination: const UsersRoute(),
+    ),
+];

@@ -84,8 +84,14 @@ class MenuItemModel extends MenuItemEntity {
       category: (category != null)
           ? CategoryModel.fromEntity(category)
           : this.category,
-      menus: menus != null ? menus.map((e) => MenuModel.fromEntity(e)).toList() : this.menus,
-      translations: translations != null ? translations.map((e) => MenuItemTranslationModel.fromEntity(e)).toList() : this.translations,
+      menus: menus != null
+          ? menus.map((e) => MenuModel.fromEntity(e)).toList()
+          : this.menus,
+      translations: translations != null
+          ? translations
+                .map((e) => MenuItemTranslationModel.fromEntity(e))
+                .toList()
+          : this.translations,
       categoryId: categoryId ?? this.categoryId,
     );
   }

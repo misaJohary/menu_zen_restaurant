@@ -11,6 +11,7 @@ class RoleModel extends RoleEntity {
     required super.level,
   });
 
-  factory RoleModel.fromJson(Map<String, dynamic> json) => _$RoleModelFromJson(json);
+  factory RoleModel.fromJson(Map<String, dynamic> json) =>
+      _$RoleModelFromJson(json);
   Map<String, dynamic> toJson() => _$RoleModelToJson(this);
 }

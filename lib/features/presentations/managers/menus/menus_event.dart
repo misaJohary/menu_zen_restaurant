@@ -29,7 +29,7 @@ class MenusUpdated extends MenusEvent {
   List<Object?> get props => [menu];
 }
 
-class MenusDeleted extends MenusEvent{
+class MenusDeleted extends MenusEvent {
   final int menuId;
 
   const MenusDeleted(this.menuId);

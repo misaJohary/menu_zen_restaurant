@@ -203,12 +203,12 @@ class _OrderSummaryPannelState extends State<OrderSummaryPannel> {
                             name: 'table_number',
                             decoration: inputDecoration,
                             items: [
-                              for(final table in state.tables)
+                              for (final table in state.tables)
                                 DropdownMenuItem(
                                   value: table.id,
                                   child: Text(table.name),
                                 ),
-                            ]
+                            ],
                           );
                         },
                       ),

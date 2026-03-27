@@ -55,7 +55,9 @@ class _AddMenuPageState extends State<AddMenuPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.menu == null ? 'Ajouter un menu' : 'Modifier un menu'),
+        title: Text(
+          widget.menu == null ? 'Ajouter un menu' : 'Modifier un menu',
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(kspacing * 2),
@@ -66,7 +68,11 @@ class _AddMenuPageState extends State<AddMenuPage> {
           initialTranslations: _getInitialTranslations(),
           multilingualFields: const [
             MultilingualField(name: 'name', label: 'Nom du Menu', maxLines: 1),
-            MultilingualField(name: 'description', label: 'Description', maxLines: 5),
+            MultilingualField(
+              name: 'description',
+              label: 'Description',
+              maxLines: 5,
+            ),
           ],
           formBuilderFields: const [],
           confirmationButton: BlocBuilder<MenusBloc, MenusState>(
@@ -86,5 +92,3 @@ class _AddMenuPageState extends State<AddMenuPage> {
     );
   }
 }
-
-

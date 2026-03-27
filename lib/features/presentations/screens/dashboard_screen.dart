@@ -67,10 +67,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     ),
                   ),
                   const SizedBox(width: kspacing * 4),
-                  const Expanded(
-                    flex: 3,
-                    child: RevenueCard(),
-                  ),
+                  const Expanded(flex: 3, child: RevenueCard()),
                 ],
               ),
             ],
@@ -94,7 +91,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
               child: StatCard(
                 label: "Total commande",
                 value: orderCount.toString().padLeft(2, '0'),
-                percentage: "+ 15,6%", // Static for now as no diff in orderCount entity
+                percentage:
+                    "+ 15,6%", // Static for now as no diff in orderCount entity
                 icon: Icons.access_time_filled_rounded,
                 iconColor: const Color(0xFF9181F4),
               ),
@@ -104,7 +102,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
               child: StatCard(
                 label: "Revenue journalière",
                 value: "${(revenue / 1000).toStringAsFixed(0)}k",
-                percentage: "${revenueDiff.isNegative ? '↓' : '↑'} ${revenueDiff.abs().toStringAsFixed(1)}%",
+                percentage:
+                    "${revenueDiff.isNegative ? '↓' : '↑'} ${revenueDiff.abs().toStringAsFixed(1)}%",
                 isNegative: revenueDiff.isNegative,
                 icon: Icons.access_time_filled_rounded,
                 iconColor: const Color(0xFFFBDD72),
@@ -132,22 +131,23 @@ class _DashboardScreenState extends State<DashboardScreen> {
         final user = state.userRestaurant?.user;
         final actualFullName = user != null
             ? (user.fullName ??
-                '${user.firstname ?? ''} ${user.lastname ?? ''}'.trim())
+                  '${user.firstname ?? ''} ${user.lastname ?? ''}'.trim())
             : '';
-        final displayName =
-            actualFullName.isNotEmpty ? actualFullName : (user?.username ?? '');
+        final displayName = actualFullName.isNotEmpty
+            ? actualFullName
+            : (user?.username ?? '');
 
         final initials = displayName.isNotEmpty
             ? displayName
-                .split(' ')
-                .where((e) => e.isNotEmpty)
-                .map((n) => n[0])
-                .take(2)
-                .join()
-                .toUpperCase()
+                  .split(' ')
+                  .where((e) => e.isNotEmpty)
+                  .map((n) => n[0])
+                  .take(2)
+                  .join()
+                  .toUpperCase()
             : (user?.username.isNotEmpty == true
-                ? user!.username[0].toUpperCase()
-                : '');
+                  ? user!.username[0].toUpperCase()
+                  : '');
 
         return Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -155,9 +155,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
             Text(
               "Dashboard",
               style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
             ),
             InkWell(
               onTap: () => context.router.push(const ProfileRoute()),
@@ -286,10 +286,7 @@ class StatCard extends StatelessWidget {
               Text(
                 label,
                 overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  color: Colors.grey,
-                  fontSize: 14,
-                ),
+                style: const TextStyle(color: Colors.grey, fontSize: 14),
               ),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.baseline,
@@ -345,9 +342,9 @@ class _RevenueCardState extends State<RevenueCard> {
             children: [
               Text(
                 "Revenu de la semaine",
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                style: Theme.of(
+                  context,
+                ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
               ),
               Row(
                 children: [
@@ -374,14 +371,18 @@ class _RevenueCardState extends State<RevenueCard> {
                       plotAreaBorderWidth: 0,
                       primaryXAxis: CategoryAxis(
                         majorGridLines: const MajorGridLines(width: 0),
-                        labelStyle:
-                            const TextStyle(color: Colors.grey, fontSize: 10),
+                        labelStyle: const TextStyle(
+                          color: Colors.grey,
+                          fontSize: 10,
+                        ),
                       ),
                       primaryYAxis: NumericAxis(
                         axisLine: const AxisLine(width: 0),
                         majorTickLines: const MajorTickLines(size: 0),
-                        labelStyle:
-                            const TextStyle(color: Colors.grey, fontSize: 10),
+                        labelStyle: const TextStyle(
+                          color: Colors.grey,
+                          fontSize: 10,
+                        ),
                         numberFormat: NumberFormat.compact(),
                       ),
                       series: <CartesianSeries>[
@@ -391,7 +392,9 @@ class _RevenueCardState extends State<RevenueCard> {
                           xValueMapper: (DailyRevenue data, _) =>
                               DateFormat('E').format(data.date),
                           yValueMapper: (DailyRevenue data, _) => data.revenue,
-                          markerSettings: const MarkerSettings(isVisible: false),
+                          markerSettings: const MarkerSettings(
+                            isVisible: false,
+                          ),
                         ),
                       ],
                       legend: Legend(
@@ -453,9 +456,9 @@ class _TopMenuCardState extends State<TopMenuCard> {
         children: [
           Text(
             "Meilleures menus",
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: kspacing * 2),
           BlocBuilder<StatsBloc, StatsState>(
@@ -470,7 +473,9 @@ class _TopMenuCardState extends State<TopMenuCard> {
               return Column(
                 children: items.take(3).map((item) {
                   final percentage = state.topMenuItems!.totalQuantity > 0
-                      ? (item.totalQuantity / state.topMenuItems!.totalQuantity * 100)
+                      ? (item.totalQuantity /
+                            state.topMenuItems!.totalQuantity *
+                            100)
                       : 0;
                   return Padding(
                     padding: const EdgeInsets.symmetric(vertical: kspacing),
@@ -485,9 +490,8 @@ class _TopMenuCardState extends State<TopMenuCard> {
                                 height: 50,
                                 fit: BoxFit.cover,
                                 imageUrl: item.picture,
-                                placeholder: (context, url) => Container(
-                                  color: Colors.grey.shade200,
-                                ),
+                                placeholder: (context, url) =>
+                                    Container(color: Colors.grey.shade200),
                               ),
                             ),
                             const SizedBox(width: kspacing * 1.5),
@@ -561,5 +565,3 @@ class _TopMenuCardState extends State<TopMenuCard> {
     );
   }
 }
-
-

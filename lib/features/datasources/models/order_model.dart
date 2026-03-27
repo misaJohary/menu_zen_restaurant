@@ -61,8 +61,12 @@ class OrderModel extends OrderEntity {
       id: entity.id,
       clientName: entity.clientName,
       orderStatus: entity.orderStatus,
-      rTable: entity.rTable != null ? TableModel.fromEntity(entity.rTable!) : null,
-      server: entity.server != null ? UserModel.fromEntity(entity.server!) : null,
+      rTable: entity.rTable != null
+          ? TableModel.fromEntity(entity.rTable!)
+          : null,
+      server: entity.server != null
+          ? UserModel.fromEntity(entity.server!)
+          : null,
       paymentStatus: entity.paymentStatus,
       orderMenuItems: orderMenuItems,
       restaurantTableId: entity.restaurantTableId,

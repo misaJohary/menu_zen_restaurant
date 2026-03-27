@@ -40,10 +40,8 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
     showDialog(
       context: context,
       barrierDismissible: true,
-      builder: (context) => CategoryDialog(
-        controller: controller,
-        category: category,
-      ),
+      builder: (context) =>
+          CategoryDialog(controller: controller, category: category),
     ).then((_) {
       // Potentially reset fields if canceled
     });
@@ -52,7 +50,9 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF1F8E9), // Light green background from mockup
+      backgroundColor: const Color(
+        0xFFF1F8E9,
+      ), // Light green background from mockup
       body: BlocListener<CategoriesBloc, CategoriesState>(
         listenWhen: (previous, current) =>
             previous.editStatus != current.editStatus,
@@ -103,12 +103,15 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                             final category = state.categories[index];
                             return CategoryCard(
                               category: category,
-                              onEdit: () => _showCategoryDialog(category: category),
+                              onEdit: () =>
+                                  _showCategoryDialog(category: category),
                             );
                           },
                         );
                       case BlocStatus.failed:
-                        return const Center(child: Text("Erreur de chargement"));
+                        return const Center(
+                          child: Text("Erreur de chargement"),
+                        );
                       default:
                         return const SizedBox.shrink();
                     }
@@ -128,17 +131,17 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
         final user = state.userRestaurant?.user;
         final displayName = user != null
             ? (user.fullName ??
-                '${user.firstname ?? ''} ${user.lastname ?? ''}'.trim())
+                  '${user.firstname ?? ''} ${user.lastname ?? ''}'.trim())
             : (user?.username ?? '');
 
         final initials = displayName.isNotEmpty
             ? displayName
-                .split(' ')
-                .where((e) => e.isNotEmpty)
-                .map((n) => n[0])
-                .take(2)
-                .join()
-                .toUpperCase()
+                  .split(' ')
+                  .where((e) => e.isNotEmpty)
+                  .map((n) => n[0])
+                  .take(2)
+                  .join()
+                  .toUpperCase()
             : 'U';
 
         return Row(
@@ -156,9 +159,9 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                 const SizedBox(height: 4),
                 Text(
                   "Gérer les catégories de tes plats",
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Colors.grey,
-                  ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium?.copyWith(color: Colors.grey),
                 ),
               ],
             ),
@@ -176,8 +179,13 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
               ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: primaryColor,
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 18,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
                 elevation: 0,
               ),
             ),
@@ -187,7 +195,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
               backgroundColor: primaryColor.withOpacity(0.1),
               child: Text(
                 initials,
-                style:  TextStyle(
+                style: TextStyle(
                   color: primaryColor,
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
@@ -229,7 +237,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
       builder: (context, state) {
         final langName = state.selectedLanguage?.name ?? 'French';
         final langFlag = state.selectedLanguage?.code == 'en' ? '🇺🇸' : '🇫🇷';
-        
+
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
           decoration: BoxDecoration(
@@ -249,10 +257,13 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
               const SizedBox(width: 8),
               Text(
                 langName,
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 13,
+                ),
               ),
               const SizedBox(width: 8),
-               Icon(Icons.check, color: primaryColor, size: 16),
+              Icon(Icons.check, color: primaryColor, size: 16),
             ],
           ),
         );

@@ -5,7 +5,8 @@ import '../../domains/entities/table_entity.dart';
 import '../managers/tables/table_bloc.dart';
 import 'base_controller.dart';
 
-class TablesController extends BaseController<TableBloc, TableModel, TableEntity> {
+class TablesController
+    extends BaseController<TableBloc, TableModel, TableEntity> {
   TablesController({required super.context});
 
   @override
@@ -35,7 +36,6 @@ class TablesController extends BaseController<TableBloc, TableModel, TableEntity
   dynamic getModelId(TableModel model) {
     return model.id;
   }
-
 
   @override
   void addFetchEvent() {

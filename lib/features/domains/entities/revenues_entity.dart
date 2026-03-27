@@ -35,5 +35,10 @@ class RevenuesEntity extends Equatable {
   });
 
   @override
-  List<Object?> get props => [dailyRevenues, totalRevenue, diffPercentage, todayRevenue];
+  List<Object?> get props => [
+    dailyRevenues,
+    totalRevenue,
+    diffPercentage,
+    todayRevenue,
+  ];
 }

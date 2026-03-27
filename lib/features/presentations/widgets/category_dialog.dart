@@ -8,11 +8,7 @@ class CategoryDialog extends StatefulWidget {
   final CategoriesController controller;
   final CategoryEntity? category;
 
-  const CategoryDialog({
-    super.key,
-    required this.controller,
-    this.category,
-  });
+  const CategoryDialog({super.key, required this.controller, this.category});
 
   @override
   State<CategoryDialog> createState() => _CategoryDialogState();
@@ -46,8 +42,7 @@ class _CategoryDialogState extends State<CategoryDialog> {
   void initState() {
     super.initState();
     _formKey = widget.controller.formKey;
-    _selectedColor =
-        widget.category?.themeColor ?? _availableColors.first;
+    _selectedColor = widget.category?.themeColor ?? _availableColors.first;
 
     // Initialize all supported languages with empty values
     for (var lang in _languages) {
@@ -59,7 +54,7 @@ class _CategoryDialogState extends State<CategoryDialog> {
         r'^(\p{Emoji_Presentation}|\p{Emoji}\uFE0F)\s*',
         unicode: true,
       );
-      
+
       for (var translation in widget.category!.translations) {
         String name = translation.name;
         final match = regex.firstMatch(name);
@@ -67,7 +62,7 @@ class _CategoryDialogState extends State<CategoryDialog> {
           _emoji = match.group(1)!;
           name = name.substring(match.end).trim();
         }
-        
+
         _translations[translation.languageCode] = {
           'name': name,
           'description': translation.description ?? '',
@@ -93,7 +88,7 @@ class _CategoryDialogState extends State<CategoryDialog> {
     _saveTranslations();
 
     widget.controller.setThemeColor = _selectedColor;
-    
+
     // Ensure the emoji field in the controller's form has the current emoji
     // The controller prepends the emoji to the names during validation
     _formKey.currentState?.fields['emoji']?.didChange(_emoji);
@@ -110,7 +105,9 @@ class _CategoryDialogState extends State<CategoryDialog> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       child: Container(
         width: 600,
-        constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.9),
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.of(context).size.height * 0.9,
+        ),
         padding: const EdgeInsets.all(32),
         child: SingleChildScrollView(
           child: FormBuilder(
@@ -129,7 +126,9 @@ class _CategoryDialogState extends State<CategoryDialog> {
                       style: Theme.of(context).textTheme.headlineSmall
                           ?.copyWith(
                             fontWeight: FontWeight.bold,
-                            color: const Color(0xFF7B5CAB), // Purple from mockup
+                            color: const Color(
+                              0xFF7B5CAB,
+                            ), // Purple from mockup
                           ),
                     ),
                     IconButton(
@@ -140,11 +139,7 @@ class _CategoryDialogState extends State<CategoryDialog> {
                           color: primaryColor.withOpacity(0.2),
                           shape: BoxShape.circle,
                         ),
-                        child:  Icon(
-                          Icons.close,
-                          color: primaryColor,
-                          size: 20,
-                        ),
+                        child: Icon(Icons.close, color: primaryColor, size: 20),
                       ),
                     ),
                   ],
@@ -171,8 +166,7 @@ class _CategoryDialogState extends State<CategoryDialog> {
                           _formKey.currentState?.fields['name']?.didChange(
                             _translations[_selectedLanguage]?['name'] ?? '',
                           );
-                          _formKey.currentState?.fields['description']
-                              ?.didChange(
+                          _formKey.currentState?.fields['description']?.didChange(
                             _translations[_selectedLanguage]?['description'] ??
                                 '',
                           );
@@ -185,7 +179,9 @@ class _CategoryDialogState extends State<CategoryDialog> {
                         ),
                         decoration: BoxDecoration(
                           border: Border.all(
-                            color: isSelected ? primaryColor : Colors.grey.shade300,
+                            color: isSelected
+                                ? primaryColor
+                                : Colors.grey.shade300,
                             width: isSelected ? 2 : 1,
                           ),
                           borderRadius: BorderRadius.circular(20),
@@ -193,15 +189,15 @@ class _CategoryDialogState extends State<CategoryDialog> {
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Text(lang['flag']!, style: const TextStyle(fontSize: 18)),
+                            Text(
+                              lang['flag']!,
+                              style: const TextStyle(fontSize: 18),
+                            ),
                             const SizedBox(width: 8),
                             Text(lang['name']!),
                             if (isSelected) const SizedBox(width: 8),
-                            if (isSelected)  Icon(
-                              Icons.check,
-                              color: primaryColor,
-                              size: 16,
-                            ),
+                            if (isSelected)
+                              Icon(Icons.check, color: primaryColor, size: 16),
                           ],
                         ),
                       ),
@@ -260,14 +256,24 @@ class _CategoryDialogState extends State<CategoryDialog> {
                   children: [
                     const Text(
                       "Ajouter une imoji",
-                      style:
-                          TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 16,
+                      ),
                     ),
                     const SizedBox(width: 12),
                     InkWell(
                       onTap: () {
                         // Emoji list to cycle through
-                        final List<String> emojis = ['🍕', '🍔', '🥗', '🍝', '🍣', '🍰', '☕'];
+                        final List<String> emojis = [
+                          '🍕',
+                          '🍔',
+                          '🥗',
+                          '🍝',
+                          '🍣',
+                          '🍰',
+                          '☕',
+                        ];
                         final currentIndex = emojis.indexOf(_emoji);
                         final nextIndex = (currentIndex + 1) % emojis.length;
                         setState(() {
@@ -292,7 +298,8 @@ class _CategoryDialogState extends State<CategoryDialog> {
                 FormBuilderField<String>(
                   name: 'emoji',
                   initialValue: _emoji,
-                  builder: (FormFieldState<String?> field) => const SizedBox.shrink(),
+                  builder: (FormFieldState<String?> field) =>
+                      const SizedBox.shrink(),
                 ),
                 const SizedBox(height: 24),
 
@@ -302,7 +309,8 @@ class _CategoryDialogState extends State<CategoryDialog> {
                 ),
                 const SizedBox(height: 12),
                 Wrap(
-                  spacing: 12, runSpacing: 12,
+                  spacing: 12,
+                  runSpacing: 12,
                   children: _availableColors.map((color) {
                     final isSelected = _selectedColor?.value == color.value;
                     final colorName = switch (color) {
@@ -320,23 +328,37 @@ class _CategoryDialogState extends State<CategoryDialog> {
                       onTap: () => setState(() => _selectedColor = color),
                       child: Container(
                         width: 110,
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
+                        ),
                         decoration: BoxDecoration(
-                          color: isSelected ? color.withOpacity(0.12) : Colors.transparent,
+                          color: isSelected
+                              ? color.withOpacity(0.12)
+                              : Colors.transparent,
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Container(
-                              width: 24, height: 24,
-                              decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+                              width: 24,
+                              height: 24,
+                              decoration: BoxDecoration(
+                                color: color,
+                                shape: BoxShape.circle,
+                              ),
                             ),
                             const SizedBox(width: 8),
-                            Text(colorName, style: TextStyle(
-                              color: isSelected ? color : Colors.black87,
-                              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                            )),
+                            Text(
+                              colorName,
+                              style: TextStyle(
+                                color: isSelected ? color : Colors.black87,
+                                fontWeight: isSelected
+                                    ? FontWeight.bold
+                                    : FontWeight.normal,
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -355,9 +377,17 @@ class _CategoryDialogState extends State<CategoryDialog> {
                           foregroundColor: primaryColor,
                           elevation: 0,
                           minimumSize: const Size(0, 56),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(28),
+                          ),
                         ),
-                        child: const Text("ANNULER", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                        child: const Text(
+                          "ANNULER",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
                       ),
                     ),
                     const SizedBox(width: 16),
@@ -369,11 +399,16 @@ class _CategoryDialogState extends State<CategoryDialog> {
                           foregroundColor: Colors.white,
                           elevation: 0,
                           minimumSize: const Size(0, 56),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(28),
+                          ),
                         ),
                         child: Text(
                           widget.category == null ? "AJOUTER" : "MODIFIER",
-                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
                         ),
                       ),
                     ),

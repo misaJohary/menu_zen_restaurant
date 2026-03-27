@@ -46,7 +46,3 @@ class LanguagesBloc extends Bloc<LanguagesEvent, LanguagesState> {
     emit(state.copyWith(selectedLanguage: event.language));
   }
 }
-
-
-
-

@@ -74,16 +74,16 @@ class AddItemWidgetState extends State<AddItemWidget> {
   @override
   void initState() {
     super.initState();
-    
+
     // Initialize translations from initialTranslations if provided
     if (widget.initialTranslations != null) {
       _translations.addAll(widget.initialTranslations!);
     }
-    
+
     // Fetch languages when widget initializes
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<LanguagesBloc>().add(LanguagesFetched());
-      
+
       // Patch FormBuilder values for multilingual fields if initialTranslations exist
       if (widget.initialTranslations != null) {
         final formState = widget.formKey.currentState;
@@ -91,7 +91,8 @@ class AddItemWidgetState extends State<AddItemWidget> {
           final Map<String, dynamic> patchValues = {};
           for (var langEntry in widget.initialTranslations!.entries) {
             for (var fieldEntry in langEntry.value.entries) {
-              patchValues['${fieldEntry.key}_${langEntry.key}'] = fieldEntry.value;
+              patchValues['${fieldEntry.key}_${langEntry.key}'] =
+                  fieldEntry.value;
             }
           }
           formState.patchValue(patchValues);
@@ -103,39 +104,42 @@ class AddItemWidgetState extends State<AddItemWidget> {
   @override
   void didUpdateWidget(AddItemWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-    
+
     // Update translations when initialTranslations change (e.g., switching to edit mode)
-    if (widget.initialTranslations != null && 
+    if (widget.initialTranslations != null &&
         widget.initialTranslations != oldWidget.initialTranslations) {
       setState(() {
         _translations.clear();
         _translations.addAll(widget.initialTranslations!);
       });
-      
+
       // Also patch FormBuilder values for multilingual fields
       WidgetsBinding.instance.addPostFrameCallback((_) {
         final formState = widget.formKey.currentState;
-        if (formState is FormBuilderState && widget.initialTranslations != null) {
+        if (formState is FormBuilderState &&
+            widget.initialTranslations != null) {
           final Map<String, dynamic> patchValues = {};
           for (var langEntry in widget.initialTranslations!.entries) {
             for (var fieldEntry in langEntry.value.entries) {
-              patchValues['${fieldEntry.key}_${langEntry.key}'] = fieldEntry.value;
+              patchValues['${fieldEntry.key}_${langEntry.key}'] =
+                  fieldEntry.value;
             }
           }
           formState.patchValue(patchValues);
         }
       });
-    } else if (widget.initialTranslations == null && 
-               oldWidget.initialTranslations != null) {
+    } else if (widget.initialTranslations == null &&
+        oldWidget.initialTranslations != null) {
       // Clear translations when switching from edit to create mode
       setState(() {
         _translations.clear();
       });
-      
+
       // Clear FormBuilder values for multilingual fields
       WidgetsBinding.instance.addPostFrameCallback((_) {
         final formState = widget.formKey.currentState;
-        if (formState is FormBuilderState && oldWidget.initialTranslations != null) {
+        if (formState is FormBuilderState &&
+            oldWidget.initialTranslations != null) {
           final Map<String, dynamic> patchValues = {};
           for (var langEntry in oldWidget.initialTranslations!.entries) {
             for (var fieldEntry in langEntry.value.entries) {

@@ -19,7 +19,3 @@ class LanguageSelected extends LanguagesEvent {
   @override
   List<Object?> get props => [language];
 }
-
-
-
-

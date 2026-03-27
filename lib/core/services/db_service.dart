@@ -24,7 +24,10 @@ class DbServiceImp implements DbService {
 
   @override
   Future saveUserRestaurant(UserRestaurantModel userRestaurant) async {
-    await prefs.setString('userRestaurant', json.encode(userRestaurant.toJson()));
+    await prefs.setString(
+      'userRestaurant',
+      json.encode(userRestaurant.toJson()),
+    );
   }
 
   @override
@@ -46,7 +49,7 @@ class DbServiceImp implements DbService {
   }
 
   @override
-  Future saveToken(Token token) async{
+  Future saveToken(Token token) async {
     await prefs.setString('token', json.encode(token.toJson()));
   }
 

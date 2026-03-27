@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -50,12 +49,18 @@ class _AddMenuItemPageState extends State<AddMenuItemPage> {
       final resolvedCategory = categoryId != null
           ? categoriesState.categories.firstWhere(
               (c) => c.id == categoryId,
-              orElse: () => currentModel.category ?? categoriesState.categories.first,
+              orElse: () =>
+                  currentModel.category ?? categoriesState.categories.first,
             )
           : currentModel.category;
 
-      final desiredMenuIds = currentModel.menus.map((m) => m.id).whereType<int>().toSet();
-      final resolvedMenus = menusState.menus.where((m) => desiredMenuIds.contains(m.id)).toList();
+      final desiredMenuIds = currentModel.menus
+          .map((m) => m.id)
+          .whereType<int>()
+          .toSet();
+      final resolvedMenus = menusState.menus
+          .where((m) => desiredMenuIds.contains(m.id))
+          .toList();
 
       formState.patchValue({
         'price': currentModel.price.toString(),
@@ -64,9 +69,14 @@ class _AddMenuItemPageState extends State<AddMenuItemPage> {
       });
     }
 
-    final categoriesLoaded = context.read<CategoriesBloc>().state.categories.isNotEmpty;
+    final categoriesLoaded = context
+        .read<CategoriesBloc>()
+        .state
+        .categories
+        .isNotEmpty;
     final menusLoaded = context.read<MenusBloc>().state.menus.isNotEmpty;
-    if (!categoriesLoaded) context.read<CategoriesBloc>().add(CategoriesFetched());
+    if (!categoriesLoaded)
+      context.read<CategoriesBloc>().add(CategoriesFetched());
     if (!menusLoaded) context.read<MenusBloc>().add(MenusFetched());
 
     patchWithReferences();
@@ -75,7 +85,10 @@ class _AddMenuItemPageState extends State<AddMenuItemPage> {
 
   Map<String, Map<String, String>>? _getInitialTranslations() {
     final entity = widget.menuItem;
-    if (entity == null || entity.translations == null || entity.translations.isEmpty) return null;
+    if (entity == null ||
+        entity.translations == null ||
+        entity.translations.isEmpty)
+      return null;
     final Map<String, Map<String, String>> map = {};
     for (var t in entity.translations) {
       map[t.languageCode] = {
@@ -97,7 +110,9 @@ class _AddMenuItemPageState extends State<AddMenuItemPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.menuItem == null ? 'Ajouter un item' : 'Modifier un item'),
+        title: Text(
+          widget.menuItem == null ? 'Ajouter un item' : 'Modifier un item',
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(kspacing * 2),
@@ -109,8 +124,16 @@ class _AddMenuItemPageState extends State<AddMenuItemPage> {
               title: widget.menuItem == null ? 'Nouvel Item' : 'Éditer Item',
               initialTranslations: _getInitialTranslations(),
               multilingualFields: const [
-                MultilingualField(name: 'name', label: "Nom de l'item", maxLines: 1),
-                MultilingualField(name: 'description', label: 'Description', maxLines: 2),
+                MultilingualField(
+                  name: 'name',
+                  label: "Nom de l'item",
+                  maxLines: 1,
+                ),
+                MultilingualField(
+                  name: 'description',
+                  label: 'Description',
+                  maxLines: 2,
+                ),
               ],
               formBuilderFields: [
                 FormBuilderTextField(
@@ -159,7 +182,9 @@ class _AddMenuItemPageState extends State<AddMenuItemPage> {
                 builder: (context, state) {
                   return ElevatedButton(
                     onPressed: _onSubmit,
-                    child: Text(widget.menuItem == null ? 'Ajouter' : 'Mettre à jour'),
+                    child: Text(
+                      widget.menuItem == null ? 'Ajouter' : 'Mettre à jour',
+                    ),
                   );
                 },
               ),
@@ -184,5 +209,3 @@ class _AddMenuItemPageState extends State<AddMenuItemPage> {
     );
   }
 }
-
-

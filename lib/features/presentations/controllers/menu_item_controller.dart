@@ -8,7 +8,9 @@ import 'package:menu_zen_restaurant/features/domains/entities/menu_entity.dart';
 
 import '../../datasources/models/category_model.dart';
 import '../../datasources/models/menu_item_model.dart';
+import '../../datasources/models/menu_item_update_model.dart';
 import '../../datasources/models/menu_model.dart';
+import '../../domains/entities/category_entity.dart';
 import '../../domains/entities/menu_item_entity.dart';
 import '../managers/menu_item/menu_item_bloc.dart';
 import 'base_controller.dart';
@@ -45,8 +47,6 @@ class MenuItemController
 
   @override
   void validate() {
-    print(formKey.currentState!.fields);
-
     Map<String, dynamic> formData = formKey.currentState!.fields.map(
       (key, value) => MapEntry(key, value.value),
     );
@@ -94,9 +94,7 @@ class MenuItemController
 
   @override
   MenuItemModel createModelFromEntity(MenuItemEntity entity) {
-    return MenuItemModel.fromEntity(
-      entity,
-    );
+    return MenuItemModel.fromEntity(entity);
   }
 
   @override
@@ -126,8 +124,16 @@ class MenuItemController
 
   @override
   void addUpdateEvent(MenuItemEntity entity) {
-    //TODO update
-    //bloc.add(MenuItemUpdated(entity));
+    if (entity is MenuItemModel) {
+      final updateModel = MenuItemUpdateModel(
+        id: entity.id!,
+        price: entity.price,
+        categoryId: entity.category?.id,
+        translations: entity.translations,
+        active: entity.active,
+      );
+      bloc.add(MenuItemUpdated(updateModel));
+    }
   }
 
   @override
@@ -158,18 +164,27 @@ class MenuItemController
               formData[entry.key] = entry.value.value;
             });
 
-        final price = double.tryParse(formData['price'] ?? '0');
-        final category = (formData['category'] as CategoryModel?)?.toJson();
-        final menus =
-            (formData['menus'] as List<MenuEntity>?)
-                ?.map((menu) => MenuModel.fromEntity(menu).toJson())
+        final priceStr = formData['price']?.toString() ?? '0';
+        final price = double.tryParse(priceStr);
+
+        final category = formData['category'] is CategoryEntity
+            ? CategoryModel.fromEntity(formData['category'] as CategoryEntity)
+            : null;
+
+        final menus = (formData['menus'] as List?)
+                ?.map((menu) {
+                  if (menu is MenuEntity) {
+                    return MenuModel.fromEntity(menu).toJson();
+                  }
+                  return menu;
+                })
                 .toList() ??
             [];
 
         formData.addAll({
           'picture': filePicked,
           'price': price ?? 0.0,
-          'category': category,
+          'category': category?.toJson(),
           'menus': menus,
         });
 

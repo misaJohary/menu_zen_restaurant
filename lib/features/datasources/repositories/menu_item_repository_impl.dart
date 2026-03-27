@@ -48,13 +48,10 @@ class MenuItemRepositoryImpl implements MenuItemRepository {
 
   @override
   Future<MultiResult<Failure, MenuItemEntity>> updateMenuItem(
-      MenuItemUpdateModel params,
+    MenuItemUpdateModel params,
   ) {
     return executeWithErrorHandling(() async {
-      return await rest.updateMenuItems(
-        params.id,
-        params,
-      );
+      return await rest.updateMenuItems(params.id, params);
     });
   }
 

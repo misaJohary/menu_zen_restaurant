@@ -49,14 +49,46 @@ class App extends StatelessWidget {
           scaffoldBackgroundColor: const Color(0xFFFAFAFA),
           textTheme: GoogleFonts.poppinsTextTheme(
             const TextTheme(
-              displayLarge: TextStyle(fontSize: 48, fontWeight: FontWeight.bold, color: Colors.black87),
-              displayMedium: TextStyle(fontSize: 36, fontWeight: FontWeight.bold, color: Colors.black87),
-              displaySmall: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black87),
-              headlineLarge: TextStyle(fontSize: 22, fontWeight: FontWeight.w600, color: Colors.black87),
-              headlineMedium: TextStyle(fontSize: 20, fontWeight: FontWeight.w600, color: Colors.black87),
-              headlineSmall: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Colors.black87),
-              titleLarge: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.black87),
-              titleMedium: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.black87),
+              displayLarge: TextStyle(
+                fontSize: 48,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
+              displayMedium: TextStyle(
+                fontSize: 36,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
+              displaySmall: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
+              headlineLarge: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.w600,
+                color: Colors.black87,
+              ),
+              headlineMedium: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+                color: Colors.black87,
+              ),
+              headlineSmall: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: Colors.black87,
+              ),
+              titleLarge: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: Colors.black87,
+              ),
+              titleMedium: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: Colors.black87,
+              ),
               bodyLarge: TextStyle(fontSize: 14, color: Colors.black87),
               bodyMedium: TextStyle(fontSize: 12, color: Colors.black54),
             ),
@@ -70,7 +102,10 @@ class App extends StatelessWidget {
                 borderRadius: BorderRadius.all(Radius.circular(20)),
               ),
               minimumSize: const Size(50, 55),
-              textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              textStyle: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
         ),

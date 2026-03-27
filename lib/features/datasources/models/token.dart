@@ -9,8 +9,7 @@ class Token {
 
   const Token({this.accessToken, this.refreshToken});
 
-  factory Token.fromJson(Map<String, dynamic> json) =>
-      _$TokenFromJson(json);
+  factory Token.fromJson(Map<String, dynamic> json) => _$TokenFromJson(json);
 
   Map<String, dynamic> toJson() => _$TokenToJson(this);
 }

@@ -74,19 +74,22 @@ class _MenuScreenState extends State<MenuScreen> {
                                 const SizedBox(height: kspacing * 2),
                                 ElevatedButton(
                                   onPressed: _showAddEditDialog,
-                                  child: const Text('Ajouter votre premier menu'),
+                                  child: const Text(
+                                    'Ajouter votre premier menu',
+                                  ),
                                 ),
                               ],
                             ),
                           );
                         }
                         return GridView.builder(
-                          gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                            maxCrossAxisExtent: 400,
-                            childAspectRatio: 1.5,
-                            crossAxisSpacing: kspacing * 4,
-                            mainAxisSpacing: kspacing * 4,
-                          ),
+                          gridDelegate:
+                              const SliverGridDelegateWithMaxCrossAxisExtent(
+                                maxCrossAxisExtent: 400,
+                                childAspectRatio: 1.5,
+                                crossAxisSpacing: kspacing * 4,
+                                mainAxisSpacing: kspacing * 4,
+                              ),
                           itemCount: state.menus.length,
                           itemBuilder: (context, index) {
                             final menu = state.menus[index];
@@ -125,15 +128,11 @@ class _MenuScreenState extends State<MenuScreen> {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => _AddEditMenuDialog(
-        controller: controller,
-        menu: menu,
-      ),
+      builder: (context) =>
+          _AddEditMenuDialog(controller: controller, menu: menu),
     );
   }
-
-  }
-
+}
 
 class _MenuHeader extends StatelessWidget {
   final VoidCallback onAddPressed;
@@ -150,15 +149,15 @@ class _MenuHeader extends StatelessWidget {
             Text(
               'Gestion de menus',
               style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
             ),
             Text(
               'Géré le menu de ton restaurant',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: grey,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium?.copyWith(color: grey),
             ),
           ],
         ),
@@ -182,7 +181,9 @@ class _MenuHeader extends StatelessWidget {
             String? profileUrl;
             return CircleAvatar(
               radius: 20,
-              backgroundImage: profileUrl != null ? NetworkImage(profileUrl) : null,
+              backgroundImage: profileUrl != null
+                  ? NetworkImage(profileUrl)
+                  : null,
               child: profileUrl == null ? const Icon(Icons.person) : null,
             );
           },
@@ -244,7 +245,11 @@ class _LanguageSelector extends StatelessWidget {
               const SizedBox(width: 8),
               const Icon(Icons.check, size: 14, color: Color(0xFF81C784)),
               const SizedBox(width: 4),
-              const Icon(Icons.keyboard_arrow_down, size: 20, color: Colors.grey),
+              const Icon(
+                Icons.keyboard_arrow_down,
+                size: 20,
+                color: Colors.grey,
+              ),
             ],
           ),
         );
@@ -270,7 +275,8 @@ class _MenuCard extends StatelessWidget {
       builder: (context, langState) {
         final selectedLang = langState.selectedLanguage?.code ?? 'en';
         final name = menu.translations.getField(selectedLang, (t) => t.name);
-        final description = menu.translations.getOptionalField(
+        final description =
+            menu.translations.getOptionalField(
               selectedLang,
               (t) => t.description,
             ) ??
@@ -309,7 +315,7 @@ class _MenuCard extends StatelessWidget {
                   ),
                   IconButton(
                     onPressed: onEdit,
-                    icon:  Icon(Icons.edit, color: primaryColor, size: 20),
+                    icon: Icon(Icons.edit, color: primaryColor, size: 20),
                     padding: EdgeInsets.zero,
                     constraints: const BoxConstraints(),
                   ),
@@ -327,8 +333,11 @@ class _MenuCard extends StatelessWidget {
               const SizedBox(height: kspacing * 2),
               Row(
                 children: [
-                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
                     decoration: BoxDecoration(
                       color: (menu.active ?? false)
                           ? const Color(0xFF2E7D32)
@@ -374,10 +383,7 @@ class _AddEditMenuDialog extends StatefulWidget {
   final MenusController controller;
   final MenuEntity? menu;
 
-  const _AddEditMenuDialog({
-    required this.controller,
-    this.menu,
-  });
+  const _AddEditMenuDialog({required this.controller, this.menu});
 
   @override
   State<_AddEditMenuDialog> createState() => _AddEditMenuDialogState();
@@ -387,7 +393,7 @@ class _AddEditMenuDialogState extends State<_AddEditMenuDialog> {
   final Map<String, Map<String, String>> _translations = {};
   final Map<String, TextEditingController> _nameControllers = {};
   final Map<String, TextEditingController> _descriptionControllers = {};
-  
+
   String _selectedLangCode = 'fr';
   bool _isActive = true;
 
@@ -402,7 +408,9 @@ class _AddEditMenuDialogState extends State<_AddEditMenuDialog> {
           'description': t.description ?? '',
         };
         _nameControllers[t.languageCode] = TextEditingController(text: t.name);
-        _descriptionControllers[t.languageCode] = TextEditingController(text: t.description ?? '');
+        _descriptionControllers[t.languageCode] = TextEditingController(
+          text: t.description ?? '',
+        );
       }
     }
     context.read<LanguagesBloc>().add(LanguagesFetched());
@@ -458,18 +466,26 @@ class _AddEditMenuDialogState extends State<_AddEditMenuDialog> {
 
     final modelJson = {
       'active': _isActive,
-      'translations': _translations.entries.map((e) => {
-        'language_code': e.key,
-        'name': e.value['name'] ?? '',
-        'description': e.value['description'] ?? '',
-      }).toList(),
+      'translations': _translations.entries
+          .map(
+            (e) => {
+              'language_code': e.key,
+              'name': e.value['name'] ?? '',
+              'description': e.value['description'] ?? '',
+            },
+          )
+          .toList(),
     };
 
     if (widget.menu != null) {
       modelJson['id'] = widget.menu!.id!;
-      widget.controller.addUpdateEvent(widget.controller.createModelFromJson(modelJson));
+      widget.controller.addUpdateEvent(
+        widget.controller.createModelFromJson(modelJson),
+      );
     } else {
-      widget.controller.addCreateEvent(widget.controller.createModelFromJson(modelJson));
+      widget.controller.addCreateEvent(
+        widget.controller.createModelFromJson(modelJson),
+      );
     }
     Navigator.of(context).pop();
   }
@@ -492,7 +508,9 @@ class _AddEditMenuDialogState extends State<_AddEditMenuDialog> {
                 Row(
                   children: [
                     Text(
-                      widget.menu == null ? 'Ajouter un menu' : 'Modifier un menu',
+                      widget.menu == null
+                          ? 'Ajouter un menu'
+                          : 'Modifier un menu',
                       style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
@@ -516,7 +534,10 @@ class _AddEditMenuDialogState extends State<_AddEditMenuDialog> {
                 const SizedBox(height: kspacing),
                 const Divider(height: 1, color: Color(0xFFEEEEEE)),
                 const SizedBox(height: kspacing * 3),
-                const Text('Traduire :', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
+                const Text(
+                  'Traduire :',
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+                ),
                 const SizedBox(height: kspacing * 1.5),
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
@@ -526,31 +547,52 @@ class _AddEditMenuDialogState extends State<_AddEditMenuDialog> {
                       return Padding(
                         padding: const EdgeInsets.only(right: 12.0),
                         child: InkWell(
-                          onTap: () => setState(() => _selectedLangCode = lang.code),
+                          onTap: () =>
+                              setState(() => _selectedLangCode = lang.code),
                           borderRadius: BorderRadius.circular(24),
                           child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 10,
+                            ),
                             decoration: BoxDecoration(
                               border: Border.all(
-                                color: isSelected ? primaryColor : Colors.grey.shade300,
+                                color: isSelected
+                                    ? primaryColor
+                                    : Colors.grey.shade300,
                                 width: isSelected ? 2 : 1,
                               ),
                               borderRadius: BorderRadius.circular(24),
                             ),
                             child: Row(
                               children: [
-                                Text(lang.code == 'fr' ? '🇫🇷' : lang.code == 'en' ? '🇺🇸' : '🇨🇳', style: const TextStyle(fontSize: 18)),
+                                Text(
+                                  lang.code == 'fr'
+                                      ? '🇫🇷'
+                                      : lang.code == 'en'
+                                      ? '🇺🇸'
+                                      : '🇨🇳',
+                                  style: const TextStyle(fontSize: 18),
+                                ),
                                 const SizedBox(width: 8),
                                 Text(
                                   lang.name,
                                   style: TextStyle(
-                                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                                    color: isSelected ? Colors.black87 : Colors.black54,
+                                    fontWeight: isSelected
+                                        ? FontWeight.bold
+                                        : FontWeight.normal,
+                                    color: isSelected
+                                        ? Colors.black87
+                                        : Colors.black54,
                                   ),
                                 ),
                                 if (isSelected) ...[
                                   const SizedBox(width: 8),
-                                  const Icon(Icons.check, size: 16, color: Color(0xFF81C784)),
+                                  const Icon(
+                                    Icons.check,
+                                    size: 16,
+                                    color: Color(0xFF81C784),
+                                  ),
                                 ],
                               ],
                             ),
@@ -561,20 +603,35 @@ class _AddEditMenuDialogState extends State<_AddEditMenuDialog> {
                   ),
                 ),
                 const SizedBox(height: kspacing * 3),
-                const Text('Nom de menu', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
+                const Text(
+                  'Nom de menu',
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+                ),
                 const SizedBox(height: 10),
                 TextField(
                   controller: _getNameController(_selectedLangCode),
                   decoration: InputDecoration(
                     hintText: 'Tend M',
                     hintStyle: TextStyle(color: Colors.grey.shade400),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: Colors.grey.shade300)),
-                    enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: Colors.grey.shade300)),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: Colors.grey.shade300),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: Colors.grey.shade300),
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 14,
+                    ),
                   ),
                 ),
                 const SizedBox(height: kspacing * 2.5),
-                const Text('Description', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
+                const Text(
+                  'Description',
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+                ),
                 const SizedBox(height: 10),
                 TextField(
                   controller: _getDescriptionController(_selectedLangCode),
@@ -582,15 +639,27 @@ class _AddEditMenuDialogState extends State<_AddEditMenuDialog> {
                   decoration: InputDecoration(
                     hintText: 'Description...',
                     hintStyle: TextStyle(color: Colors.grey.shade400),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: Colors.grey.shade300)),
-                    enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: Colors.grey.shade300)),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: Colors.grey.shade300),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: Colors.grey.shade300),
+                    ),
                     contentPadding: const EdgeInsets.all(16),
                   ),
                 ),
                 const SizedBox(height: kspacing * 2.5),
                 Row(
                   children: [
-                    const Text('Menu actif', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
+                    const Text(
+                      'Menu actif',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 16,
+                      ),
+                    ),
                     const SizedBox(width: 12),
                     Switch(
                       value: _isActive,
@@ -610,10 +679,18 @@ class _AddEditMenuDialogState extends State<_AddEditMenuDialog> {
                           backgroundColor: const Color(0xFFF1F8E9),
                           foregroundColor: primaryColor,
                           elevation: 0,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
                           padding: const EdgeInsets.symmetric(vertical: 18),
                         ),
-                        child: const Text('ANNULER', style: TextStyle(fontWeight: FontWeight.w800, letterSpacing: 0.5)),
+                        child: const Text(
+                          'ANNULER',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
                       ),
                     ),
                     const SizedBox(width: kspacing * 3),
@@ -624,12 +701,17 @@ class _AddEditMenuDialogState extends State<_AddEditMenuDialog> {
                           backgroundColor: primaryColor, // Solid green
                           foregroundColor: Colors.white,
                           elevation: 0,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
                           padding: const EdgeInsets.symmetric(vertical: 18),
                         ),
                         child: Text(
                           widget.menu == null ? 'AJOUTER' : 'MODIFIER',
-                          style: const TextStyle(fontWeight: FontWeight.w800, letterSpacing: 0.5),
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: 0.5,
+                          ),
                         ),
                       ),
                     ),

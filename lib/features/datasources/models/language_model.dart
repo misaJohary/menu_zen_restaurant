@@ -4,7 +4,7 @@ import 'package:menu_zen_restaurant/features/domains/entities/language_entity.da
 part 'language_model.g.dart';
 
 @JsonSerializable()
-class LanguageModel extends LanguageEntity{
+class LanguageModel extends LanguageEntity {
   const LanguageModel({required super.code, required super.name});
 
   factory LanguageModel.fromEntity(LanguageEntity entity) {

@@ -74,11 +74,12 @@ class _CashierScreenState extends State<CashierScreen> {
                       }
 
                       final filteredOrders = state.orders.where((order) {
-                        if (order.orderStatus != OrderStatus.served) return false;
-                        
+                        if (order.orderStatus != OrderStatus.served)
+                          return false;
+
                         if (showCompleted) {
                           return order.paymentStatus == PaymentStatus.paid ||
-                                 order.paymentStatus == PaymentStatus.prepaid;
+                              order.paymentStatus == PaymentStatus.prepaid;
                         } else {
                           return order.paymentStatus == PaymentStatus.unpaid;
                         }
@@ -262,10 +263,7 @@ class _CashierScreenState extends State<CashierScreen> {
       ),
       child: Row(
         children: [
-          Text(
-            "$stationName",
-            style: const TextStyle(color: Colors.white),
-          ),
+          Text("$stationName", style: const TextStyle(color: Colors.white)),
           const SizedBox(width: kspacing),
           const Icon(Icons.keyboard_arrow_down, color: Colors.white, size: 20),
         ],
@@ -281,12 +279,19 @@ class _CashierScreenState extends State<CashierScreen> {
             ? const Color(0xFF2E2E2E)
             : const Color(0xFF4A4A4A);
         final openCount = state.orders
-            .where((o) => o.paymentStatus == PaymentStatus.unpaid && o.orderStatus == OrderStatus.served)
+            .where(
+              (o) =>
+                  o.paymentStatus == PaymentStatus.unpaid &&
+                  o.orderStatus == OrderStatus.served,
+            )
             .length;
         final completedCount = state.orders
-            .where((o) =>
-                (o.paymentStatus == PaymentStatus.paid ||
-                o.paymentStatus == PaymentStatus.prepaid) && o.orderStatus == OrderStatus.served)
+            .where(
+              (o) =>
+                  (o.paymentStatus == PaymentStatus.paid ||
+                      o.paymentStatus == PaymentStatus.prepaid) &&
+                  o.orderStatus == OrderStatus.served,
+            )
             .length;
 
         return Container(
@@ -406,11 +411,9 @@ class CashierOrderCard extends StatelessWidget {
     final bool isPaid =
         order.paymentStatus == PaymentStatus.paid ||
         order.paymentStatus == PaymentStatus.prepaid;
-    
-    final Color headerColor = isPaid
-        ? primaryColor
-        : const Color(0xFF4A4A4A);
-    
+
+    final Color headerColor = isPaid ? primaryColor : const Color(0xFF4A4A4A);
+
     final String timeStr = order.createdAt != null
         ? DateFormat('hh:mm a').format(order.createdAt!)
         : '--:--';
@@ -464,11 +467,7 @@ class CashierOrderCard extends StatelessWidget {
                       ),
                     ],
                   ),
-                  Icon(
-                    Icons.payments,
-                    color: Colors.white,
-                    size: 24,
-                  ),
+                  Icon(Icons.payments, color: Colors.white, size: 24),
                 ],
               ),
             ),
@@ -533,29 +532,41 @@ class CashierOrderCard extends StatelessWidget {
             ),
             if (isUnpaid)
               Padding(
-                padding: const EdgeInsets.fromLTRB(kspacing, 0, kspacing, kspacing),
+                padding: const EdgeInsets.fromLTRB(
+                  kspacing,
+                  0,
+                  kspacing,
+                  kspacing,
+                ),
                 child: ElevatedButton(
                   onPressed: () {
                     context.read<OrdersBloc>().add(
-                      OrderUpdated(order.copyWith(paymentStatus: PaymentStatus.paid)),
+                      OrderUpdated(
+                        order.copyWith(paymentStatus: PaymentStatus.paid),
+                      ),
                     );
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: primaryColor,
                     foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: kspacing * 1.5),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: kspacing * 1.5,
+                    ),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
-                  child: const Text("Payer", style: TextStyle(fontWeight: FontWeight.bold)),
+                  child: const Text(
+                    "Payer",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
                 ),
               ),
           ],
           // Continued Bottom
           if (slot.showContinuedBottom)
             _buildContinuedIndicator(context, "Suite...", Icons.arrow_downward),
-          
+
           if (isPaid)
             Padding(
               padding: const EdgeInsets.fromLTRB(
@@ -634,10 +645,7 @@ class CashierOrderCard extends StatelessWidget {
             children: [
               Text(
                 "${item.quantity}",
-                style: TextStyle(
-                  fontWeight: FontWeight.w900,
-                  fontSize: 13,
-                ),
+                style: TextStyle(fontWeight: FontWeight.w900, fontSize: 13),
               ),
               const SizedBox(width: kspacing * 1.5),
               Expanded(
@@ -702,7 +710,8 @@ List<List<_CardSlot>> _buildColumns(
   const double subHeaderHeight = 100;
   const double dividerHeight = 1;
   const double continuedHeight = 20;
-  const double buttonHeight = 100; // Increased to factor in total amount AND Payer button
+  const double buttonHeight =
+      100; // Increased to factor in total amount AND Payer button
   const double cardGap = kspacing * 2;
 
   double itemHeight(OrderMenuItem item) {
@@ -771,7 +780,7 @@ List<List<_CardSlot>> _buildColumns(
       }
 
       final bool isLastForOrder = slice.length == remaining.length;
-      
+
       columns.last.add(
         _CardSlot(
           order: order,
@@ -782,7 +791,10 @@ List<List<_CardSlot>> _buildColumns(
         ),
       );
 
-      usedHeight += sliceHeight + (isLastForOrder ? buttonHeight : continuedHeight) + cardGap;
+      usedHeight +=
+          sliceHeight +
+          (isLastForOrder ? buttonHeight : continuedHeight) +
+          cardGap;
       remaining = remaining.sublist(slice.length);
       isFirstSlice = false;
     }

@@ -1,6 +1,1 @@
-enum BlocStatus{
-  init,
-  loading,
-  loaded,
-  failed;
-}
+enum BlocStatus { init, loading, loaded, failed }

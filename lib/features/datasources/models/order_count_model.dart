@@ -20,7 +20,9 @@ class OrderCountModel extends OrderCountEntity {
 
   const OrderCountModel({
     required this.dailyCounts,
-    required super.totalCount, required super.todayCount, required super.meanCount,
+    required super.totalCount,
+    required super.todayCount,
+    required super.meanCount,
   });
 
   factory OrderCountModel.fromJson(Map<String, dynamic> json) =>

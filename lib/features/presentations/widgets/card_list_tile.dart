@@ -24,7 +24,7 @@ class CardListTile extends StatelessWidget {
         horizontal: kspacing,
         vertical: kspacing * 2,
       ),
-      padding: EdgeInsets.all(kspacing*5),
+      padding: EdgeInsets.all(kspacing * 5),
       child: Row(
         children: [
           if (leading != null) ...[leading!, SizedBox(width: kspacing * 2)],

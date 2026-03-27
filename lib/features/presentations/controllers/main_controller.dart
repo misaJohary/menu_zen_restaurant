@@ -16,7 +16,7 @@ class MainController extends ChangeNotifier {
 
   bool hidePannel = false;
 
-  togglePannelVisibility({required bool show}){
+  togglePannelVisibility({required bool show}) {
     hidePannel = !show;
   }
 

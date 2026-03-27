@@ -35,10 +35,7 @@ class CustomChipChoice<T> extends StatelessWidget {
       child: Container(
         padding:
             padding ??
-            EdgeInsets.symmetric(
-              vertical: kspacing,
-              horizontal: kspacing * 2,
-            ),
+            EdgeInsets.symmetric(vertical: kspacing, horizontal: kspacing * 2),
         margin: margin ?? EdgeInsets.only(right: kspacing * 2),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(kspacing * 3),

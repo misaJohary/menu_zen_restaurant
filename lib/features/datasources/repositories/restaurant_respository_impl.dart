@@ -20,13 +20,15 @@ class RestaurantRepositoryImpl implements RestaurantRepository {
   Future<MultiResult<Failure, UserRestaurantEntity>> createRestaurant(
     UserRestaurantEntity userRestaurant,
   ) async {
-      return executeWithErrorHandling(() async {
-        final res = await rest.createRestaurant(UserRestaurantModel.fromEntity(userRestaurant));
-        db.saveUserRestaurant(res);
-        if(res.token != null) {
-          db.saveToken(res.token!);
-        }
-        return res;
-      });
+    return executeWithErrorHandling(() async {
+      final res = await rest.createRestaurant(
+        UserRestaurantModel.fromEntity(userRestaurant),
+      );
+      db.saveUserRestaurant(res);
+      if (res.token != null) {
+        db.saveToken(res.token!);
+      }
+      return res;
+    });
   }
 }

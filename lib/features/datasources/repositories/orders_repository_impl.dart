@@ -33,7 +33,9 @@ class OrdersRepositoryImpl implements OrdersRepository {
   }
 
   @override
-  Future<MultiResult<Failure, List<OrderModel>>> getOrders(OrderParams params) async {
+  Future<MultiResult<Failure, List<OrderModel>>> getOrders(
+    OrderParams params,
+  ) async {
     return executeWithErrorHandling(() async {
       return await rest.getOrders(params.toJson());
     });
@@ -65,7 +67,6 @@ class OrdersRepositoryImpl implements OrdersRepository {
       return await rest.deleteOrder(orderId);
     });
   }
-
 
   @override
   Future<MultiResult<Failure, OrderModel>> updateOrder(

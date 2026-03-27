@@ -77,11 +77,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 child: Center(
                   child: isActive
                       ? const Icon(Icons.check, color: Colors.white, size: 20)
-                      : Text(number,
+                      : Text(
+                          number,
                           style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 13,
-                              fontWeight: FontWeight.bold)),
+                            color: Colors.white,
+                            fontSize: 13,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                 ),
               ),
               if (!isLast)
@@ -91,7 +94,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     margin: const EdgeInsets.symmetric(vertical: 4),
                     child: CustomPaint(
                       painter: DashedLinePainter(
-                          color: isActive ? primaryColor : Colors.grey.shade300),
+                        color: isActive ? primaryColor : Colors.grey.shade300,
+                      ),
                     ),
                   ),
                 ),
@@ -179,7 +183,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               children: [
                 Container(
                   margin: const EdgeInsets.all(24),
-                  padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 40),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 40,
+                    vertical: 40,
+                  ),
                   width: 380,
                   decoration: BoxDecoration(
                     color: Colors.white,
@@ -190,18 +197,21 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         blurRadius: 10,
                         offset: const Offset(0, 4),
                       ),
-                    ]
+                    ],
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Logo(isBig: false),
                       const SizedBox(height: 60),
-                      const Text('Créer un compte',
-                          style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black)),
+                      const Text(
+                        'Créer un compte',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
                       const SizedBox(height: 60),
                       _buildStepperItem(
                         title: 'Informations restaurant',
@@ -223,25 +233,34 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       ),
                       const Spacer(),
                       InkWell(
-                        onTap: () => context.router.replaceAll([app_router.LoginRoute()]),
+                        onTap: () => context.router.replaceAll([
+                          app_router.LoginRoute(),
+                        ]),
                         child: Row(
                           children: [
                             Icon(Icons.login_outlined, color: primaryColor),
                             const SizedBox(width: 8),
-                            Text('SE CONNECTER',
-                                style: TextStyle(
-                                    color: primaryColor,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 14)),
+                            Text(
+                              'SE CONNECTER',
+                              style: TextStyle(
+                                color: primaryColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                              ),
+                            ),
                           ],
                         ),
-                      )
+                      ),
                     ],
                   ),
                 ),
                 Expanded(
                   child: Container(
-                    margin: const EdgeInsets.only(top: 24, bottom: 24, right: 24),
+                    margin: const EdgeInsets.only(
+                      top: 24,
+                      bottom: 24,
+                      right: 24,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(24),
@@ -251,7 +270,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                           blurRadius: 10,
                           offset: const Offset(0, 4),
                         ),
-                      ]
+                      ],
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(24),
@@ -273,7 +292,11 @@ Widget _buildLabel(String text) {
     padding: const EdgeInsets.only(bottom: 8),
     child: Text(
       text,
-      style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: Colors.black87),
+      style: const TextStyle(
+        fontWeight: FontWeight.w600,
+        fontSize: 13,
+        color: Colors.black87,
+      ),
     ),
   );
 }
@@ -281,7 +304,11 @@ Widget _buildLabel(String text) {
 InputDecoration _defaultInputDecoration({String? hintText}) {
   return InputDecoration(
     hintText: hintText,
-    hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 14, fontWeight: FontWeight.normal),
+    hintStyle: TextStyle(
+      color: Colors.grey.shade400,
+      fontSize: 14,
+      fontWeight: FontWeight.normal,
+    ),
     contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
     border: OutlineInputBorder(
       borderRadius: BorderRadius.circular(8),
@@ -330,13 +357,19 @@ class _RestaurantCustomizeFormState extends State<RestaurantCustomizeForm> {
               children: [
                 Text(
                   'Sélectionner la catégorie et la langue utilise pour le menu',
-                  style: TextStyle(fontSize: 20, color: Colors.grey.shade500, fontWeight: FontWeight.w400),
+                  style: TextStyle(
+                    fontSize: 20,
+                    color: Colors.grey.shade500,
+                    fontWeight: FontWeight.w400,
+                  ),
                 ),
                 const SizedBox(height: 30),
                 _buildLabel('Catégorie'),
                 FormBuilderDropdown(
                   name: 'type',
-                  decoration: _defaultInputDecoration(hintText: 'Sélectionner catégorie(s)'),
+                  decoration: _defaultInputDecoration(
+                    hintText: 'Sélectionner catégorie(s)',
+                  ),
                   validator: FormBuilderValidators.required(),
                   items: RestaurantType.values.map((type) {
                     return DropdownMenuItem(
@@ -355,12 +388,17 @@ class _RestaurantCustomizeFormState extends State<RestaurantCustomizeForm> {
                       initialValue: ['fr'],
                       spacing: 12,
                       runSpacing: 12,
-                      decoration: const InputDecoration(border: InputBorder.none),
+                      decoration: const InputDecoration(
+                        border: InputBorder.none,
+                      ),
                       options: selectedLang.map((lang) {
                         return FormBuilderChipOption(
                           value: lang.code,
                           avatar: _getAvatarForLang(lang.code),
-                          child: Text('  ${lang.name}  ', style: const TextStyle(fontWeight: FontWeight.w500)),
+                          child: Text(
+                            '  ${lang.name}  ',
+                            style: const TextStyle(fontWeight: FontWeight.w500),
+                          ),
                         );
                       }).toList(),
                       //selectedRowColor: primaryColor.withOpacity(0.1),
@@ -380,7 +418,7 @@ class _RestaurantCustomizeFormState extends State<RestaurantCustomizeForm> {
                   children: [
                     ElevatedButton(
                       onPressed: () {
-                         AutoTabsRouter.of(context).setActiveIndex(0);
+                        AutoTabsRouter.of(context).setActiveIndex(0);
                       },
                       style: ElevatedButton.styleFrom(
                         minimumSize: const Size(200, 50),
@@ -391,7 +429,10 @@ class _RestaurantCustomizeFormState extends State<RestaurantCustomizeForm> {
                           borderRadius: BorderRadius.circular(25),
                         ),
                       ),
-                      child: const Text('PRÉCÉDENT', style: TextStyle(fontWeight: FontWeight.bold)),
+                      child: const Text(
+                        'PRÉCÉDENT',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
                     ),
                     const SizedBox(width: 24),
                     ElevatedButton(
@@ -404,7 +445,10 @@ class _RestaurantCustomizeFormState extends State<RestaurantCustomizeForm> {
                           borderRadius: BorderRadius.circular(25),
                         ),
                       ),
-                      child: const Text('SUIVANT', style: TextStyle(fontWeight: FontWeight.bold)),
+                      child: const Text(
+                        'SUIVANT',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
                     ),
                   ],
                 ),
@@ -456,14 +500,20 @@ class _RestaurantFormState extends State<RestaurantForm> {
               children: [
                 Text(
                   'Veuillez entrer les informations de votre restaurant',
-                  style: TextStyle(fontSize: 20, color: Colors.grey.shade500, fontWeight: FontWeight.w400),
+                  style: TextStyle(
+                    fontSize: 20,
+                    color: Colors.grey.shade500,
+                    fontWeight: FontWeight.w400,
+                  ),
                 ),
                 const SizedBox(height: 30),
                 _buildLabel('Nom de l\'établissement'),
                 FormBuilderTextField(
                   autofocus: true,
                   name: 'name',
-                  decoration: _defaultInputDecoration(hintText: 'Menu Zen Restaurant'),
+                  decoration: _defaultInputDecoration(
+                    hintText: 'Menu Zen Restaurant',
+                  ),
                   validator: FormBuilderValidators.compose([
                     FormBuilderValidators.required(),
                     FormBuilderValidators.maxLength(
@@ -477,7 +527,9 @@ class _RestaurantFormState extends State<RestaurantForm> {
                 FormBuilderTextField(
                   name: 'description',
                   maxLines: 4,
-                  decoration: _defaultInputDecoration(hintText: 'Description....'),
+                  decoration: _defaultInputDecoration(
+                    hintText: 'Description....',
+                  ),
                   validator: FormBuilderValidators.compose([
                     FormBuilderValidators.maxLength(
                       100,
@@ -489,7 +541,9 @@ class _RestaurantFormState extends State<RestaurantForm> {
                 _buildLabel('Email'),
                 FormBuilderTextField(
                   name: 'email',
-                  decoration: _defaultInputDecoration(hintText: 'menuzen@gmail.com'),
+                  decoration: _defaultInputDecoration(
+                    hintText: 'menuzen@gmail.com',
+                  ),
                   validator: FormBuilderValidators.compose([
                     FormBuilderValidators.email(),
                   ]),
@@ -562,7 +616,10 @@ class _RestaurantFormState extends State<RestaurantForm> {
                       ),
                     ),
                     onPressed: controller.validate,
-                    child: const Text('SUIVANT', style: TextStyle(fontWeight: FontWeight.bold)),
+                    child: const Text(
+                      'SUIVANT',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
                   ),
                 ),
                 const SizedBox(height: 40),
@@ -608,7 +665,11 @@ class _UserFormState extends State<UserForm> {
               children: [
                 Text(
                   'Veuillez entrer votre information en tant que gérant du restaurant',
-                  style: TextStyle(fontSize: 20, color: Colors.grey.shade500, fontWeight: FontWeight.w400),
+                  style: TextStyle(
+                    fontSize: 20,
+                    color: Colors.grey.shade500,
+                    fontWeight: FontWeight.w400,
+                  ),
                 ),
                 const SizedBox(height: 30),
                 _buildLabel('Nom d\'utilisateur'),
@@ -639,7 +700,9 @@ class _UserFormState extends State<UserForm> {
                 _buildLabel('Email'),
                 FormBuilderTextField(
                   name: 'email',
-                  decoration: _defaultInputDecoration(hintText: 'amel@gmail.com'),
+                  decoration: _defaultInputDecoration(
+                    hintText: 'amel@gmail.com',
+                  ),
                   validator: FormBuilderValidators.compose([
                     FormBuilderValidators.email(),
                   ]),
@@ -660,19 +723,22 @@ class _UserFormState extends State<UserForm> {
                 FormBuilderTextField(
                   name: 'password',
                   obscureText: _obscurePassword,
-                  decoration: _defaultInputDecoration(hintText: '********').copyWith(
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _obscurePassword ? Icons.visibility_off : Icons.visibility,
-                        color: Colors.grey,
+                  decoration: _defaultInputDecoration(hintText: '********')
+                      .copyWith(
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _obscurePassword
+                                ? Icons.visibility_off
+                                : Icons.visibility,
+                            color: Colors.grey,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _obscurePassword = !_obscurePassword;
+                            });
+                          },
+                        ),
                       ),
-                      onPressed: () {
-                        setState(() {
-                          _obscurePassword = !_obscurePassword;
-                        });
-                      },
-                    ),
-                  ),
                   validator: FormBuilderValidators.compose([
                     FormBuilderValidators.password(
                       minSpecialCharCount: 0,
@@ -687,19 +753,23 @@ class _UserFormState extends State<UserForm> {
                 FormBuilderTextField(
                   name: 'confirm_password',
                   obscureText: _obscureConfirmPassword,
-                  decoration: _defaultInputDecoration(hintText: '********').copyWith(
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _obscureConfirmPassword ? Icons.visibility_off : Icons.visibility,
-                        color: Colors.grey,
+                  decoration: _defaultInputDecoration(hintText: '********')
+                      .copyWith(
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _obscureConfirmPassword
+                                ? Icons.visibility_off
+                                : Icons.visibility,
+                            color: Colors.grey,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _obscureConfirmPassword =
+                                  !_obscureConfirmPassword;
+                            });
+                          },
+                        ),
                       ),
-                      onPressed: () {
-                        setState(() {
-                          _obscureConfirmPassword = !_obscureConfirmPassword;
-                        });
-                      },
-                    ),
-                  ),
                   validator: (pass) {
                     if (pass !=
                         controller
@@ -734,7 +804,10 @@ class _UserFormState extends State<UserForm> {
                               borderRadius: BorderRadius.circular(25),
                             ),
                           ),
-                          child: const Text('PRÉCÉDENT', style: TextStyle(fontWeight: FontWeight.bold)),
+                          child: const Text(
+                            'PRÉCÉDENT',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
                         ),
                         const SizedBox(width: 24),
                         ElevatedButton(
@@ -747,7 +820,10 @@ class _UserFormState extends State<UserForm> {
                               borderRadius: BorderRadius.circular(25),
                             ),
                           ),
-                          child: const Text('ENREGISTRER', style: TextStyle(fontWeight: FontWeight.bold)),
+                          child: const Text(
+                            'ENREGISTRER',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
                         ),
                       ],
                     );

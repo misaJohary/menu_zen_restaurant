@@ -32,10 +32,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Profil'),
-        elevation: 0,
-      ),
+      appBar: AppBar(title: const Text('Profil'), elevation: 0),
       body: SafeArea(
         child: BlocBuilder<AuthBloc, AuthState>(
           builder: (context, state) {
@@ -47,17 +44,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(
-                      Icons.person_off,
-                      size: 64,
-                      color: grey,
-                    ),
+                    Icon(Icons.person_off, size: 64, color: grey),
                     SizedBox(height: kspacing * 2),
                     Text(
                       'Aucune information utilisateur disponible',
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            color: grey,
-                          ),
+                      style: Theme.of(
+                        context,
+                      ).textTheme.bodyLarge?.copyWith(color: grey),
                     ),
                     SizedBox(height: kspacing * 3),
                     ElevatedButton.icon(
@@ -86,10 +79,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 }
 
 class _ProfileView extends StatelessWidget {
-  const _ProfileView({
-    required this.userRestaurant,
-    required this.onLogout,
-  });
+  const _ProfileView({required this.userRestaurant, required this.onLogout});
 
   final UserRestaurantEntity userRestaurant;
   final VoidCallback onLogout;
@@ -174,10 +164,7 @@ class _ProfileView extends StatelessWidget {
         ),
         SizedBox(width: kspacing * 3),
         // Restaurant Info Card - Right Side
-        Expanded(
-          flex: 1,
-          child: _RestaurantInfoCard(restaurant: restaurant),
-        ),
+        Expanded(flex: 1, child: _RestaurantInfoCard(restaurant: restaurant)),
       ],
     );
   }
@@ -221,10 +208,13 @@ class _UserInfoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final actualFullName = user.fullName ??
-            '${user.firstname ?? ''} ${user.lastname ?? ''}'.trim();
-    final displayName = actualFullName.isNotEmpty ? actualFullName : user.username;
-    
+    final actualFullName =
+        user.fullName ??
+        '${user.firstname ?? ''} ${user.lastname ?? ''}'.trim();
+    final displayName = actualFullName.isNotEmpty
+        ? actualFullName
+        : user.username;
+
     final initials = displayName.isNotEmpty
         ? displayName.split(' ').map((n) => n[0]).take(2).join().toUpperCase()
         : user.username[0].toUpperCase();
@@ -259,9 +249,9 @@ class _UserInfoCard extends StatelessWidget {
                   child: Text(
                     initials,
                     style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
@@ -272,9 +262,8 @@ class _UserInfoCard extends StatelessWidget {
                   children: [
                     Text(
                       displayName,
-                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
+                      style: Theme.of(context).textTheme.headlineSmall
+                          ?.copyWith(fontWeight: FontWeight.bold),
                     ),
                     SizedBox(height: kspacing),
                     Container(
@@ -288,7 +277,8 @@ class _UserInfoCard extends StatelessWidget {
                       ),
                       child: Text(
                         getRoleDisplayName(user.role ?? Role.admin),
-                        style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                        style: Theme.of(context).textTheme.labelMedium
+                            ?.copyWith(
                               color: getRoleTextColor(user.role ?? Role.admin),
                               fontWeight: FontWeight.w600,
                             ),
@@ -397,11 +387,7 @@ class _RestaurantInfoCard extends StatelessWidget {
                     color: primaryColor.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Icon(
-                    Icons.restaurant,
-                    size: 40,
-                    color: primaryColor,
-                  ),
+                  child: Icon(Icons.restaurant, size: 40, color: primaryColor),
                 ),
               SizedBox(width: kspacing * 3),
               Expanded(
@@ -410,9 +396,8 @@ class _RestaurantInfoCard extends StatelessWidget {
                   children: [
                     Text(
                       restaurant.name,
-                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
+                      style: Theme.of(context).textTheme.headlineSmall
+                          ?.copyWith(fontWeight: FontWeight.bold),
                     ),
                     if (restaurant.type != null) ...[
                       SizedBox(height: kspacing),
@@ -427,7 +412,8 @@ class _RestaurantInfoCard extends StatelessWidget {
                         ),
                         child: Text(
                           restaurant.type!,
-                          style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                          style: Theme.of(context).textTheme.labelMedium
+                              ?.copyWith(
                                 color: Colors.amber.shade900,
                                 fontWeight: FontWeight.w600,
                               ),
@@ -453,9 +439,7 @@ class _RestaurantInfoCard extends StatelessWidget {
                   width: double.infinity,
                   height: 200,
                   color: Colors.grey.shade200,
-                  child: const Center(
-                    child: CircularProgressIndicator(),
-                  ),
+                  child: const Center(child: CircularProgressIndicator()),
                 ),
                 errorWidget: (context, url, error) => Container(
                   width: double.infinity,
@@ -519,7 +503,8 @@ class _RestaurantInfoCard extends StatelessWidget {
               ],
             ),
           ],
-          if (restaurant.languages != null && restaurant.languages!.isNotEmpty) ...[
+          if (restaurant.languages != null &&
+              restaurant.languages!.isNotEmpty) ...[
             SizedBox(height: kspacing * 2),
             Wrap(
               spacing: kspacing,
@@ -544,14 +529,16 @@ class _RestaurantInfoCard extends StatelessWidget {
             Wrap(
               spacing: kspacing,
               runSpacing: kspacing,
-              children: restaurant.socialMedia!.map(
-                (social) => Chip(
-                  avatar: const Icon(Icons.link, size: 16),
-                  label: Text(social),
-                  backgroundColor: Colors.purple.shade50,
-                  labelStyle: TextStyle(color: Colors.purple.shade900),
-                ),
-              ).toList(),
+              children: restaurant.socialMedia!
+                  .map(
+                    (social) => Chip(
+                      avatar: const Icon(Icons.link, size: 16),
+                      label: Text(social),
+                      backgroundColor: Colors.purple.shade50,
+                      labelStyle: TextStyle(color: Colors.purple.shade900),
+                    ),
+                  )
+                  .toList(),
             ),
           ],
         ],
@@ -561,10 +548,7 @@ class _RestaurantInfoCard extends StatelessWidget {
 }
 
 class _SectionTitle extends StatelessWidget {
-  const _SectionTitle({
-    required this.title,
-    this.onEdit,
-  });
+  const _SectionTitle({required this.title, this.onEdit});
 
   final String title;
   final VoidCallback? onEdit;
@@ -584,9 +568,9 @@ class _SectionTitle extends StatelessWidget {
         SizedBox(width: kspacing * 2),
         Text(
           title,
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+          style: Theme.of(
+            context,
+          ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
         ),
         if (onEdit != null) ...[
           const Spacer(),
@@ -630,16 +614,16 @@ class _InfoTile extends StatelessWidget {
                 Text(
                   label,
                   style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                        color: grey,
-                        fontWeight: FontWeight.w500,
-                      ),
+                    color: grey,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
                 SizedBox(height: kspacing / 2),
                 Text(
                   value,
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        fontWeight: FontWeight.w500,
-                      ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w500),
                   maxLines: maxLines,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -731,10 +715,7 @@ class _EditUserDialogState extends State<_EditUserDialog> {
 }
 
 class _EditRestaurantDialog extends StatefulWidget {
-  const _EditRestaurantDialog({
-    required this.restaurant,
-    required this.bloc,
-  });
+  const _EditRestaurantDialog({required this.restaurant, required this.bloc});
 
   final RestaurantModel restaurant;
   final AuthBloc bloc;
@@ -754,7 +735,9 @@ class _EditRestaurantDialogState extends State<_EditRestaurantDialog> {
     super.initState();
     _phoneCtrl = TextEditingController(text: widget.restaurant.phone);
     _emailCtrl = TextEditingController(text: widget.restaurant.email);
-    _descriptionCtrl = TextEditingController(text: widget.restaurant.description);
+    _descriptionCtrl = TextEditingController(
+      text: widget.restaurant.description,
+    );
     _cityCtrl = TextEditingController(text: widget.restaurant.city);
   }
 
@@ -777,12 +760,16 @@ class _EditRestaurantDialogState extends State<_EditRestaurantDialog> {
           children: [
             TextField(
               controller: _phoneCtrl,
-              decoration: const InputDecoration(labelText: 'Téléphone du restaurant'),
+              decoration: const InputDecoration(
+                labelText: 'Téléphone du restaurant',
+              ),
             ),
             SizedBox(height: kspacing),
             TextField(
               controller: _emailCtrl,
-              decoration: const InputDecoration(labelText: 'Email du restaurant'),
+              decoration: const InputDecoration(
+                labelText: 'Email du restaurant',
+              ),
             ),
             SizedBox(height: kspacing),
             TextField(
@@ -820,4 +807,3 @@ class _EditRestaurantDialogState extends State<_EditRestaurantDialog> {
     );
   }
 }
-

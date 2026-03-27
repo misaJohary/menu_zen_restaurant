@@ -44,7 +44,10 @@ class OrderItem extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(order.rTable!.name, style: Theme.of(context).textTheme.titleLarge),
+              Text(
+                order.rTable!.name,
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
               EditDeleteIcon(
                 onDelete: onDelete ?? () {},
                 onEdit: onEdit ?? () {},

@@ -27,11 +27,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(state.copyWith(status: BlocStatus.loading));
     final res = await repo.login(event.loginParams);
     if (res.isSuccess) {
-      emit(
-        state.copyWith(
-          authStatus: AuthStatus.authenticated,
-        ),
-      );
+      emit(state.copyWith(authStatus: AuthStatus.authenticated));
     } else {
       emit(state.copyWith(status: BlocStatus.failed));
     }
@@ -84,7 +80,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   _onAuthRestaurantUpdated(
-      AuthRestaurantUpdated event, Emitter<AuthState> emit) async {
+    AuthRestaurantUpdated event,
+    Emitter<AuthState> emit,
+  ) async {
     emit(state.copyWith(status: BlocStatus.loading));
     final res = await repo.updateRestaurant(event.restaurant);
     if (res.isSuccess) {

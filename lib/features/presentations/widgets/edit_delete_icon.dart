@@ -19,37 +19,37 @@ class EditDeleteIcon extends StatelessWidget {
     if (isVertical!) {
       return Column(
         children: [
-          if(onEdit != null)
+          if (onEdit != null)
+            IconButton(
+              icon: Icon(Icons.edit),
+              iconSize: iconSize,
+              onPressed: onEdit,
+            ),
+          if (onDelete != null)
+            IconButton(
+              icon: Icon(Icons.delete),
+              iconSize: iconSize,
+              onPressed: onDelete,
+              color: Colors.red,
+            ),
+        ],
+      );
+    }
+    return Row(
+      children: [
+        if (onEdit != null)
           IconButton(
             icon: Icon(Icons.edit),
             iconSize: iconSize,
             onPressed: onEdit,
           ),
-          if(onDelete != null)
+        if (onDelete != null)
           IconButton(
             icon: Icon(Icons.delete),
             iconSize: iconSize,
             onPressed: onDelete,
             color: Colors.red,
           ),
-        ],
-      );
-    }
-    return Row(
-      children: [
-        if(onEdit != null)
-        IconButton(
-          icon: Icon(Icons.edit),
-          iconSize: iconSize,
-          onPressed: onEdit,
-        ),
-        if(onDelete != null)
-        IconButton(
-          icon: Icon(Icons.delete),
-          iconSize: iconSize,
-          onPressed: onDelete,
-          color: Colors.red,
-        ),
       ],
     );
   }

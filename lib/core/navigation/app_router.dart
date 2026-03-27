@@ -11,7 +11,6 @@ class AppRouter extends RootStackRouter {
   AppRouter() : super(navigatorKey: navKey);
 
   @override
-
   RouteType get defaultRouteType => RouteType.material(); //.cupertino, .adaptive ..etc
 
   @override
@@ -38,9 +37,7 @@ class AppRouter extends RootStackRouter {
         AutoRoute(path: 'menu_items', page: MenuItemRoute.page),
         AutoRoute(path: 'tables', page: TablesRoute.page),
         AutoRoute(path: 'users', page: UsersRoute.page),
-
       ],
-
     ),
     AutoRoute(path: '/profil', page: ProfileRoute.page),
     AutoRoute(path: '/make_order', page: MakeOrderRoute.page),

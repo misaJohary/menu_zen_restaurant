@@ -18,13 +18,11 @@ class RevenuesModel extends RevenuesEntity {
   @override
   final List<DailyRevenueModel> dailyRevenues;
 
-
-
   const RevenuesModel({
     required super.todayRevenue,
     required this.dailyRevenues,
     required super.totalRevenue,
-    required super.diffPercentage
+    required super.diffPercentage,
   });
 
   factory RevenuesModel.fromJson(Map<String, dynamic> json) =>

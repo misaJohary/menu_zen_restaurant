@@ -1,4 +1,3 @@
-
 import '../errors/failure.dart';
 
 abstract class MultiResult<T extends Failure, E> {

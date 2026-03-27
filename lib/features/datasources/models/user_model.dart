@@ -21,25 +21,22 @@ class UserModel extends UserEntity {
     @JsonKey(name: 'must_change_password') super.mustChangePassword,
   });
 
-
-
-
   /// Constructor from UserEntity
   UserModel.fromEntity(UserEntity entity)
-      : super(
-    id: entity.id,
-    firstname: entity.firstname,
-    lastname: entity.lastname,
-    fullName: entity.fullName,
-    email: entity.email,
-    phone: entity.phone,
-    username: entity.username,
-    password: entity.password,
-    role: entity.role,
-    roleId: entity.roleId,
-    roleName: entity.roleName,
-    mustChangePassword: entity.mustChangePassword,
-  );
+    : super(
+        id: entity.id,
+        firstname: entity.firstname,
+        lastname: entity.lastname,
+        fullName: entity.fullName,
+        email: entity.email,
+        phone: entity.phone,
+        username: entity.username,
+        password: entity.password,
+        role: entity.role,
+        roleId: entity.roleId,
+        roleName: entity.roleName,
+        mustChangePassword: entity.mustChangePassword,
+      );
 
   ///copyWith
   UserModel copyWith({
@@ -71,7 +68,6 @@ class UserModel extends UserEntity {
       mustChangePassword: mustChangePassword ?? this.mustChangePassword,
     );
   }
-
 
   factory UserModel.fromJson(Map<String, dynamic> json) =>
       _$UserModelFromJson(json);

@@ -22,16 +22,18 @@ class BoardTitleWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       title: Text(title),
-      contentPadding: contentPadding?? EdgeInsets.all(kspacing),
+      contentPadding: contentPadding ?? EdgeInsets.all(kspacing),
       titleTextStyle: Theme.of(
         context,
       ).textTheme.displaySmall!.copyWith(fontWeight: FontWeight.w800),
-      subtitle: description!= null? Text(
-        description!,
-        style: Theme.of(
-          context,
-        ).textTheme.bodyLarge!.copyWith(color: grey, fontSize: 14),
-      ) : null,
+      subtitle: description != null
+          ? Text(
+              description!,
+              style: Theme.of(
+                context,
+              ).textTheme.bodyLarge!.copyWith(color: grey, fontSize: 14),
+            )
+          : null,
       trailing: ElevatedButton.icon(
         onPressed: onButtonPressed,
         icon: Icon(Icons.add),

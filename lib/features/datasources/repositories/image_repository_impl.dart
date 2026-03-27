@@ -11,6 +11,7 @@ import '../../../core/http_connexion/rest_client.dart';
 import '../../domains/repositories/image_repository.dart';
 import 'package:dio/dio.dart';
 import 'package:http_parser/http_parser.dart';
+
 @LazySingleton(as: ImageRepository)
 class ImageRepositoryImpl implements ImageRepository {
   final RestClient rest;

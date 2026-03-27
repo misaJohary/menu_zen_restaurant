@@ -1,7 +1,6 @@
 part of 'order_menu_item_bloc.dart';
 
 class OrderMenuItemState extends Equatable {
-
   const OrderMenuItemState({
     this.orderMenuItems = const [],
     this.status = BlocStatus.init,
@@ -9,10 +8,7 @@ class OrderMenuItemState extends Equatable {
   final List<OrderMenuItem> orderMenuItems;
   final BlocStatus status;
 
-  copyWith({
-    List<OrderMenuItem>? orderMenuItems,
-    BlocStatus? status,
-  }) {
+  copyWith({List<OrderMenuItem>? orderMenuItems, BlocStatus? status}) {
     return OrderMenuItemState(
       orderMenuItems: orderMenuItems ?? this.orderMenuItems,
       status: status ?? this.status,

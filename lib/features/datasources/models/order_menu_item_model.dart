@@ -9,7 +9,7 @@ class OrderMenuItemModel extends OrderMenuItem {
   @override
   @JsonKey(includeToJson: false)
   final MenuItemModel menuItem;
-  
+
   const OrderMenuItemModel({
     int? id,
     int quantity = 0,
@@ -19,14 +19,14 @@ class OrderMenuItemModel extends OrderMenuItem {
     String status = "init",
     String? notes,
   }) : super(
-          id: id,
-          menuItem: menuItem,
-          quantity: quantity,
-          unitPrice: unitPrice,
-          menuItemId: menuItemId,
-          status: status,
-          notes: notes,
-        );
+         id: id,
+         menuItem: menuItem,
+         quantity: quantity,
+         unitPrice: unitPrice,
+         menuItemId: menuItemId,
+         status: status,
+         notes: notes,
+       );
 
   factory OrderMenuItemModel.fromJson(Map<String, dynamic> json) =>
       _$OrderMenuItemModelFromJson(json);

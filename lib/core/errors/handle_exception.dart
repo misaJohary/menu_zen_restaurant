@@ -29,10 +29,17 @@ Future<MultiResult<Failure, T>> executeWithErrorHandling<T>(
 
 Failure handleDioException(DioException e) {
   if (e.response?.statusCode == 400) {
-    return ServerFailure(message: e.response?.data['message'] ?? e.response?.data['detail'] ?? 'Mauvaise requête');
+    return ServerFailure(
+      message:
+          e.response?.data['message'] ??
+          e.response?.data['detail'] ??
+          'Mauvaise requête',
+    );
   }
   if (e.response?.statusCode == 403) {
-    return ServerFailure(message: 'Accès refusé. Vous n\'avez pas les permissions nécessaires.');
+    return ServerFailure(
+      message: 'Accès refusé. Vous n\'avez pas les permissions nécessaires.',
+    );
   }
   if (e.error.runtimeType == SocketException) {
     return InternetConnectionFailure();

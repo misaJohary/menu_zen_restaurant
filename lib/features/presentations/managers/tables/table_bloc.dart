@@ -9,7 +9,6 @@ import '../../../domains/repositories/tables_repository.dart';
 part 'table_event.dart';
 part 'table_state.dart';
 
-
 class TableBloc extends Bloc<TableEvent, TableState> {
   final TablesRepository tablesRepository;
 

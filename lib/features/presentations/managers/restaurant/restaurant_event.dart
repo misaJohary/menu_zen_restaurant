@@ -29,7 +29,6 @@ class RestaurantMoreInfoFilled extends RestaurantEvent {
   List<Object?> get props => [datas];
 }
 
-
 class RestaurantUserInfoFilled extends RestaurantEvent {
   final UserEntity user;
 

@@ -15,10 +15,10 @@ class Logo extends StatelessWidget {
         Text(
           'Click Menu',
           style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                color: primaryColor,
-                fontWeight: FontWeight.w600,
-                fontSize: isBig! ? 24 : 14,
-              ),
+            color: primaryColor,
+            fontWeight: FontWeight.w600,
+            fontSize: isBig! ? 24 : 14,
+          ),
         ),
         Row(
           mainAxisSize: MainAxisSize.min,
@@ -27,19 +27,15 @@ class Logo extends StatelessWidget {
             Text(
               'ZEN ',
               style: Theme.of(context).textTheme.headlineMedium!.copyWith(
-                    color: Colors.black,
-                    fontWeight: FontWeight.w800,
-                    fontSize: isBig! ? 40 : 22,
-                  ),
+                color: Colors.black,
+                fontWeight: FontWeight.w800,
+                fontSize: isBig! ? 40 : 22,
+              ),
             ),
-            Image.asset(
-              'assets/images/leaf.png',
-              width: isBig! ? 40 : 22,
-            ),
+            Image.asset('assets/images/leaf.png', width: isBig! ? 40 : 22),
           ],
         ),
       ],
     );
   }
 }
-

@@ -29,7 +29,7 @@ class TableUpdated extends TableEvent {
   List<Object?> get props => [table];
 }
 
-class TableDeleted extends TableEvent{
+class TableDeleted extends TableEvent {
   final int tableId;
 
   const TableDeleted(this.tableId);

@@ -33,36 +33,39 @@ class RestaurantBloc extends Bloc<RestaurantEvent, RestaurantState> {
       type: event.datas['type'].toName,
       languages: event.datas['languages'],
     );
-    emit(state.copyWith(
-      restaurantMoreInfoFilled: true,
-      navigationNonce: state.navigationNonce + 1,
-    ));
+    emit(
+      state.copyWith(
+        restaurantMoreInfoFilled: true,
+        navigationNonce: state.navigationNonce + 1,
+      ),
+    );
   }
-
 
   _onRestaurantUserInfoFilled(
     RestaurantUserInfoFilled event,
     Emitter<RestaurantState> emit,
   ) {
     _userEntity = event.user;
-    emit(state.copyWith(
-      userFilled: true,
-      navigationNonce: state.navigationNonce + 1,
-    ));
+    emit(
+      state.copyWith(
+        userFilled: true,
+        navigationNonce: state.navigationNonce + 1,
+      ),
+    );
   }
-
 
   _onRestaurantInfoFilled(
     RestaurantInfoFilled event,
     Emitter<RestaurantState> emit,
   ) {
     _restaurantEntity = event.restaurant;
-    emit(state.copyWith(
-      restaurantFilled: true,
-      navigationNonce: state.navigationNonce + 1,
-    ));
+    emit(
+      state.copyWith(
+        restaurantFilled: true,
+        navigationNonce: state.navigationNonce + 1,
+      ),
+    );
   }
-
 
   _onRestaurantCreated(
     RestaurantCreated event,

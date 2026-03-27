@@ -110,7 +110,7 @@ class MenuItemBloc extends Bloc<MenuItemEvent, MenuItemState> {
     MenuItemPictureUploaded event,
     Emitter<MenuItemState> emit,
   ) async {
-    try{
+    try {
       emit(state.copyWith(uploadStatus: BlocStatus.loading));
       Logger().e('begin');
       final res = await imageRepo.uploadImage(event.file);
@@ -126,7 +126,7 @@ class MenuItemBloc extends Bloc<MenuItemEvent, MenuItemState> {
       } else {
         emit(state.copyWith(uploadStatus: BlocStatus.failed));
       }
-    }catch(e){
+    } catch (e) {
       Logger().e(e.toString());
     }
   }

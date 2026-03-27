@@ -4,7 +4,7 @@ import 'package:menu_zen_restaurant/features/domains/entities/menu_entity.dart';
 part 'menu_translation_model.g.dart';
 
 @JsonSerializable()
-class MenuTranslationModel extends MenuTranslation{
+class MenuTranslationModel extends MenuTranslation {
   const MenuTranslationModel({
     required super.name,
     super.description,

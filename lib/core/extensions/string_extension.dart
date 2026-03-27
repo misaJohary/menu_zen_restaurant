@@ -19,7 +19,7 @@ extension StringExtension on String {
   String toSnakeCase() {
     return replaceAllMapped(
       RegExp('([a-z])([A-Z])'),
-          (match) => '${match.group(1)}_${match.group(2)?.toLowerCase()}',
+      (match) => '${match.group(1)}_${match.group(2)?.toLowerCase()}',
     );
   }
 }

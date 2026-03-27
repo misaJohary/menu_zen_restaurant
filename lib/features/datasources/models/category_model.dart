@@ -27,17 +27,12 @@ class ColorConverter implements JsonConverter<Color?, String?> {
 }
 
 @JsonSerializable()
-class CategoryModel extends CategoryEntity{
+class CategoryModel extends CategoryEntity {
   @override
   final List<CategoryTranslationModel> translations;
 
-  const CategoryModel({
-    super.id,
-    required this.translations,
-    this.color,
-  }): super(
-    themeColor: color,
-  );
+  const CategoryModel({super.id, required this.translations, this.color})
+    : super(themeColor: color);
 
   @ColorConverter()
   final Color? color;
@@ -57,7 +52,11 @@ class CategoryModel extends CategoryEntity{
 
   Map<String, dynamic> toJson() => _$CategoryModelToJson(this);
 
-  CategoryModel copyWith({int? id, List<CategoryTranslationModel>? translations, Color? color}) {
+  CategoryModel copyWith({
+    int? id,
+    List<CategoryTranslationModel>? translations,
+    Color? color,
+  }) {
     return CategoryModel(
       id: id ?? this.id,
       translations: translations ?? this.translations,

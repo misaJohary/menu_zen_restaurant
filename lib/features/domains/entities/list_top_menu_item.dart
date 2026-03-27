@@ -5,10 +5,7 @@ class ListTopMenuItem extends Equatable {
   final List<TopMenuItemEntity> values;
   final int totalQuantity;
 
-  const ListTopMenuItem({
-    required this.values,
-    required this.totalQuantity,
-  });
+  const ListTopMenuItem({required this.values, required this.totalQuantity});
 
   factory ListTopMenuItem.create(List<TopMenuItemEntity> menuItems) =>
       ListTopMenuItem(

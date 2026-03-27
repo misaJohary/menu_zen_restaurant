@@ -65,7 +65,6 @@ abstract class RestClient {
   @GET('/admin/permissions')
   Future<List<String>> getPermissions();
 
-
   @POST('/restaurants')
   Future<UserRestaurantModel> createRestaurant(
     @Body() UserRestaurantModel params,
@@ -144,7 +143,6 @@ abstract class RestClient {
     @Path() int id,
     @Body() Map<String, String> status,
   );
-
 
   @PATCH('/menu-items/{id}')
   Future<MenuItemModel> updateMenuItems(
