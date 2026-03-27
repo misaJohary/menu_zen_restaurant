@@ -8,6 +8,7 @@ import 'package:menu_zen_restaurant/core/extensions/double_extension.dart';
 import 'package:menu_zen_restaurant/features/domains/entities/revenues_entity.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
+import '../../../core/constants/constants.dart';
 import '../../../core/enums/bloc_status.dart';
 import '../../domains/entities/user_entity.dart';
 import '../managers/auths/auth_bloc.dart';
@@ -15,24 +16,309 @@ import '../managers/stats/stats_bloc.dart';
 import '../widgets/custom_container.dart';
 
 @RoutePage()
-class DashboardScreen extends StatelessWidget {
+class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
+
+  @override
+  State<DashboardScreen> createState() => _DashboardScreenState();
+}
+
+class _DashboardScreenState extends State<DashboardScreen> {
+  @override
+  void initState() {
+    super.initState();
+    final authState = context.read<AuthBloc>().state;
+    final role = authState.userRestaurant?.user.role;
+    if (role != Role.cook && role != Role.server) {
+      context.read<StatsBloc>().add(StatsRevenueGot());
+      context.read<StatsBloc>().add(StatsTodayOrderCountGot());
+      context.read<StatsBloc>().add(StatsTopMenuItemsGot());
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      //body: Center(child: Image.asset('assets/images/dashboard.png')),
-      body: Row(
+      backgroundColor: primaryColor.withOpacity(0.05),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(kspacing * 4),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildHeader(context),
+              const SizedBox(height: kspacing * 4),
+              _buildStatsRow(),
+              const SizedBox(height: kspacing * 4),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    flex: 4,
+                    child: Column(
+                      children: [
+                        _buildBanner(),
+                        const SizedBox(height: kspacing * 2),
+                        const TopMenuCard(),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: kspacing * 4),
+                  const Expanded(
+                    flex: 3,
+                    child: RevenueCard(),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStatsRow() {
+    return BlocBuilder<StatsBloc, StatsState>(
+      builder: (context, state) {
+        final revenue = state.revenues?.todayRevenue ?? 0;
+        final revenueDiff = state.revenues?.diffPercentage ?? 0;
+        final orderCount = state.ordersCount?.todayCount ?? 0;
+        final menuCount = state.topMenuItems?.values.length ?? 0;
+
+        return Row(
+          children: [
+            Expanded(
+              child: StatCard(
+                label: "Total commande",
+                value: orderCount.toString().padLeft(2, '0'),
+                percentage: "+ 15,6%", // Static for now as no diff in orderCount entity
+                icon: Icons.access_time_filled_rounded,
+                iconColor: const Color(0xFF9181F4),
+              ),
+            ),
+            const SizedBox(width: kspacing * 2),
+            Expanded(
+              child: StatCard(
+                label: "Revenue journalière",
+                value: "${(revenue / 1000).toStringAsFixed(0)}k",
+                percentage: "${revenueDiff.isNegative ? '↓' : '↑'} ${revenueDiff.abs().toStringAsFixed(1)}%",
+                isNegative: revenueDiff.isNegative,
+                icon: Icons.access_time_filled_rounded,
+                iconColor: const Color(0xFFFBDD72),
+              ),
+            ),
+            const SizedBox(width: kspacing * 2),
+            Expanded(
+              child: StatCard(
+                label: "Total menu",
+                value: menuCount.toString(),
+                percentage: "+ 15,6%",
+                icon: Icons.access_time_filled_rounded,
+                iconColor: const Color(0xFFB9E8B2),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildHeader(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          "Dashboard",
+          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
+        ),
+        Row(
+          children: [
+            const CircleAvatar(
+              radius: 20,
+              backgroundImage: NetworkImage(
+                'https://i.pravatar.cc/150?u=user123',
+              ),
+            ),
+            const SizedBox(width: kspacing),
+            Container(
+              padding: const EdgeInsets.all(kspacing),
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.search, size: 20, color: Colors.grey),
+            ),
+            const SizedBox(width: kspacing),
+            Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: kspacing * 1.5,
+                vertical: kspacing,
+              ),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Row(
+                children: [
+                  Image.network(
+                    'https://upload.wikimedia.org/wikipedia/en/thumb/c/c3/Flag_of_France.svg/1200px-Flag_of_France.svg.png',
+                    width: 20,
+                    height: 15,
+                    fit: BoxFit.cover,
+                  ),
+                  const SizedBox(width: kspacing),
+                  const Text(
+                    "French",
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const Icon(Icons.check, size: 14, color: Colors.green),
+                  const Icon(Icons.keyboard_arrow_down, size: 18),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildBanner() {
+    return Container(
+      height: 180,
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: primaryColor.withOpacity(0.8),
+        borderRadius: BorderRadius.circular(25),
+      ),
+      child: Stack(
         children: [
-          Expanded(
+          Padding(
+            padding: const EdgeInsets.all(kspacing * 4),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Expanded(child: OrderCountCard()),
-                Expanded(child: TopMenuCard()),
+                const Text(
+                  "Click Menu Zen",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: kspacing),
+                SizedBox(
+                  width: 250,
+                  child: Text(
+                    "Gérez vos menus, suivez vos performances et optimisez votre offre en temps réel.",
+                    style: TextStyle(
+                      color: Colors.white.withOpacity(0.9),
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
-          Expanded(child: RevenueCard()),
+          Positioned(
+            right: 0,
+            top: 0,
+            bottom: 0,
+            child: ClipRRect(
+              borderRadius: const BorderRadius.only(
+                topRight: Radius.circular(25),
+                bottomRight: Radius.circular(25),
+              ),
+              child: Image.asset(
+                'assets/images/salade_au_fromage.png',
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class StatCard extends StatelessWidget {
+  final String label;
+  final String value;
+  final String percentage;
+  final IconData icon;
+  final Color iconColor;
+  final bool isNegative;
+
+  const StatCard({
+    super.key,
+    required this.label,
+    required this.value,
+    required this.percentage,
+    required this.icon,
+    required this.iconColor,
+    this.isNegative = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(kspacing * 3),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(kspacing * 1.5),
+            decoration: BoxDecoration(
+              color: iconColor.withOpacity(0.2),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, color: iconColor, size: 30),
+          ),
+          const SizedBox(width: kspacing * 2),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  color: Colors.grey,
+                  fontSize: 14,
+                ),
+              ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.baseline,
+                textBaseline: TextBaseline.alphabetic,
+                children: [
+                  Text(
+                    value,
+                    style: const TextStyle(
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(width: kspacing),
+                  Text(
+                    percentage,
+                    style: TextStyle(
+                      color: isNegative ? Colors.red : Colors.green,
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ],
       ),
     );
@@ -48,188 +334,101 @@ class RevenueCard extends StatefulWidget {
 
 class _RevenueCardState extends State<RevenueCard> {
   @override
-  void initState() {
-    super.initState();
-    final authState = context.read<AuthBloc>().state;
-    if (authState.userRestaurant?.user.role != Role.cook &&
-        authState.userRestaurant?.user.role != Role.server) {
-      context.read<StatsBloc>().add(StatsRevenueGot());
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return BlocBuilder<StatsBloc, StatsState>(
-      builder: (context, state) {
-        return CustomContainer(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "Revenue journalière",
-                style: Theme.of(context).textTheme.headlineMedium,
-              ),
-              Expanded(
-                child: BlocBuilder<StatsBloc, StatsState>(
-                  builder: (context, state) {
-                    switch (state.revenueStatus) {
-                      case BlocStatus.loaded:
-                        final diff = state.revenues?.diffPercentage
-                            .ceilToDouble();
-                        return Center(
-                          child: Column(
-                            children: [
-                              Expanded(
-                                child: Center(
-                                  child: RichText(
-                                    text: TextSpan(
-                                      text:
-                                          '${state.revenues?.todayRevenue.formatMoney} Ar',
-                                      style: Theme.of(
-                                        context,
-                                      ).textTheme.displayLarge,
-                                      children: [
-                                        TextSpan(
-                                          text:
-                                              '\n${diff?.isNegative == true ? '' : '+'}$diff%',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .displaySmall
-                                              ?.copyWith(
-                                                color: diff?.isNegative == true
-                                                    ? Colors.red
-                                                    : Colors.green,
-                                              ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              SfCartesianChart(
-                                primaryXAxis: CategoryAxis(),
-                                primaryYAxis: NumericAxis(
-                                  numberFormat: NumberFormat.simpleCurrency(
-                                    decimalDigits: 0,
-                                    name: 'Ar ',
-                                  ),
-                                  // Or for more control:
-                                  // numberFormat: NumberFormat('#,##0 Ar'),
-                                ),
-                                legend: Legend(
-                                  isVisible: true,
-                                  position: LegendPosition.bottom,
-                                ),
-                                series: <CartesianSeries>[
-                                  StackedLineSeries<DailyRevenue, String>(
-                                    color: Theme.of(context).primaryColor,
-                                    dataSource: state.revenues?.dailyRevenues,
-                                    name: 'Revenue de la semaine',
-                                    yValueMapper: (DailyRevenue data, _) =>
-                                        data.revenue,
-                                    isVisibleInLegend: true,
-                                    xValueMapper: (DailyRevenue data, _) =>
-                                        DateFormat(
-                                          'dd/MM/yy',
-                                        ).format(data.date),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        );
-                      case BlocStatus.loading:
-                        return Text('Calculating....');
-                      default:
-                        return SizedBox.shrink();
-                    }
-                  },
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-}
-
-class OrderCountCard extends StatefulWidget {
-  const OrderCountCard({super.key});
-
-  @override
-  State<OrderCountCard> createState() => _OrderCountCardState();
-}
-
-class _OrderCountCardState extends State<OrderCountCard> {
-  @override
-  void initState() {
-    super.initState();
-    final authState = context.read<AuthBloc>().state;
-    if (authState.userRestaurant?.user.role != Role.cook &&
-        authState.userRestaurant?.user.role != Role.server) {
-      context.read<StatsBloc>().add(StatsTodayOrderCountGot());
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return CustomContainer(
+    return Container(
+      padding: const EdgeInsets.all(kspacing * 3),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(25),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            "Nombre de commandes",
-            style: Theme.of(context).textTheme.headlineMedium,
-          ),
-          Expanded(
-            child: Center(
-              child: BlocBuilder<StatsBloc, StatsState>(
-                builder: (context, state) {
-                  switch (state.orderCountStatus) {
-                    case BlocStatus.loaded:
-                      return Stack(
-                        children: [
-                          Align(
-                            alignment: Alignment.center,
-                            child: RichText(
-                              text: TextSpan(
-                                text: '${state.ordersCount?.todayCount}',
-                                style: Theme.of(context).textTheme.displayLarge
-                                    ?.copyWith(
-                                      color: Theme.of(context).primaryColor,
-                                    ),
-                              ),
-                            ),
-                          ),
-                          Align(
-                            alignment: Alignment.center,
-                            child: Lottie.asset('assets/lotties/ring.json'),
-                          ),
-                        ],
-                      );
-                    // return CircleAvatar(
-                    //   radius: 80,
-                    //   backgroundColor: Theme.of(context).primaryColor,
-                    //   child: CircleAvatar(
-                    //     radius: 75,
-                    //     backgroundColor: Colors.white,
-                    //     child: RichText(
-                    //       text: TextSpan(
-                    //         text: '${state.ordersCount?.todayCount}',
-                    //         style: Theme.of(context).textTheme.displayLarge,
-                    //       ),
-                    //     ),
-                    //   ),
-                    // );
-                    case BlocStatus.loading:
-                      return Text('Calculating....');
-                    default:
-                      return SizedBox.shrink();
-                  }
-                },
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "Revenu de la semaine",
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
               ),
+              Row(
+                children: [
+                  const Icon(Icons.chevron_left, size: 20, color: Colors.grey),
+                  const SizedBox(width: 4),
+                  Text(
+                    DateFormat('dd/MM/yyyy').format(DateTime.now()),
+                    style: const TextStyle(fontSize: 12, color: Colors.grey),
+                  ),
+                  const SizedBox(width: 4),
+                  const Icon(Icons.chevron_right, size: 20, color: Colors.grey),
+                ],
+              ),
+            ],
+          ),
+          const SizedBox(height: kspacing * 4),
+          SizedBox(
+            height: 350,
+            child: BlocBuilder<StatsBloc, StatsState>(
+              builder: (context, state) {
+                switch (state.revenueStatus) {
+                  case BlocStatus.loaded:
+                    return SfCartesianChart(
+                      plotAreaBorderWidth: 0,
+                      primaryXAxis: CategoryAxis(
+                        majorGridLines: const MajorGridLines(width: 0),
+                        labelStyle:
+                            const TextStyle(color: Colors.grey, fontSize: 10),
+                      ),
+                      primaryYAxis: NumericAxis(
+                        axisLine: const AxisLine(width: 0),
+                        majorTickLines: const MajorTickLines(size: 0),
+                        labelStyle:
+                            const TextStyle(color: Colors.grey, fontSize: 10),
+                        numberFormat: NumberFormat.compact(),
+                      ),
+                      series: <CartesianSeries>[
+                        LineSeries<DailyRevenue, String>(
+                          color: Colors.blue,
+                          dataSource: state.revenues?.dailyRevenues ?? [],
+                          xValueMapper: (DailyRevenue data, _) =>
+                              DateFormat('E').format(data.date),
+                          yValueMapper: (DailyRevenue data, _) => data.revenue,
+                          markerSettings: const MarkerSettings(isVisible: false),
+                        ),
+                      ],
+                      legend: Legend(
+                        isVisible: true,
+                        position: LegendPosition.bottom,
+                        overflowMode: LegendItemOverflowMode.wrap,
+                      ),
+                    );
+                  case BlocStatus.loading:
+                    return const Center(child: CircularProgressIndicator());
+                  default:
+                    return const SizedBox.shrink();
+                }
+              },
             ),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                width: 8,
+                height: 8,
+                decoration: const BoxDecoration(
+                  color: Colors.blue,
+                  shape: BoxShape.circle,
+                ),
+              ),
+              const SizedBox(width: kspacing),
+              const Text(
+                "Revenue de la semaine en Ar",
+                style: TextStyle(fontSize: 12, color: Colors.black87),
+              ),
+            ],
           ),
         ],
       ),
@@ -246,142 +445,125 @@ class TopMenuCard extends StatefulWidget {
 
 class _TopMenuCardState extends State<TopMenuCard> {
   @override
-  void initState() {
-    super.initState();
-    final authState = context.read<AuthBloc>().state;
-    if (authState.userRestaurant?.user.role != Role.cook &&
-        authState.userRestaurant?.user.role != Role.server) {
-      context.read<StatsBloc>().add(StatsTopMenuItemsGot());
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return BlocBuilder<StatsBloc, StatsState>(
-      builder: (context, state) {
-        return CustomContainer(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "Meilleures Menus",
-                style: Theme.of(context).textTheme.headlineMedium,
-              ),
-              Expanded(
-                child: BlocBuilder<StatsBloc, StatsState>(
-                  builder: (context, state) {
-                    switch (state.topMenuStatus) {
-                      case BlocStatus.loaded:
-                        final items = state.topMenuItems?.values;
-                        if (items == null || items.isEmpty) {
-                          return SizedBox.shrink();
-                        }
-                        return ListView(
-                          shrinkWrap: true,
-                          children: [
-                            for (int i = 0; i < items.length; i++)
-                              Transform.scale(
-                                scale: i == 0 ? 1.05 : 1,
-                                child: Padding(
-                                  padding: EdgeInsets.all(4),
-                                  child: Column(
-                                    children: [
-                                      ListTile(
-                                        contentPadding: EdgeInsets.zero,
-                                        leading: ClipRRect(
-                                          borderRadius: BorderRadius.circular(
-                                            20.0,
-                                          ),
-                                          child: CachedNetworkImage(
-                                            width: 60,
-                                            height: 60,
-                                            fit: BoxFit.cover,
-                                            imageUrl: items[i].picture,
-                                          ),
-                                        ),
-                                        title: Text(items[i].name),
-                                        subtitle: Text(items[i].category),
-                                        trailing: Text(
-                                          '${items[i].totalQuantity} Vendu(s)',
-                                        ),
-                                      ),
-                                      LinearProgressIndicator(
-                                        value:
-                                            (items[i].totalQuantity /
-                                            state.topMenuItems!.totalQuantity),
-                                        borderRadius: BorderRadius.circular(30),
-                                        minHeight: 8,
-                                        color: Theme.of(context).primaryColor,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                          ],
-                        );
-                      //return Text('${state.topMenuItems.last.name}', style: Theme.of(context).textTheme.displayLarge,);
-                      case BlocStatus.loading:
-                        return Text('Calculating....');
-                      default:
-                        return SizedBox.shrink();
-                    }
-                  },
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-}
-
-class TopServerCard extends StatefulWidget {
-  const TopServerCard({super.key});
-
-  @override
-  State<TopServerCard> createState() => _TopServerCardState();
-}
-
-class _TopServerCardState extends State<TopServerCard> {
-  @override
-  void initState() {
-    super.initState();
-    //context.read<StatsBloc>().add(StatsTodayOrderCountGot());
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return CustomContainer(
+    return Container(
+      padding: const EdgeInsets.all(kspacing * 3),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(25),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "Meilleurs serveur",
-            style: Theme.of(context).textTheme.headlineMedium,
+            "Meilleures menus",
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
           ),
-          Spacer(),
-          // Expanded(
-          //   child: Center(
-          //     child: BlocBuilder<StatsBloc, StatsState>(
-          //       builder: (context, state) {
-          //         switch (state.orderCountStatus) {
-          //           case BlocStatus.loaded:
-          //             return Text(
-          //               '${state.ordersCount?.dailyCounts.last.count}',
-          //               style: Theme.of(context).textTheme.displayLarge,
-          //             );
-          //           case BlocStatus.loading:
-          //             return Text('Calculating....');
-          //           default:
-          //             return SizedBox.shrink();
-          //         }
-          //       },
-          //     ),
-          //   ),
-          // ),
+          const SizedBox(height: kspacing * 2),
+          BlocBuilder<StatsBloc, StatsState>(
+            builder: (context, state) {
+              if (state.topMenuStatus == BlocStatus.loading) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              final items = state.topMenuItems?.values;
+              if (items == null || items.isEmpty) {
+                return const Center(child: Text("Aucune donnée disponible"));
+              }
+              return Column(
+                children: items.take(3).map((item) {
+                  final percentage = state.topMenuItems!.totalQuantity > 0
+                      ? (item.totalQuantity / state.topMenuItems!.totalQuantity * 100)
+                      : 0;
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: kspacing),
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: CachedNetworkImage(
+                                width: 50,
+                                height: 50,
+                                fit: BoxFit.cover,
+                                imageUrl: item.picture,
+                                placeholder: (context, url) => Container(
+                                  color: Colors.grey.shade200,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: kspacing * 1.5),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    item.name,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                  Text(
+                                    item.category,
+                                    style: const TextStyle(
+                                      color: Colors.grey,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                RichText(
+                                  text: TextSpan(
+                                    text: "${percentage.toStringAsFixed(0)}%",
+                                    style: TextStyle(
+                                      color: primaryColor,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14,
+                                    ),
+                                    children: const [
+                                      TextSpan(
+                                        text: " Vendus",
+                                        style: TextStyle(
+                                          color: Colors.grey,
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.normal,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(5),
+                          child: LinearProgressIndicator(
+                            value: percentage / 100,
+                            backgroundColor: Colors.grey.shade100,
+                            color: Colors.orange,
+                            minHeight: 8,
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }).toList(),
+              );
+            },
+          ),
         ],
       ),
     );
   }
 }
+
+
