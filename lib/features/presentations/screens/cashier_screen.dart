@@ -10,6 +10,7 @@ import 'package:menu_zen_restaurant/features/presentations/managers/orders/order
 import '../../../core/constants/constants.dart';
 import '../../domains/entities/order_entity.dart';
 import '../../domains/entities/order_menu_item.dart';
+import '../widgets/payment_summary_dialog.dart';
 
 @RoutePage()
 class CashierScreen extends StatefulWidget {
@@ -539,12 +540,25 @@ class CashierOrderCard extends StatelessWidget {
                   kspacing,
                 ),
                 child: ElevatedButton(
-                  onPressed: () {
-                    context.read<OrdersBloc>().add(
-                      OrderUpdated(
-                        order.copyWith(paymentStatus: PaymentStatus.paid),
+                  onPressed: () async {
+                    final result = await showDialog<Map<String, dynamic>>(
+                      context: context,
+                      builder: (context) => PaymentSummaryDialog(
+                        order: order,
                       ),
                     );
+
+                    if (result != null) {
+                      context.read<OrdersBloc>().add(
+                        OrderUpdated(
+                          order.copyWith(paymentStatus: PaymentStatus.paid),
+                        ),
+                      );
+
+                      if (result['action'] == 'print_and_pay') {
+                        // TODO: Implement printing logic
+                      }
+                    }
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: primaryColor,
