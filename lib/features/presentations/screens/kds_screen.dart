@@ -422,7 +422,7 @@ class _KdsScreenState extends State<KdsScreen> {
         return Row(
           children: [
             _buildTabButton(
-              label: "$openCountStr OUVERTES",
+              label: "$openCountStr Ouvertes",
               isActive: !showCompleted,
               onTap: () => setState(() => showCompleted = false),
               activeColor: const Color(0xFFD1D1EB),
@@ -430,7 +430,7 @@ class _KdsScreenState extends State<KdsScreen> {
             ),
             const SizedBox(width: kspacing * 2),
             _buildTabButton(
-              label: "$completedCountStr TERMINÉES",
+              label: "$completedCountStr Terminées",
               isActive: showCompleted,
               onTap: () => setState(() => showCompleted = true),
               activeColor: const Color(0xFFFFE0B2),
@@ -594,13 +594,17 @@ class KdsOrderCard extends StatelessWidget {
             _buildContinuedIndicator(context, "Suite...", Icons.arrow_upward),
           // Items
           Padding(
-            padding: const EdgeInsets.all(kspacing),
+            padding: const EdgeInsets.symmetric(horizontal: kspacing * 2),
             child: Column(
               children: [
                 for (final item in slot.items)
                   _buildOrderItem(context, slot.order, item),
               ],
             ),
+          ),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: kspacing * 2),
+            child: Divider(height: 1),
           ),
           // Continued Bottom
           if (slot.showContinuedBottom)
@@ -610,7 +614,7 @@ class KdsOrderCard extends StatelessWidget {
             if (isInProgress)
               _buildLargeActionButton(
                 context,
-                "TERMINER",
+                "Terminer",
                 const Color(0xFF9CCC65),
                 OrderStatus.ready,
               )
@@ -664,7 +668,10 @@ class KdsOrderCard extends StatelessWidget {
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
     final Color muted = isDark ? Colors.white54 : Colors.grey;
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: kspacing, vertical: 4),
+      padding: const EdgeInsets.symmetric(
+        horizontal: kspacing * 2,
+        vertical: 4,
+      ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
@@ -715,13 +722,16 @@ class KdsOrderCard extends StatelessWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  "${item.quantity}",
-                  style: TextStyle(
-                    fontWeight: FontWeight.w900,
-                    fontSize: 13,
-                    decoration: decoration,
-                    color: textColor,
+                SizedBox(
+                  width: 28,
+                  child: Text(
+                    "${item.quantity}",
+                    style: TextStyle(
+                      fontWeight: FontWeight.w900,
+                      fontSize: 13,
+                      decoration: decoration,
+                      color: textColor,
+                    ),
                   ),
                 ),
                 const SizedBox(width: kspacing * 1.5),
@@ -773,7 +783,6 @@ class KdsOrderCard extends StatelessWidget {
   Widget _buildStatusChip(BuildContext context, OrderStatus status) {
     Color color;
     String label;
-
     switch (status) {
       case OrderStatus.inPreparation:
         color = const Color(0xFF2196F3);
@@ -791,7 +800,6 @@ class KdsOrderCard extends StatelessWidget {
         color = const Color(0xFF9E9E9E);
         label = status.name.toUpperCase();
     }
-
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
@@ -816,7 +824,7 @@ class KdsOrderCard extends StatelessWidget {
     OrderStatus nextStatus,
   ) {
     return Padding(
-      padding: const EdgeInsets.all(kspacing * 2),
+      padding: const EdgeInsets.symmetric(horizontal: kspacing * 2, vertical: kspacing * 2),
       child: ElevatedButton(
         onPressed: () {
           context.read<OrdersBloc>().add(

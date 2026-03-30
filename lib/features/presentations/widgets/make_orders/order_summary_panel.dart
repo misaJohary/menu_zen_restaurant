@@ -6,7 +6,7 @@ import 'package:menu_zen_restaurant/core/extensions/double_extension.dart';
 import 'package:menu_zen_restaurant/core/extensions/list_extension.dart';
 import 'package:menu_zen_restaurant/core/navigation/app_router.gr.dart';
 import 'package:menu_zen_restaurant/features/presentations/controllers/make_order_controller.dart';
-import 'package:menu_zen_restaurant/features/presentations/widgets/orders/order_item.dart';
+import 'package:menu_zen_restaurant/features/presentations/widgets/make_orders/order_success_dialog.dart';
 
 import '../../../../core/constants/constants.dart';
 import '../../../../core/enums/bloc_status.dart';
@@ -58,32 +58,15 @@ class _OrderSummaryPannelState extends State<OrderSummaryPannel> {
               case BlocStatus.loaded:
                 showDialog(
                   context: context,
-                  builder: (context) => AlertDialog(
-                    backgroundColor: Colors.white,
-                    title: Text(
-                      'Commande créée avec succès !',
-                      style: Theme.of(
-                        context,
-                      ).textTheme.titleLarge?.copyWith(color: Colors.green),
-                    ),
-                    content: OrderItem(
-                      order: state.selectedOrder!,
-                      onStatusChanged: (_) {},
-                    ),
-                    actions: [
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        child: Text('Créer une autre'),
-                      ),
-                      ElevatedButton(
-                        onPressed: () {
-                          context.router.push(OrdersRoute());
-                        },
-                        child: Text('Voir listes'),
-                      ),
-                    ],
+                  barrierColor: Colors.black.withValues(alpha: 0.1),
+                  builder: (context) => OrderSuccessDialog(
+                    order: state.selectedOrder!,
+                    onAnotherOrder: () {
+                      Navigator.pop(context);
+                    },
+                    onViewList: () {
+                      context.router.push(OrdersRoute());
+                    },
                   ),
                 );
                 widget.controller.clearOrderMenuItem();
@@ -112,32 +95,15 @@ class _OrderSummaryPannelState extends State<OrderSummaryPannel> {
               case BlocStatus.loaded:
                 showDialog(
                   context: context,
-                  builder: (context) => AlertDialog(
-                    backgroundColor: Colors.white,
-                    title: Text(
-                      'Commande mise à jour avec succès !',
-                      style: Theme.of(
-                        context,
-                      ).textTheme.titleLarge?.copyWith(color: Colors.green),
-                    ),
-                    content: OrderItem(
-                      order: state.selectedOrder!,
-                      onStatusChanged: (_) {},
-                    ),
-                    actions: [
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        child: Text('Créer une autre'),
-                      ),
-                      ElevatedButton(
-                        onPressed: () {
-                          context.router.push(OrdersRoute());
-                        },
-                        child: Text('Voir listes'),
-                      ),
-                    ],
+                  barrierColor: Colors.black.withValues(alpha: 0.1),
+                  builder: (context) => OrderSuccessDialog(
+                    order: state.selectedOrder!,
+                    onAnotherOrder: () {
+                      Navigator.pop(context);
+                    },
+                    onViewList: () {
+                      context.router.push(OrdersRoute());
+                    },
                   ),
                 );
                 widget.controller.clearOrderMenuItem();
