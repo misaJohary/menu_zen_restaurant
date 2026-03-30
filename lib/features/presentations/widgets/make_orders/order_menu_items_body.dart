@@ -62,153 +62,206 @@ class _OrderMenuItemsBodyState extends State<OrderMenuItemsBody> {
                               ),
                             );
                           }
-                          return GridView.builder(
-                            gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount:
-                                      widget.controller
-                                          .filterMenuOrdered(state)
-                                          .isEmpty
-                                      ? 4
-                                      : 3, // 4 items per row
-                                  crossAxisSpacing: 12,
-                                  mainAxisSpacing: 0,
-                                  childAspectRatio:
-                                      1, // makes them look like rectangles
-                                ),
-                            shrinkWrap: true,
-                            itemCount: state.orderMenuItems.length,
-                            itemBuilder: (context, index) {
-                              final menuItem = orderMenu[index].menuItem;
-                              return BlocBuilder<LanguagesBloc, LanguagesState>(
-                                builder: (context, langState) {
-                                  final selectedLang =
-                                      langState.selectedLanguage?.code ?? 'en';
-                                  final itemName = menuItem.translations
-                                      .getField(selectedLang, (t) => t.name);
+                          return ListenableBuilder(
+                            listenable: widget.controller,
+                            builder: (context, child) {
+                              // Build indexed pairs so we preserve the
+                              // original position for bloc increment/decrement.
+                              final indexed = [
+                                for (
+                                  var i = 0;
+                                  i < orderMenu.length;
+                                  i++
+                                )
+                                  (i, orderMenu[i]),
+                              ];
+                              final selected =
+                                  widget.controller.selectedCategory;
+                              final filtered =
+                                  selected == null
+                                      ? indexed
+                                      : indexed
+                                          .where(
+                                            (pair) =>
+                                                pair.$2.menuItem.category
+                                                    ?.id ==
+                                                selected.id,
+                                          )
+                                          .toList();
 
-                                  return Column(
-                                    mainAxisAlignment: .start,
-                                    crossAxisAlignment: .start,
-                                    children: [
-                                      menuItem.picture != null
-                                          ? ClipRRect(
-                                              borderRadius: .circular(
-                                                kspacing * 2,
-                                              ),
-                                              child: CachedNetworkImage(
-                                                width: double.infinity,
-                                                height: 160,
-                                                fit: BoxFit.cover,
-                                                imageUrl: menuItem.picture!,
-                                              ),
-                                            )
-                                          : const CircleAvatar(
-                                              child: Icon(Icons.fastfood),
-                                            ),
-                                      SizedBox(height: kspacing),
-                                      Text(
-                                        itemName,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .labelLarge
-                                            ?.copyWith(fontSize: 17),
-                                        maxLines: 2,
-                                        overflow: .ellipsis,
-                                      ),
-                                      SizedBox(height: kspacing),
-                                      Row(
-                                        mainAxisAlignment: .spaceBetween,
+                              if (filtered.isEmpty) {
+                                return Center(
+                                  child: Text(
+                                    'Aucun élément dans cette catégorie',
+                                    style:
+                                        Theme.of(context).textTheme.bodyLarge,
+                                  ),
+                                );
+                              }
+
+                              return GridView.builder(
+                                gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount:
+                                          widget.controller
+                                                  .filterMenuOrdered(state)
+                                                  .isEmpty
+                                              ? 4
+                                              : 3,
+                                      crossAxisSpacing: 12,
+                                      mainAxisSpacing: 0,
+                                      childAspectRatio: 1,
+                                    ),
+                                shrinkWrap: true,
+                                itemCount: filtered.length,
+                                itemBuilder: (context, gridIndex) {
+                                  final (originalIndex, orderMenuItem) =
+                                      filtered[gridIndex];
+                                  final menuItem = orderMenuItem.menuItem;
+                                  return BlocBuilder<
+                                    LanguagesBloc,
+                                    LanguagesState
+                                  >(
+                                    builder: (context, langState) {
+                                      final selectedLang =
+                                          langState.selectedLanguage?.code ??
+                                          'en';
+                                      final itemName =
+                                          menuItem.translations.getField(
+                                            selectedLang,
+                                            (t) => t.name,
+                                          );
+
+                                      return Column(
+                                        mainAxisAlignment: .start,
+                                        crossAxisAlignment: .start,
                                         children: [
+                                          menuItem.picture != null
+                                              ? ClipRRect(
+                                                  borderRadius: .circular(
+                                                    kspacing * 2,
+                                                  ),
+                                                  child: CachedNetworkImage(
+                                                    width: double.infinity,
+                                                    height: 160,
+                                                    fit: BoxFit.cover,
+                                                    imageUrl: menuItem.picture!,
+                                                  ),
+                                                )
+                                              : const CircleAvatar(
+                                                  child: Icon(Icons.fastfood),
+                                                ),
+                                          SizedBox(height: kspacing),
                                           Text(
-                                            '${menuItem.price.formatMoney} Ar',
+                                            itemName,
                                             style: Theme.of(context)
                                                 .textTheme
-                                                .bodyLarge
-                                                ?.copyWith(
-                                                  color: Color(0xFF7E7D7E),
-                                                ),
+                                                .labelLarge
+                                                ?.copyWith(fontSize: 17),
+                                            maxLines: 2,
+                                            overflow: .ellipsis,
                                           ),
-                                          Container(
-                                            decoration: BoxDecoration(
-                                              color: Color(0xFFF5F5F5),
-
-                                              borderRadius: .circular(
-                                                kspacing * 2,
+                                          SizedBox(height: kspacing),
+                                          Row(
+                                            mainAxisAlignment: .spaceBetween,
+                                            children: [
+                                              Text(
+                                                '${menuItem.price.formatMoney}'
+                                                ' Ar',
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyLarge
+                                                    ?.copyWith(
+                                                      color: Color(0xFF7E7D7E),
+                                                    ),
                                               ),
-                                            ),
-                                            child: Row(
-                                              children: [
-                                                InkWell(
-                                                  onTap: () {
-                                                    if (orderMenu[index]
-                                                            .quantity >
-                                                        0) {
-                                                      widget.controller
-                                                          .decrementQuantity(
-                                                            index,
-                                                          );
-                                                    }
-                                                  },
-                                                  child: Icon(
-                                                    Icons.remove_circle,
-                                                    size: 35,
-                                                    color: Colors.white,
+                                              Container(
+                                                decoration: BoxDecoration(
+                                                  color: Color(0xFFF5F5F5),
+                                                  borderRadius: .circular(
+                                                    kspacing * 2,
                                                   ),
                                                 ),
-                                                Padding(
-                                                  padding: const .all(kspacing),
-                                                  child: Text(
-                                                    orderMenu[index].quantity
-                                                        .toString(),
-                                                    style: Theme.of(
-                                                      context,
-                                                    ).textTheme.bodyLarge,
-                                                  ),
-                                                ),
-                                                InkWell(
-                                                  onTap: () {
-                                                    widget.controller
-                                                        .incrementQuantity(
-                                                          index,
-                                                        );
-                                                    if (widget
-                                                                .controller
-                                                                .orderListScroll !=
-                                                            null &&
-                                                        widget
-                                                            .controller
-                                                            .orderListScroll!
-                                                            .hasClients) {
-                                                      widget
-                                                          .controller
-                                                          .orderListScroll!
-                                                          .animateTo(
+                                                child: Row(
+                                                  children: [
+                                                    InkWell(
+                                                      onTap: () {
+                                                        if (orderMenuItem
+                                                                .quantity >
+                                                            0) {
+                                                          widget.controller
+                                                              .decrementQuantity(
+                                                                originalIndex,
+                                                              );
+                                                        }
+                                                      },
+                                                      child: Icon(
+                                                        Icons.remove_circle,
+                                                        size: 35,
+                                                        color: Colors.white,
+                                                      ),
+                                                    ),
+                                                    Padding(
+                                                      padding: const .all(
+                                                        kspacing,
+                                                      ),
+                                                      child: Text(
+                                                        orderMenuItem.quantity
+                                                            .toString(),
+                                                        style: Theme.of(
+                                                          context,
+                                                        ).textTheme.bodyLarge,
+                                                      ),
+                                                    ),
+                                                    InkWell(
+                                                      onTap: () {
+                                                        widget.controller
+                                                            .incrementQuantity(
+                                                              originalIndex,
+                                                            );
+                                                        if (widget
+                                                                    .controller
+                                                                    .orderListScroll !=
+                                                                null &&
                                                             widget
                                                                 .controller
                                                                 .orderListScroll!
-                                                                .position
-                                                                .maxScrollExtent,
-                                                            duration: Duration(
-                                                              seconds: 2,
-                                                            ),
-                                                            curve: Curves
-                                                                .fastOutSlowIn,
-                                                          );
-                                                    }
-                                                  },
-                                                  child: Icon(
-                                                    Icons.add_circle,
-                                                    size: 35,
-                                                    color: Color(0xFF201F20),
-                                                  ),
+                                                                .hasClients) {
+                                                          widget
+                                                              .controller
+                                                              .orderListScroll!
+                                                              .animateTo(
+                                                                widget
+                                                                    .controller
+                                                                    .orderListScroll!
+                                                                    .position
+                                                                    .maxScrollExtent,
+                                                                duration:
+                                                                    Duration(
+                                                                      seconds:
+                                                                          2,
+                                                                    ),
+                                                                curve: Curves
+                                                                    .fastOutSlowIn,
+                                                              );
+                                                        }
+                                                      },
+                                                      child: Icon(
+                                                        Icons.add_circle,
+                                                        size: 35,
+                                                        color: Color(
+                                                          0xFF201F20,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
                                                 ),
-                                              ],
-                                            ),
+                                              ),
+                                            ],
                                           ),
                                         ],
-                                      ),
-                                    ],
+                                      );
+                                    },
                                   );
                                 },
                               );
