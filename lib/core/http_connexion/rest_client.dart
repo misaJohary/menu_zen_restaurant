@@ -110,7 +110,9 @@ abstract class RestClient {
   Future<MenuItemModel> createMenuItems(@Body() MenuItemModel params);
 
   @GET('/menu-items-order')
-  Future<List<OrderMenuItemModel>> getMenuItemsOrder();
+  Future<List<OrderMenuItemModel>> getMenuItemsOrder({
+    @Query('search') String? search,
+  });
 
   //orders
   @POST('/orders')

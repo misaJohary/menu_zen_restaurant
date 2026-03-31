@@ -6,7 +6,9 @@ import '../entities/order_entity.dart';
 import '../params/order_params.dart';
 
 abstract class OrdersRepository {
-  Future<MultiResult<Failure, List<OrderMenuItemModel>>> getOrderMenuItems();
+  Future<MultiResult<Failure, List<OrderMenuItemModel>>> getOrderMenuItems({
+    String? search,
+  });
   Future<MultiResult<Failure, OrderModel>> createOrder(OrderModel order);
   Future<MultiResult<Failure, List<OrderModel>>> getOrders(OrderParams params);
   Future<MultiResult<Failure, OrderModel>> updateStatusOrder(

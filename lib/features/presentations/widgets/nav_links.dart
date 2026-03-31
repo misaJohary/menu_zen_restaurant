@@ -106,13 +106,13 @@ List<Widget> navLinks(String currentRoute, Role? role) => [
     isSelected: currentRoute == TablesRoute.name,
     destination: const TablesRoute(),
   ),
-  NavLink(
-    label: 'Commande',
-    iconPath: 'assets/icons/commandes.svg',
-    isSelected: currentRoute == OrdersRoute.name,
-    destination: const OrdersRoute(),
-  ),
-  if (role == Role.admin || role == Role.superAdmin)
+  // NavLink(
+  //   label: 'Commande',
+  //   iconPath: 'assets/icons/commandes.svg',
+  //   isSelected: currentRoute == OrdersRoute.name,
+  //   destination: const OrdersRoute(),
+  // ),
+  //if (role == Role.admin || role == Role.superAdmin)
     NavLink(
       label: 'Utilisateurs',
       iconPath: 'assets/icons/user.svg', // Fallback for Users

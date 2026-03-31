@@ -24,6 +24,7 @@ class MakeOrderController extends ChangeNotifier {
   CategoryEntity? selectedCategory;
   ScrollController? orderListScroll;
   final formKey = GlobalKey<FormBuilderState>();
+  final TextEditingController menuSearchController = TextEditingController();
 
   void selectCategory(CategoryEntity? category) {
     selectedCategory = category;
@@ -47,8 +48,19 @@ class MakeOrderController extends ChangeNotifier {
     orderMenuItemBloc.add(OrderMenuItemRemoved(orderMenuItem));
   }
 
-  addFetchOrderMenuItem() {
-    orderMenuItemBloc.add(OrderMenuItemFetched());
+  void addFetchOrderMenuItem({String? search}) {
+    orderMenuItemBloc.add(OrderMenuItemFetched(search: search));
+  }
+
+  void submitOrderMenuSearch() {
+    final q = menuSearchController.text.trim();
+    addFetchOrderMenuItem(search: q.isEmpty ? null : q);
+  }
+
+  @override
+  void dispose() {
+    menuSearchController.dispose();
+    super.dispose();
   }
 
   addFetchTables() {

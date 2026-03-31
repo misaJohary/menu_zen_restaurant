@@ -3,12 +3,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/constants/constants.dart';
 import '../../../domains/entities/language_entity.dart';
+import '../../controllers/make_order_controller.dart';
 import '../../managers/auths/auth_bloc.dart';
 import '../../managers/languages/languages_bloc.dart';
 import '../custom_container.dart';
 
 class OrderHeader extends StatefulWidget {
-  const OrderHeader({super.key});
+  const OrderHeader({super.key, required this.controller});
+
+  final MakeOrderController controller;
 
   @override
   State<OrderHeader> createState() => _OrderHeaderState();
@@ -51,6 +54,9 @@ class _OrderHeaderState extends State<OrderHeader> {
               SizedBox(
                 width: 300,
                 child: TextField(
+                  controller: widget.controller.menuSearchController,
+                  textInputAction: TextInputAction.search,
+                  onSubmitted: (_) => widget.controller.submitOrderMenuSearch(),
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(kspacing * 2),

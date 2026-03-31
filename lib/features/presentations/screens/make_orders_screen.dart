@@ -22,6 +22,12 @@ class _MakeOrderScreenState extends State<MakeOrderScreen> {
   late MakeOrderController controller;
 
   @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
   void initState() {
     super.initState();
     controller = MakeOrderController(context: context)..addFetchOrderMenuItem();
@@ -45,7 +51,7 @@ class _MakeOrderScreenState extends State<MakeOrderScreen> {
               Expanded(
                 child: Column(
                   children: [
-                    OrderHeader(),
+                    OrderHeader(controller: controller),
                     OrderMenuItemsBody(controller: controller),
                   ],
                 ),

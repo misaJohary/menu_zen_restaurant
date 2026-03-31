@@ -28,7 +28,7 @@ class OrderMenuItemBloc extends Bloc<OrderMenuItemEvent, OrderMenuItemState> {
     Emitter<OrderMenuItemState> emit,
   ) async {
     //if (state.orderMenuItems.isEmpty) {
-    await _onOrderMenuItemFetched(OrderMenuItemFetched(), emit);
+    await _onOrderMenuItemFetched(const OrderMenuItemFetched(), emit);
     //}
 
     final List<OrderMenuItem> orders = List.from(state.orderMenuItems);
@@ -61,7 +61,7 @@ class OrderMenuItemBloc extends Bloc<OrderMenuItemEvent, OrderMenuItemState> {
     Emitter<OrderMenuItemState> emit,
   ) async {
     emit(state.copyWith(status: BlocStatus.loading));
-    final result = await repo.getOrderMenuItems();
+    final result = await repo.getOrderMenuItems(search: event.search);
     if (result.isSuccess) {
       emit(
         state.copyWith(

@@ -19,9 +19,9 @@ class OrdersRepositoryImpl implements OrdersRepository {
 
   @override
   Future<MultiResult<Failure, List<OrderMenuItemModel>>>
-  getOrderMenuItems() async {
+  getOrderMenuItems({String? search}) async {
     return executeWithErrorHandling(() async {
-      return await rest.getMenuItemsOrder();
+      return await rest.getMenuItemsOrder(search: search);
     });
   }
 

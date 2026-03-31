@@ -5,10 +5,12 @@ abstract class OrderMenuItemEvent extends Equatable {
 }
 
 class OrderMenuItemFetched extends OrderMenuItemEvent {
-  const OrderMenuItemFetched();
+  const OrderMenuItemFetched({this.search});
+
+  final String? search;
 
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [search];
 }
 
 class OrderMenuItemIncremented extends OrderMenuItemEvent {
