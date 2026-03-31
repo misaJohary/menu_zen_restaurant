@@ -74,9 +74,7 @@ class MakeOrderController extends ChangeNotifier {
   }
 
   List<OrderMenuItem> filterMenuOrdered(OrderMenuItemState state) {
-    return state.orderMenuItems
-        .where((orderMenu) => orderMenu.quantity > 0)
-        .toList();
+    return state.orderedItems;
   }
 
   orderUpdateInitiated(OrderEntity order) {

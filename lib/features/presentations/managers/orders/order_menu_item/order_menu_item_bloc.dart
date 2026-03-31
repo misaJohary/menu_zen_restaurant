@@ -23,6 +23,29 @@ class OrderMenuItemBloc extends Bloc<OrderMenuItemEvent, OrderMenuItemState> {
     on<OrderMenuUpdateInitiated>(_onOrderMenuUpdateInitiated);
   }
 
+  List<OrderMenuItem> _updateOrderedItems(
+    List<OrderMenuItem> currentOrderedItems,
+    OrderMenuItem updatedItem,
+  ) {
+    final items = List<OrderMenuItem>.from(currentOrderedItems);
+    final index = items.indexWhere(
+      (i) => i.menuItem.id == updatedItem.menuItem.id,
+    );
+
+    if (updatedItem.quantity > 0) {
+      if (index >= 0) {
+        items[index] = updatedItem;
+      } else {
+        items.add(updatedItem);
+      }
+    } else {
+      if (index >= 0) {
+        items.removeAt(index);
+      }
+    }
+    return items;
+  }
+
   _onOrderMenuUpdateInitiated(
     OrderMenuUpdateInitiated event,
     Emitter<OrderMenuItemState> emit,
@@ -34,15 +57,20 @@ class OrderMenuItemBloc extends Bloc<OrderMenuItemEvent, OrderMenuItemState> {
     final List<OrderMenuItem> orders = List.from(state.orderMenuItems);
     Logger().e(orders);
     if (orders.isEmpty) return;
+    
+    List<OrderMenuItem> orderedItems = [];
     for (final orderItem in event.order.orderMenuItems) {
       final index = orders.indexWhere(
         (item) => item.menuItem.id == orderItem.menuItem.id,
       );
       if (index != -1) {
         orders[index] = orders[index].copyWith(quantity: orderItem.quantity);
+        orderedItems.add(orders[index]);
+      } else {
+        orderedItems.add(orderItem);
       }
     }
-    emit(state.copyWith(orderMenuItems: orders));
+    emit(state.copyWith(orderMenuItems: orders, orderedItems: orderedItems));
   }
 
   _onOrderMenuItemCleared(
@@ -53,7 +81,7 @@ class OrderMenuItemBloc extends Bloc<OrderMenuItemEvent, OrderMenuItemState> {
     for (var e in state.orderMenuItems) {
       orderMenuItems.add(e.copyWith(quantity: 0));
     }
-    emit(state.copyWith(orderMenuItems: orderMenuItems));
+    emit(state.copyWith(orderMenuItems: orderMenuItems, orderedItems: const []));
   }
 
   _onOrderMenuItemFetched(
@@ -63,9 +91,20 @@ class OrderMenuItemBloc extends Bloc<OrderMenuItemEvent, OrderMenuItemState> {
     emit(state.copyWith(status: BlocStatus.loading));
     final result = await repo.getOrderMenuItems(search: event.search);
     if (result.isSuccess) {
+      final fetchedItems = result.getSuccess ?? [];
+      final orderMenuItems = fetchedItems.map((item) {
+        final idx = state.orderedItems.indexWhere(
+          (o) => o.menuItem.id == item.menuItem.id,
+        );
+        if (idx >= 0) {
+          return item.copyWith(quantity: state.orderedItems[idx].quantity);
+        }
+        return item;
+      }).toList();
+
       emit(
         state.copyWith(
-          orderMenuItems: result.getSuccess,
+          orderMenuItems: orderMenuItems,
           status: BlocStatus.loaded,
         ),
       );
@@ -81,8 +120,11 @@ class OrderMenuItemBloc extends Bloc<OrderMenuItemEvent, OrderMenuItemState> {
     final orderMenuItems = List<OrderMenuItem>.from(state.orderMenuItems);
     if (event.index >= 0 && event.index < orderMenuItems.length) {
       final item = orderMenuItems[event.index];
-      orderMenuItems[event.index] = item.copyWith(quantity: item.quantity + 1);
-      emit(state.copyWith(orderMenuItems: orderMenuItems));
+      final newItem = item.copyWith(quantity: item.quantity + 1);
+      orderMenuItems[event.index] = newItem;
+      
+      final orderedItems = _updateOrderedItems(state.orderedItems, newItem);
+      emit(state.copyWith(orderMenuItems: orderMenuItems, orderedItems: orderedItems));
     }
   }
 
@@ -94,10 +136,11 @@ class OrderMenuItemBloc extends Bloc<OrderMenuItemEvent, OrderMenuItemState> {
     if (event.index >= 0 && event.index < orderMenuItems.length) {
       final item = orderMenuItems[event.index];
       if (item.quantity > 0) {
-        orderMenuItems[event.index] = item.copyWith(
-          quantity: item.quantity - 1,
-        );
-        emit(state.copyWith(orderMenuItems: orderMenuItems));
+        final newItem = item.copyWith(quantity: item.quantity - 1);
+        orderMenuItems[event.index] = newItem;
+        
+        final orderedItems = _updateOrderedItems(state.orderedItems, newItem);
+        emit(state.copyWith(orderMenuItems: orderMenuItems, orderedItems: orderedItems));
       }
     }
   }
@@ -113,9 +156,16 @@ class OrderMenuItemBloc extends Bloc<OrderMenuItemEvent, OrderMenuItemState> {
     if (index >= 0 && index < orderMenuItems.length) {
       final item = orderMenuItems[index];
       if (item.quantity > 0) {
-        orderMenuItems[index] = item.copyWith(quantity: 0);
-        emit(state.copyWith(orderMenuItems: orderMenuItems));
+        final newItem = item.copyWith(quantity: 0);
+        orderMenuItems[index] = newItem;
+        
+        final orderedItems = _updateOrderedItems(state.orderedItems, newItem);
+        emit(state.copyWith(orderMenuItems: orderMenuItems, orderedItems: orderedItems));
       }
+    } else {
+      final newItem = event.orderMenuItem.copyWith(quantity: 0);
+      final orderedItems = _updateOrderedItems(state.orderedItems, newItem);
+      emit(state.copyWith(orderedItems: orderedItems));
     }
   }
 }

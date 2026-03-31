@@ -56,7 +56,7 @@ class _OrderHeaderState extends State<OrderHeader> {
                 child: TextField(
                   controller: widget.controller.menuSearchController,
                   textInputAction: TextInputAction.search,
-                  onSubmitted: (_) => widget.controller.submitOrderMenuSearch(),
+                  onChanged: (_) => widget.controller.submitOrderMenuSearch(),
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(kspacing * 2),
