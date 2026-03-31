@@ -14,10 +14,11 @@ class OrderCreated extends OrdersEvent {
 }
 
 class OrderFetched extends OrdersEvent {
-  const OrderFetched();
+  final String? search;
+  const OrderFetched({this.search});
 
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [search];
 }
 
 class OrderStatusUpdated extends OrdersEvent {

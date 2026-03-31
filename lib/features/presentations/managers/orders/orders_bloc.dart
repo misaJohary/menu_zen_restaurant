@@ -52,7 +52,7 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
         ),
       );
     } else {
-      add(OrderFetched());
+      add(const OrderFetched());
     }
   }
 
@@ -195,7 +195,7 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
       (element) => element.id == event.orderId,
     );
     if (orderIndex == -1) {
-      add(OrderFetched());
+      add(const OrderFetched());
       return;
     }
     final order = state.orders[orderIndex];
@@ -204,7 +204,7 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
       (item) => item.id == event.orderMenuItemId,
     );
     if (itemIndex == -1) {
-      add(OrderFetched());
+      add(const OrderFetched());
       return;
     }
 
@@ -239,7 +239,7 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
 
   _onOrderFetched(OrderFetched event, Emitter<OrdersState> emit) async {
     emit(state.copyWith(status: BlocStatus.loading));
-    final result = await repo.getOrders(OrderParams(todayOnly: false));
+    final result = await repo.getOrders(OrderParams(todayOnly: false, search: event.search));
     if (result.isSuccess) {
       emit(
         state.copyWith(orders: result.getSuccess, status: BlocStatus.loaded),

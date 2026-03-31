@@ -8,11 +8,12 @@ class OrderParams extends Equatable {
   final int? page;
   final int? limit;
   final bool todayOnly;
+  final String? search;
 
-  const OrderParams({this.page, this.limit, this.todayOnly = false});
+  const OrderParams({this.page, this.limit, this.todayOnly = false, this.search});
 
   @override
-  List<Object?> get props => [page, limit, todayOnly];
+  List<Object?> get props => [page, limit, todayOnly, search];
 
   factory OrderParams.fromJson(Map<String, dynamic> json) =>
       _$OrderParamsFromJson(json);

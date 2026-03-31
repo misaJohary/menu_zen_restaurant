@@ -36,6 +36,8 @@ class _OrdersScreenState extends State<OrdersScreen> {
 
   bool showCompleted = false;
   bool isDarkMode = false;
+  bool isSearching = false;
+  final TextEditingController searchController = TextEditingController();
 
   Future<void> _confirmLogout() async {
     final bool? shouldLogout = await showDialog<bool>(
@@ -72,6 +74,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
 
   @override
   void dispose() {
+    searchController.dispose();
     _wsSubscription?.cancel();
     super.dispose();
   }
@@ -378,35 +381,80 @@ class _OrdersScreenState extends State<OrdersScreen> {
           child: Row(
             children: [
               const Logo(),
-              const Spacer(),
-              ElevatedButton.icon(
-                onPressed: () => context.router.push(MakeOrderRoute()),
-                icon: const Icon(Icons.add, size: 20),
-                label: const Text(
-                  "AJOUTER",
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF9CCC65),
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+              if (isSearching) ...[
+                const SizedBox(width: kspacing * 2),
+                Expanded(
+                  child: TextField(
+                    controller: searchController,
+                    decoration: InputDecoration(
+                      hintText: 'Rechercher par client ou table...',
+                      hintStyle: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey.shade500,
+                      ),
+                      prefixIcon: const Icon(Icons.search, size: 20),
+                      suffixIcon: IconButton(
+                        icon: const Icon(Icons.close, size: 20),
+                        onPressed: () {
+                          setState(() {
+                            isSearching = false;
+                            searchController.clear();
+                          });
+                          context.read<OrdersBloc>().add(const OrderFetched());
+                        },
+                      ),
+                      isDense: true,
+                      contentPadding: const EdgeInsets.symmetric(
+                        vertical: kspacing,
+                        horizontal: kspacing * 2,
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide.none,
+                      ),
+                      filled: true,
+                      fillColor: Colors.grey.shade100,
+                    ),
+                    onChanged: (value) {
+                      context.read<OrdersBloc>().add(OrderFetched(search: value.isEmpty ? null : value));
+                    },
                   ),
-                  elevation: 0,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: kspacing * 2,
-                    vertical: kspacing,
-                  ),
-                  visualDensity: VisualDensity.compact,
                 ),
-              ),
-              const SizedBox(width: kspacing * 2),
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.search),
-                constraints: const BoxConstraints(),
-                padding: const EdgeInsets.all(kspacing),
-              ),
+              ] else ...[
+                const Spacer(),
+                ElevatedButton.icon(
+                  onPressed: () => context.router.push(MakeOrderRoute()),
+                  icon: const Icon(Icons.add, size: 20),
+                  label: const Text(
+                    "AJOUTER",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF9CCC65),
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    elevation: 0,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: kspacing * 2,
+                      vertical: kspacing,
+                    ),
+                    visualDensity: VisualDensity.compact,
+                  ),
+                ),
+                const SizedBox(width: kspacing * 2),
+                IconButton(
+                  onPressed: () {
+                    setState(() {
+                      isSearching = true;
+                    });
+                  },
+                  icon: const Icon(Icons.search),
+                  constraints: const BoxConstraints(),
+                  padding: const EdgeInsets.all(kspacing),
+                ),
+              ],
               const SizedBox(width: kspacing),
               GestureDetector(
                 onTap: () {},
