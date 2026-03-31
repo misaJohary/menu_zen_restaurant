@@ -89,6 +89,12 @@ class MakeOrderController extends ChangeNotifier {
         order.copyWith(
           clientName: firstname ?? order.clientName,
           orderMenuItems: orderMenu,
+          totalAmount: orderMenu
+              .fold<double>(
+                0,
+                (sum, item) => sum + (item.quantity * item.unitPrice),
+              )
+              .toInt(),
         ),
       ),
     );
