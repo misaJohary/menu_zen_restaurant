@@ -12,6 +12,9 @@ import '../managers/auths/auth_bloc.dart';
 import '../widgets/custom_container.dart';
 import '../../datasources/models/restaurant_model.dart';
 import '../../datasources/models/user_model.dart';
+import 'package:image_picker/image_picker.dart';
+import '../../../core/injection/dependencies_injection.dart';
+import '../../domains/repositories/image_repository.dart';
 
 @RoutePage()
 class ProfileScreen extends StatefulWidget {
@@ -347,6 +350,64 @@ class _RestaurantInfoCard extends StatelessWidget {
 
   final RestaurantEntity restaurant;
 
+  Future<void> _updateLogo(BuildContext context) async {
+    final picker = ImagePicker();
+    final source = await showModalBottomSheet<ImageSource>(
+      context: context,
+      builder: (context) => Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ListTile(
+            leading: const Icon(Icons.camera_alt),
+            title: const Text("Appareil photo"),
+            onTap: () => Navigator.pop(context, ImageSource.camera),
+          ),
+          ListTile(
+            leading: const Icon(Icons.photo_library),
+            title: const Text("Galerie"),
+            onTap: () => Navigator.pop(context, ImageSource.gallery),
+          ),
+        ],
+      ),
+    );
+
+    if (source != null) {
+      final file = await picker.pickImage(source: source);
+      if (file != null) {
+        if (!context.mounted) return;
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (_) => const Center(child: CircularProgressIndicator()),
+        );
+
+        try {
+          final imageRepo = getIt<ImageRepository>();
+          final result = await imageRepo.uploadImage(file);
+          
+          if (!context.mounted) return;
+          Navigator.pop(context); // close loading dialog
+          
+          if (result.isSuccess) {
+            final logoUrl = result.getSuccess;
+            final updatedRestaurant = RestaurantModel.fromEntity(restaurant).copyWith(logo: logoUrl);
+            context.read<AuthBloc>().add(AuthRestaurantUpdated(updatedRestaurant));
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Erreur lors de l\'upload de l\'image')),
+            );
+          }
+        } catch (e) {
+          if (!context.mounted) return;
+          Navigator.pop(context); // close loading dialog
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Erreur inattendue')),
+          );
+        }
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return CustomContainer(
@@ -357,38 +418,63 @@ class _RestaurantInfoCard extends StatelessWidget {
           // Restaurant Header with Logo
           Row(
             children: [
-              if (restaurant.logo != null)
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: CachedNetworkImage(
-                    imageUrl: restaurant.logo!,
-                    width: 80,
-                    height: 80,
-                    fit: BoxFit.cover,
-                    placeholder: (context, url) => Container(
-                      width: 80,
-                      height: 80,
-                      color: Colors.grey.shade200,
-                      child: const Icon(Icons.restaurant, size: 40),
+              GestureDetector(
+                onTap: () => _updateLogo(context),
+                child: Stack(
+                  children: [
+                    if (restaurant.logo != null)
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: CachedNetworkImage(
+                          imageUrl: restaurant.logo!,
+                          width: 80,
+                          height: 80,
+                          fit: BoxFit.cover,
+                          placeholder: (context, url) => Container(
+                            width: 80,
+                            height: 80,
+                            color: Colors.grey.shade200,
+                            child: const Icon(Icons.restaurant, size: 40),
+                          ),
+                          errorWidget: (context, url, error) => Container(
+                            width: 80,
+                            height: 80,
+                            color: Colors.grey.shade200,
+                            child: const Icon(Icons.restaurant, size: 40),
+                          ),
+                        ),
+                      )
+                    else
+                      Container(
+                        width: 80,
+                        height: 80,
+                        decoration: BoxDecoration(
+                          color: primaryColor.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Icon(Icons.restaurant, size: 40, color: primaryColor),
+                      ),
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black12,
+                              blurRadius: 4,
+                            ),
+                          ],
+                        ),
+                        child: Icon(Icons.edit, size: 16, color: primaryColor),
+                      ),
                     ),
-                    errorWidget: (context, url, error) => Container(
-                      width: 80,
-                      height: 80,
-                      color: Colors.grey.shade200,
-                      child: const Icon(Icons.restaurant, size: 40),
-                    ),
-                  ),
-                )
-              else
-                Container(
-                  width: 80,
-                  height: 80,
-                  decoration: BoxDecoration(
-                    color: primaryColor.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Icon(Icons.restaurant, size: 40, color: primaryColor),
+                  ],
                 ),
+              ),
               SizedBox(width: kspacing * 3),
               Expanded(
                 child: Column(

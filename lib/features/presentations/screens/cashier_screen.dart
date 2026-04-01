@@ -263,6 +263,15 @@ class _CashierScreenState extends State<CashierScreen> {
           child: Row(
             children: [
               const Logo(),
+              const SizedBox(width: kspacing * 1.5),
+              Text(
+                "Caissier",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: isDark ? Colors.white70 : Colors.grey.shade700,
+                ),
+              ),
               const Spacer(),
               Row(
                 children: [

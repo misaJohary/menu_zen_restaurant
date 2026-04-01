@@ -316,17 +316,18 @@ class _KdsScreenState extends State<KdsScreen> {
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
         final user = state.userRestaurant?.user;
-        final initials = (user?.firstname != null &&
+        final initials =
+            (user?.firstname != null &&
                 user!.firstname!.isNotEmpty &&
                 user.lastname != null &&
                 user.lastname!.isNotEmpty)
             ? "${user.firstname![0]}${user.lastname![0]}".toUpperCase()
             : (user?.fullName?.isNotEmpty ?? false
-                    ? user!.fullName![0]
-                    : (user?.username.isNotEmpty ?? false
-                        ? user!.username[0]
-                        : "?"))
-                .toUpperCase();
+                      ? user!.fullName![0]
+                      : (user?.username.isNotEmpty ?? false
+                            ? user!.username[0]
+                            : "?"))
+                  .toUpperCase();
 
         return Container(
           padding: const EdgeInsets.symmetric(
@@ -346,7 +347,21 @@ class _KdsScreenState extends State<KdsScreen> {
           ),
           child: Row(
             children: [
-              const Logo(),
+              if (state.userRestaurant != null)
+                Logo(imageUrl: state.userRestaurant!.restaurant.logo)
+              else
+                const SizedBox(height: 40),
+              const SizedBox(width: kspacing * 1.5),
+              Text(
+                "Cuisinier",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withOpacity(0.7),
+                ),
+              ),
               const Spacer(),
               IconButton(
                 onPressed: () {},
@@ -824,7 +839,10 @@ class KdsOrderCard extends StatelessWidget {
     OrderStatus nextStatus,
   ) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: kspacing * 2, vertical: kspacing * 2),
+      padding: const EdgeInsets.symmetric(
+        horizontal: kspacing * 2,
+        vertical: kspacing * 2,
+      ),
       child: ElevatedButton(
         onPressed: () {
           context.read<OrdersBloc>().add(
@@ -834,7 +852,9 @@ class KdsOrderCard extends StatelessWidget {
         style: ElevatedButton.styleFrom(
           backgroundColor: color,
           foregroundColor: Colors.white,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
           padding: const EdgeInsets.symmetric(vertical: kspacing * 0.75),
           elevation: 0,
         ),

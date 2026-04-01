@@ -17,6 +17,7 @@ import '../widgets/board_title_widget.dart';
 import '../widgets/card_list_tile.dart';
 import '../widgets/edit_delete_icon.dart';
 import '../widgets/loading_widget.dart';
+import '../widgets/logo.dart';
 import '../widgets/multilingual_field.dart';
 
 @RoutePage()
@@ -141,67 +142,79 @@ class _MenuHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+    return BlocBuilder<AuthBloc, AuthState>(
+      builder: (context, authState) {
+        return Row(
           children: [
-            Text(
-              'Gestion de menus',
-              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
+            if (authState.userRestaurant != null)
+              Logo(imageUrl: authState.userRestaurant!.restaurant.logo)
+            else
+              const SizedBox(height: 40),
+            const SizedBox(width: kspacing * 2),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Gestion de menus',
+                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                ),
+                Text(
+                  'Géré le menu de ton restaurant',
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium?.copyWith(color: grey),
+                ),
+              ],
+            ),
+            const Spacer(),
+            ElevatedButton.icon(
+              onPressed: onAddPressed,
+              icon: const Icon(Icons.add, size: 20),
+              label: const Text('AJOUTER'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: primaryColor,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 12,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
             ),
-            Text(
-              'Géré le menu de ton restaurant',
-              style: Theme.of(
-                context,
-              ).textTheme.bodyMedium?.copyWith(color: grey),
+            const SizedBox(width: kspacing * 2),
+            BlocBuilder<AuthBloc, AuthState>(
+              builder: (context, state) {
+                String? profileUrl;
+                return CircleAvatar(
+                  radius: 20,
+                  backgroundImage: profileUrl != null
+                      ? NetworkImage(profileUrl)
+                      : null,
+                  child: profileUrl == null ? const Icon(Icons.person) : null,
+                );
+              },
             ),
+            const SizedBox(width: kspacing * 2),
+            IconButton(
+              onPressed: () {},
+              icon: Icon(Icons.search, color: grey),
+              style: IconButton.styleFrom(
+                backgroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
+            const SizedBox(width: kspacing * 2),
+            _LanguageSelector(),
           ],
-        ),
-        const Spacer(),
-        ElevatedButton.icon(
-          onPressed: onAddPressed,
-          icon: const Icon(Icons.add, size: 20),
-          label: const Text('AJOUTER'),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: primaryColor,
-            foregroundColor: Colors.white,
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-          ),
-        ),
-        const SizedBox(width: kspacing * 2),
-        BlocBuilder<AuthBloc, AuthState>(
-          builder: (context, state) {
-            String? profileUrl;
-            return CircleAvatar(
-              radius: 20,
-              backgroundImage: profileUrl != null
-                  ? NetworkImage(profileUrl)
-                  : null,
-              child: profileUrl == null ? const Icon(Icons.person) : null,
-            );
-          },
-        ),
-        const SizedBox(width: kspacing * 2),
-        IconButton(
-          onPressed: () {},
-          icon: Icon(Icons.search, color: grey),
-          style: IconButton.styleFrom(
-            backgroundColor: Colors.white,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-          ),
-        ),
-        const SizedBox(width: kspacing * 2),
-        _LanguageSelector(),
-      ],
+        );
+      },
     );
   }
 }

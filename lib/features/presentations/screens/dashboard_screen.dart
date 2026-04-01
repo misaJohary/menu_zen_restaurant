@@ -1,22 +1,18 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:auto_route/annotations.dart';
-import '../../../core/navigation/app_router.gr.dart';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:lottie/lottie.dart';
-import 'package:menu_zen_restaurant/core/extensions/double_extension.dart';
 import 'package:menu_zen_restaurant/features/domains/entities/revenues_entity.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 import '../../../core/constants/constants.dart';
 import '../../../core/enums/bloc_status.dart';
+import '../../../core/navigation/app_router.gr.dart';
 import '../../domains/entities/user_entity.dart';
 import '../managers/auths/auth_bloc.dart';
 import '../managers/stats/stats_bloc.dart';
-import '../widgets/custom_container.dart';
+import '../widgets/logo.dart';
 
 @RoutePage()
 class DashboardScreen extends StatefulWidget {
@@ -148,16 +144,24 @@ class _DashboardScreenState extends State<DashboardScreen> {
             : (user?.username.isNotEmpty == true
                   ? user!.username[0].toUpperCase()
                   : '');
-
         return Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              "Dashboard",
-              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
-              ),
+            Row(
+              children: [
+                if (state.userRestaurant != null)
+                  Logo(imageUrl: state.userRestaurant!.restaurant.logo)
+                else
+                  const SizedBox(height: 40),
+                const SizedBox(width: kspacing * 2),
+                Text(
+                  "Dashboard",
+                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                ),
+              ],
             ),
             InkWell(
               onTap: () => context.router.push(const ProfileRoute()),

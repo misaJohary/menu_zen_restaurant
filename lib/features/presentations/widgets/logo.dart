@@ -1,14 +1,28 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import '../../../core/constants/constants.dart';
 
 class Logo extends StatelessWidget {
-  const Logo({super.key, this.isBig = false});
+  const Logo({super.key, this.isBig = false, this.imageUrl});
 
   final bool? isBig;
+  final String? imageUrl;
 
   @override
   Widget build(BuildContext context) {
+    if (imageUrl != null && imageUrl!.isNotEmpty) {
+      return CachedNetworkImage(
+        imageUrl: imageUrl!,
+        height: isBig! ? 70 : 40,
+        fit: BoxFit.contain,
+        errorWidget: (context, url, error) => _buildDefaultLogo(context),
+      );
+    }
+    return _buildDefaultLogo(context);
+  }
+
+  Widget _buildDefaultLogo(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

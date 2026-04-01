@@ -11,6 +11,7 @@ import 'package:menu_zen_restaurant/features/presentations/managers/languages/la
 import 'package:menu_zen_restaurant/features/presentations/widgets/category_card.dart';
 import 'package:menu_zen_restaurant/features/presentations/widgets/category_dialog.dart';
 import 'package:menu_zen_restaurant/features/presentations/widgets/loading_widget.dart';
+import 'package:menu_zen_restaurant/features/presentations/widgets/logo.dart';
 
 @RoutePage()
 class CategoriesScreen extends StatefulWidget {
@@ -146,6 +147,11 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
 
         return Row(
           children: [
+            if (state.userRestaurant != null)
+              Logo(imageUrl: state.userRestaurant!.restaurant.logo)
+            else
+              const SizedBox(height: 40),
+            const SizedBox(width: kspacing * 2),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

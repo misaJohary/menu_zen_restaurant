@@ -1,5 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:menu_zen_restaurant/features/domains/entities/restaurant_entity.dart';
+import 'package:menu_zen_restaurant/core/config/base_url_config.dart';
 
 part 'restaurant_model.g.dart';
 
@@ -76,8 +77,15 @@ class RestaurantModel extends RestaurantEntity {
     );
   }
 
-  factory RestaurantModel.fromJson(Map<String, dynamic> json) =>
-      _$RestaurantModelFromJson(json);
+  factory RestaurantModel.fromJson(Map<String, dynamic> json) {
+    if (json['logo'] != null) {
+      final pic = json['logo'];
+      if (!pic.toString().startsWith('http')) {
+        json['logo'] = '${BaseUrlConfig.current}/$pic';
+      }
+    }
+    return _$RestaurantModelFromJson(json);
+  }
 
   Map<String, dynamic> toJson() => _$RestaurantModelToJson(this);
 }

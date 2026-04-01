@@ -10,6 +10,7 @@ import 'package:menu_zen_restaurant/features/presentations/managers/auths/auth_b
 import 'package:menu_zen_restaurant/features/presentations/managers/languages/languages_bloc.dart';
 import 'package:menu_zen_restaurant/features/presentations/managers/menu_item/menu_item_bloc.dart';
 import 'package:menu_zen_restaurant/features/presentations/widgets/loading_widget.dart';
+import 'package:menu_zen_restaurant/features/presentations/widgets/logo.dart';
 import 'package:menu_zen_restaurant/features/presentations/widgets/menu_item_card_widget.dart';
 import 'package:menu_zen_restaurant/features/presentations/widgets/menu_item_dialog.dart';
 
@@ -34,10 +35,8 @@ class _MenuItemScreenState extends State<MenuItemScreen> {
     showDialog(
       context: context,
       barrierDismissible: true,
-      builder: (context) => MenuItemDialog(
-        controller: controller,
-        menuItem: menuItem,
-      ),
+      builder: (context) =>
+          MenuItemDialog(controller: controller, menuItem: menuItem),
     );
   }
 
@@ -89,11 +88,11 @@ class _MenuItemScreenState extends State<MenuItemScreen> {
                             return GridView.builder(
                               gridDelegate:
                                   const SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 3,
-                                crossAxisSpacing: 24,
-                                mainAxisSpacing: 24,
-                                childAspectRatio: 1.15,
-                              ),
+                                    crossAxisCount: 3,
+                                    crossAxisSpacing: 24,
+                                    mainAxisSpacing: 24,
+                                    childAspectRatio: 1.15,
+                                  ),
                               itemCount: state.menuItems.length,
                               itemBuilder: (context, index) {
                                 final menu = state.menuItems[index];
@@ -120,7 +119,9 @@ class _MenuItemScreenState extends State<MenuItemScreen> {
                           },
                         );
                       case BlocStatus.failed:
-                        return const Center(child: Text("Erreur de chargement"));
+                        return const Center(
+                          child: Text("Erreur de chargement"),
+                        );
                       default:
                         return const SizedBox.shrink();
                     }
@@ -140,21 +141,26 @@ class _MenuItemScreenState extends State<MenuItemScreen> {
         final user = state.userRestaurant?.user;
         final displayName = user != null
             ? (user.fullName ??
-                '${user.firstname ?? ''} ${user.lastname ?? ''}'.trim())
+                  '${user.firstname ?? ''} ${user.lastname ?? ''}'.trim())
             : (user?.username ?? '');
 
         final initials = displayName.isNotEmpty
             ? displayName
-                .split(' ')
-                .where((e) => e.isNotEmpty)
-                .map((n) => n[0])
-                .take(2)
-                .join()
-                .toUpperCase()
+                  .split(' ')
+                  .where((e) => e.isNotEmpty)
+                  .map((n) => n[0])
+                  .take(2)
+                  .join()
+                  .toUpperCase()
             : 'U';
 
         return Row(
           children: [
+            if (state.userRestaurant != null)
+              Logo(imageUrl: state.userRestaurant!.restaurant.logo)
+            else
+              const SizedBox(height: 40),
+            const SizedBox(width: kspacing * 2),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -187,8 +193,10 @@ class _MenuItemScreenState extends State<MenuItemScreen> {
               ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF91C14F),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 18,
+                ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
                 ),
@@ -263,8 +271,10 @@ class _MenuItemScreenState extends State<MenuItemScreen> {
               const SizedBox(width: 8),
               Text(
                 langName,
-                style:
-                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 13,
+                ),
               ),
               const SizedBox(width: 8),
               const Icon(Icons.check, color: Color(0xFF91C14F), size: 16),

@@ -196,9 +196,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: kspacing * 3),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildStatusToggles(),
-                    ],
+                    children: [_buildStatusToggles()],
                   ),
                 ),
                 const SizedBox(height: kspacing * 2),
@@ -350,17 +348,18 @@ class _OrdersScreenState extends State<OrdersScreen> {
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
         final user = state.userRestaurant?.user;
-        final initials = (user?.firstname != null &&
+        final initials =
+            (user?.firstname != null &&
                 user!.firstname!.isNotEmpty &&
                 user.lastname != null &&
                 user.lastname!.isNotEmpty)
             ? "${user.firstname![0]}${user.lastname![0]}".toUpperCase()
             : (user?.fullName?.isNotEmpty ?? false
-                    ? user!.fullName![0]
-                    : (user?.username.isNotEmpty ?? false
-                        ? user!.username[0]
-                        : "?"))
-                .toUpperCase();
+                      ? user!.fullName![0]
+                      : (user?.username.isNotEmpty ?? false
+                            ? user!.username[0]
+                            : "?"))
+                  .toUpperCase();
 
         return Container(
           padding: const EdgeInsets.symmetric(
@@ -380,7 +379,21 @@ class _OrdersScreenState extends State<OrdersScreen> {
           ),
           child: Row(
             children: [
-              const Logo(),
+              if (state.userRestaurant != null)
+                Logo(imageUrl: state.userRestaurant!.restaurant.logo)
+              else
+                const SizedBox(height: 40),
+              const SizedBox(width: kspacing * 1.5),
+              Text(
+                "Serveur",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withOpacity(0.7),
+                ),
+              ),
               if (isSearching) ...[
                 const SizedBox(width: kspacing * 2),
                 Expanded(
@@ -416,7 +429,9 @@ class _OrdersScreenState extends State<OrdersScreen> {
                       fillColor: Colors.grey.shade100,
                     ),
                     onChanged: (value) {
-                      context.read<OrdersBloc>().add(OrderFetched(search: value.isEmpty ? null : value));
+                      context.read<OrdersBloc>().add(
+                        OrderFetched(search: value.isEmpty ? null : value),
+                      );
                     },
                   ),
                 ),
@@ -686,8 +701,11 @@ class _OrdersOrderCard extends StatelessWidget {
                     const SizedBox(width: 8),
                     IconButton(
                       onPressed: () => onEdit(order),
-                      icon: const Icon(Icons.edit_outlined,
-                          color: Color(0xFF9CCC65), size: 20),
+                      icon: const Icon(
+                        Icons.edit_outlined,
+                        color: Color(0xFF9CCC65),
+                        size: 20,
+                      ),
                       constraints: const BoxConstraints(),
                       padding: EdgeInsets.zero,
                     ),
@@ -718,7 +736,9 @@ class _OrdersOrderCard extends StatelessWidget {
           if (slot.showContinuedBottom)
             _buildContinuedIndicator(context, "Suite...", Icons.arrow_downward),
           if (slot.showButton)
-            if (isInProgress || isReady || order.orderStatus == OrderStatus.created)
+            if (isInProgress ||
+                isReady ||
+                order.orderStatus == OrderStatus.created)
               Padding(
                 padding: const EdgeInsets.all(kspacing * 2),
                 child: Column(
@@ -728,7 +748,10 @@ class _OrdersOrderCard extends StatelessWidget {
                       children: [
                         Text(
                           "Commande #${order.id}",
-                          style: TextStyle(color: Colors.grey.shade400, fontSize: 12),
+                          style: TextStyle(
+                            color: Colors.grey.shade400,
+                            fontSize: 12,
+                          ),
                         ),
                         _buildStatusChip(context, order),
                       ],
@@ -739,7 +762,9 @@ class _OrdersOrderCard extends StatelessWidget {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF9CCC65),
                         foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
                         minimumSize: const Size(double.infinity, 44),
                         elevation: 0,
                       ),
