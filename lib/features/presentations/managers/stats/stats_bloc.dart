@@ -1,4 +1,3 @@
-import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
@@ -7,7 +6,6 @@ import 'package:menu_zen_restaurant/features/domains/entities/order_count_entity
 import 'package:menu_zen_restaurant/features/domains/entities/revenues_entity.dart';
 
 import '../../../domains/entities/list_top_menu_item.dart';
-import '../../../domains/entities/top_menu_item_entity.dart';
 import '../../../domains/repositories/stats_repository.dart';
 
 part 'stats_event.dart';

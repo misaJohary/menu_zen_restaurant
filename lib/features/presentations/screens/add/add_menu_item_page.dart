@@ -75,8 +75,9 @@ class _AddMenuItemPageState extends State<AddMenuItemPage> {
         .categories
         .isNotEmpty;
     final menusLoaded = context.read<MenusBloc>().state.menus.isNotEmpty;
-    if (!categoriesLoaded)
+    if (!categoriesLoaded) {
       context.read<CategoriesBloc>().add(CategoriesFetched());
+    }
     if (!menusLoaded) context.read<MenusBloc>().add(MenusFetched());
 
     patchWithReferences();
@@ -87,8 +88,9 @@ class _AddMenuItemPageState extends State<AddMenuItemPage> {
     final entity = widget.menuItem;
     if (entity == null ||
         entity.translations == null ||
-        entity.translations.isEmpty)
+        entity.translations.isEmpty) {
       return null;
+    }
     final Map<String, Map<String, String>> map = {};
     for (var t in entity.translations) {
       map[t.languageCode] = {

@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
-import 'package:logger/logger.dart';
 
 import '../../datasources/models/user_model.dart';
 import '../managers/restaurant/restaurant_bloc.dart';

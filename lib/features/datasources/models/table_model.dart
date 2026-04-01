@@ -24,6 +24,7 @@ class TableModel extends TableEntity {
   }
 
   ///copyWith
+  @override
   TableModel copyWith({int? id, String? name, bool? isActive}) {
     return TableModel(
       id: id ?? this.id,

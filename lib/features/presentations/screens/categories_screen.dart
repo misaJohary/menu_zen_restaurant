@@ -12,6 +12,8 @@ import 'package:menu_zen_restaurant/features/presentations/widgets/category_card
 import 'package:menu_zen_restaurant/features/presentations/widgets/category_dialog.dart';
 import 'package:menu_zen_restaurant/features/presentations/widgets/loading_widget.dart';
 import 'package:menu_zen_restaurant/features/presentations/widgets/logo.dart';
+import 'package:menu_zen_restaurant/core/animations/staggered_fade_in.dart';
+import 'package:menu_zen_restaurant/core/animations/hover_scale_card.dart';
 
 @RoutePage()
 class CategoriesScreen extends StatefulWidget {
@@ -102,10 +104,17 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                           itemCount: state.categories.length,
                           itemBuilder: (context, index) {
                             final category = state.categories[index];
-                            return CategoryCard(
-                              category: category,
-                              onEdit: () =>
-                                  _showCategoryDialog(category: category),
+                            return StaggeredFadeIn(
+                              index: index,
+                              child: HoverScaleCard(
+                                child: CategoryCard(
+                                  category: category,
+                                  onEdit: () =>
+                                      _showCategoryDialog(
+                                        category: category,
+                                      ),
+                                ),
+                              ),
                             );
                           },
                         );

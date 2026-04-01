@@ -13,6 +13,8 @@ import 'package:menu_zen_restaurant/features/presentations/widgets/loading_widge
 import 'package:menu_zen_restaurant/features/presentations/widgets/logo.dart';
 import 'package:menu_zen_restaurant/features/presentations/widgets/menu_item_card_widget.dart';
 import 'package:menu_zen_restaurant/features/presentations/widgets/menu_item_dialog.dart';
+import 'package:menu_zen_restaurant/core/animations/staggered_fade_in.dart';
+import 'package:menu_zen_restaurant/core/animations/hover_scale_card.dart';
 
 @RoutePage()
 class MenuItemScreen extends StatefulWidget {
@@ -96,23 +98,31 @@ class _MenuItemScreenState extends State<MenuItemScreen> {
                               itemCount: state.menuItems.length,
                               itemBuilder: (context, index) {
                                 final menu = state.menuItems[index];
-                                return MenuItemCardWidget(
-                                  menuItem: menu,
-                                  selectedLanguage: selectedLang,
-                                  onEdit: () =>
-                                      _showMenuItemDialog(menuItem: menu),
-                                  onStatusChanged: (bool value) {
-                                    if (menu.active != value) {
-                                      context.read<MenuItemBloc>().add(
-                                        MenuItemUpdated(
-                                          MenuItemUpdateModel(
-                                            id: menu.id!,
-                                            active: value,
+                                return StaggeredFadeIn(
+                                  index: index,
+                                  child: HoverScaleCard(
+                                    borderRadius: 24,
+                                    child: MenuItemCardWidget(
+                                      menuItem: menu,
+                                      selectedLanguage: selectedLang,
+                                      onEdit: () =>
+                                          _showMenuItemDialog(
+                                            menuItem: menu,
                                           ),
-                                        ),
-                                      );
-                                    }
-                                  },
+                                      onStatusChanged: (bool value) {
+                                        if (menu.active != value) {
+                                          context.read<MenuItemBloc>().add(
+                                            MenuItemUpdated(
+                                              MenuItemUpdateModel(
+                                                id: menu.id!,
+                                                active: value,
+                                              ),
+                                            ),
+                                          );
+                                        }
+                                      },
+                                    ),
+                                  ),
                                 );
                               },
                             );

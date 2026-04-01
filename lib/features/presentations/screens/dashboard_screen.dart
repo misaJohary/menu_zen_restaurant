@@ -9,6 +9,8 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 import '../../../core/constants/constants.dart';
 import '../../../core/enums/bloc_status.dart';
 import '../../../core/navigation/app_router.gr.dart';
+import '../../../core/animations/fade_slide_in.dart';
+import '../../../core/animations/animated_count_up.dart';
 import '../../domains/entities/user_entity.dart';
 import '../managers/auths/auth_bloc.dart';
 import '../managers/stats/stats_bloc.dart';
@@ -45,26 +47,35 @@ class _DashboardScreenState extends State<DashboardScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildHeader(context),
+              FadeSlideIn(
+                direction: AxisDirection.down,
+                child: _buildHeader(context),
+              ),
               const SizedBox(height: kspacing * 4),
-              _buildStatsRow(),
+              FadeSlideIn(
+                delay: const Duration(milliseconds: 150),
+                child: _buildStatsRow(),
+              ),
               const SizedBox(height: kspacing * 4),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    flex: 4,
-                    child: Column(
-                      children: [
-                        _buildBanner(),
-                        const SizedBox(height: kspacing * 2),
-                        const TopMenuCard(),
-                      ],
+              FadeSlideIn(
+                delay: const Duration(milliseconds: 300),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      flex: 4,
+                      child: Column(
+                        children: [
+                          _buildBanner(),
+                          const SizedBox(height: kspacing * 2),
+                          const TopMenuCard(),
+                        ],
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: kspacing * 4),
-                  const Expanded(flex: 3, child: RevenueCard()),
-                ],
+                    const SizedBox(width: kspacing * 4),
+                    const Expanded(flex: 3, child: RevenueCard()),
+                  ],
+                ),
               ),
             ],
           ),
@@ -296,8 +307,16 @@ class StatCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.baseline,
                 textBaseline: TextBaseline.alphabetic,
                 children: [
-                  Text(
-                    value,
+                  AnimatedCountUp(
+                    end: double.tryParse(
+                          value.replaceAll(
+                            RegExp(r'[^0-9.]'),
+                            '',
+                          ),
+                        ) ??
+                        0,
+                    suffix: value.contains('k') ? 'k' : '',
+                    delay: const Duration(milliseconds: 400),
                     style: const TextStyle(
                       fontSize: 32,
                       fontWeight: FontWeight.bold,
@@ -548,14 +567,24 @@ class _TopMenuCardState extends State<TopMenuCard> {
                           ],
                         ),
                         const SizedBox(height: 8),
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(5),
-                          child: LinearProgressIndicator(
-                            value: percentage / 100,
-                            backgroundColor: Colors.grey.shade100,
-                            color: Colors.orange,
-                            minHeight: 8,
+                        TweenAnimationBuilder<double>(
+                          tween: Tween<double>(
+                            begin: 0,
+                            end: (percentage / 100).toDouble(),
                           ),
+                          duration: const Duration(milliseconds: 800),
+                          curve: Curves.easeOutCubic,
+                          builder: (context, value, child) {
+                            return ClipRRect(
+                              borderRadius: BorderRadius.circular(5),
+                              child: LinearProgressIndicator(
+                                value: value,
+                                backgroundColor: Colors.grey.shade100,
+                                color: Colors.orange,
+                                minHeight: 8,
+                              ),
+                            );
+                          },
                         ),
                       ],
                     ),

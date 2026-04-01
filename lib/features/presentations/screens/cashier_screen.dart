@@ -1,4 +1,3 @@
-import 'package:auto_route/annotations.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -284,7 +283,7 @@ class _CashierScreenState extends State<CashierScreen> {
                   Switch(
                     value: isDarkMode,
                     onChanged: (value) => setState(() => isDarkMode = value),
-                    activeColor: const Color(0xFF2E7D32),
+                    activeThumbColor: const Color(0xFF2E7D32),
                   ),
                 ],
               ),

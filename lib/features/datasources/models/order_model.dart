@@ -2,10 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:menu_zen_restaurant/features/datasources/models/table_model.dart';
 import 'package:menu_zen_restaurant/features/domains/entities/order_entity.dart';
 
-import 'category_model.dart';
 import 'menu_item_model.dart';
-import 'menu_item_translation_model.dart';
-import 'menu_model.dart';
 import 'order_menu_item_model.dart';
 import 'user_model.dart';
 
@@ -23,27 +20,20 @@ class OrderModel extends OrderEntity {
   final UserModel? server;
 
   const OrderModel({
-    int? id,
-    String? clientName,
+    super.id,
+    super.clientName,
     required this.orderMenuItems,
     required this.rTable,
     this.server,
-    required OrderStatus orderStatus,
-    required PaymentStatus paymentStatus,
-    required int restaurantTableId,
-    DateTime? createdAt,
-    required int totalAmount,
+    required super.orderStatus,
+    required super.paymentStatus,
+    required super.restaurantTableId,
+    super.createdAt,
+    required super.totalAmount,
   }) : super(
-         id: id,
-         clientName: clientName,
          orderMenuItems: orderMenuItems,
-         restaurantTableId: restaurantTableId,
          rTable: rTable,
          server: server,
-         orderStatus: orderStatus,
-         paymentStatus: paymentStatus,
-         createdAt: createdAt,
-         totalAmount: totalAmount,
        );
 
   factory OrderModel.fromEntity(OrderEntity entity) {

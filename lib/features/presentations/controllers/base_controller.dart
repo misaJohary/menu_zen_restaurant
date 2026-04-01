@@ -65,7 +65,7 @@ abstract class BaseController<TBloc extends BlocBase, TModel, TEntity>
         if (_isEditMode && _currentModel != null) {
           final updatedModel = copyModelWithId(
             model,
-            getModelId(_currentModel!),
+            getModelId(_currentModel as TModel),
           );
           return updateItem(updatedModel as TEntity);
         }

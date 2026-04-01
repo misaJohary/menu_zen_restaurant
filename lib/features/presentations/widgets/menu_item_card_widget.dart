@@ -1,11 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:menu_zen_restaurant/core/constants/constants.dart';
 import 'package:menu_zen_restaurant/core/extensions/double_extension.dart';
 import 'package:menu_zen_restaurant/core/extensions/list_extension.dart';
 import 'package:menu_zen_restaurant/features/domains/entities/menu_item_entity.dart';
-import 'package:menu_zen_restaurant/features/presentations/managers/languages/languages_bloc.dart';
 import 'package:menu_zen_restaurant/features/presentations/widgets/category_name_widget.dart';
 
 class MenuItemCardWidget extends StatelessWidget {
@@ -211,7 +208,7 @@ class MenuItemCardWidget extends StatelessWidget {
                       child: Switch(
                         value: menuItem.active ?? true,
                         onChanged: onStatusChanged,
-                        activeColor: const Color(0xFF91C14F),
+                        activeThumbColor: const Color(0xFF91C14F),
                         activeTrackColor: const Color(
                           0xFF91C14F,
                         ).withOpacity(0.3),

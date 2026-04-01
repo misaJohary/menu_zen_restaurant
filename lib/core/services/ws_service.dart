@@ -1,10 +1,7 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:injectable/injectable.dart';
-import 'package:logger/logger.dart';
 import 'package:menu_zen_restaurant/core/services/db_service.dart';
-import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 @lazySingleton

@@ -1,15 +1,11 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:menu_zen_restaurant/features/presentations/controllers/main_controller.dart';
-import 'package:menu_zen_restaurant/features/presentations/widgets/custom_container.dart';
 
 import '../../../core/constants/constants.dart';
-import '../../../core/navigation/app_router.gr.dart';
 import 'logo.dart';
 import 'nav_links.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../domains/entities/user_entity.dart';
 import '../managers/auths/auth_bloc.dart';
 
 class MainNavigationPannelWidget extends StatelessWidget {

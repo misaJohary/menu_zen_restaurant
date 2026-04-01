@@ -3,9 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:logger/logger.dart';
 
-import '../../../core/injection/dependencies_injection.dart';
-import '../../../core/services/photon_geocoding_service.dart';
-import '../../datasources/models/restaurant_model.dart';
 import '../managers/restaurant/restaurant_bloc.dart';
 
 class RestaurantMoreInfoController extends ChangeNotifier {

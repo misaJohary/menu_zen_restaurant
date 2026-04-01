@@ -43,6 +43,7 @@ class RestaurantModel extends RestaurantEntity {
       );
 
   /// Copywith constructor
+  @override
   RestaurantModel copyWith({
     int? id,
     String? name,

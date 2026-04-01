@@ -88,7 +88,7 @@ class OrderItem extends StatelessWidget {
                             horizontal: kspacing,
                           ),
                         ),
-                        value: order.orderStatus,
+                        initialValue: order.orderStatus,
                         items: [
                           ...OrderStatus.values.map(
                             (orderStatus) => DropdownMenuItem(

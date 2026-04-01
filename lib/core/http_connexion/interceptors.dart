@@ -1,13 +1,10 @@
 import 'dart:convert';
 import 'dart:developer';
 
-import 'dart:convert';
-import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:injectable/injectable.dart';
-import 'package:logger/logger.dart';
 
 import '../navigation/app_router.dart';
 import '../services/db_service.dart';

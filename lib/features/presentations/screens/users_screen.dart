@@ -237,7 +237,7 @@ class _UserFormDialogState extends State<_UserFormDialog> {
               BlocBuilder<UsersBloc, UsersState>(
                 builder: (context, state) {
                   return DropdownButtonFormField<int>(
-                    value: _selectedRoleId,
+                    initialValue: _selectedRoleId,
                     decoration: const InputDecoration(labelText: 'Rôle'),
                     items: state.roles.map((role) {
                       return DropdownMenuItem(

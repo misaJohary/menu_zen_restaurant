@@ -1,6 +1,5 @@
 import 'package:equatable/equatable.dart';
 import 'package:bloc/bloc.dart';
-import 'package:flutter/foundation.dart';
 import 'package:logger/logger.dart';
 import 'package:menu_zen_restaurant/features/domains/entities/restaurant_entity.dart';
 import 'package:menu_zen_restaurant/features/domains/entities/user_restaurant_entity.dart';

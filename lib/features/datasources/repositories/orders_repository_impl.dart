@@ -1,5 +1,4 @@
 import 'package:injectable/injectable.dart';
-import 'package:logger/logger.dart';
 import 'package:menu_zen_restaurant/core/errors/handle_exception.dart';
 import 'package:menu_zen_restaurant/features/datasources/models/order_model.dart';
 import 'package:menu_zen_restaurant/features/domains/entities/order_entity.dart';

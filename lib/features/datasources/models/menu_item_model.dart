@@ -1,7 +1,5 @@
-import 'dart:convert';
 
 import 'package:json_annotation/json_annotation.dart';
-import 'package:logger/logger.dart';
 import 'package:menu_zen_restaurant/features/datasources/models/menu_item_translation_model.dart';
 import 'package:menu_zen_restaurant/features/domains/entities/menu_item_entity.dart';
 import 'package:menu_zen_restaurant/core/config/base_url_config.dart';

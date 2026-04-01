@@ -11,21 +11,15 @@ class OrderMenuItemModel extends OrderMenuItem {
   final MenuItemModel menuItem;
 
   const OrderMenuItemModel({
-    int? id,
-    int quantity = 0,
-    double unitPrice = 0.0,
+    super.id,
+    super.quantity,
+    super.unitPrice,
     required this.menuItem,
-    int? menuItemId,
-    String status = "init",
-    String? notes,
+    super.menuItemId,
+    super.status,
+    super.notes,
   }) : super(
-         id: id,
          menuItem: menuItem,
-         quantity: quantity,
-         unitPrice: unitPrice,
-         menuItemId: menuItemId,
-         status: status,
-         notes: notes,
        );
 
   factory OrderMenuItemModel.fromJson(Map<String, dynamic> json) =>

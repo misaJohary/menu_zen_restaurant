@@ -6,7 +6,7 @@ import '../../../core/constants/constants.dart';
 import '../../../core/navigation/app_router.gr.dart';
 import '../../domains/entities/user_entity.dart';
 
-class NavLink extends StatelessWidget {
+class NavLink extends StatefulWidget {
   const NavLink({
     super.key,
     required this.iconPath,
@@ -21,56 +21,132 @@ class NavLink extends StatelessWidget {
   final String iconPath;
 
   @override
+  State<NavLink> createState() => _NavLinkState();
+}
+
+class _NavLinkState extends State<NavLink>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _hoverController;
+  late final Animation<double> _hoverScale;
+  bool _isHovered = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _hoverController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 150),
+    );
+    _hoverScale = Tween<double>(begin: 1.0, end: 1.02).animate(
+      CurvedAnimation(
+        parent: _hoverController,
+        curve: Curves.easeOut,
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _hoverController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Container(
-          margin: const EdgeInsets.symmetric(
-            horizontal: kspacing * 2,
-            vertical: 4,
-          ),
-          child: ListTile(
-            dense: true,
-            visualDensity: const VisualDensity(vertical: -1),
-            leading: SvgPicture.asset(
-              iconPath,
-              colorFilter: ColorFilter.mode(
-                isSelected ? primaryColor : grey,
-                BlendMode.srcIn,
-              ),
-              width: 24,
-              height: 24,
-            ),
-            title: Text(
-              label ?? '',
-              style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                color: isSelected ? primaryColor : grey,
-                fontSize: 16,
-                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-              ),
-            ),
-            onTap: () {
-              context.router.push(destination);
+    return MouseRegion(
+      onEnter: (_) {
+        setState(() => _isHovered = true);
+        _hoverController.forward();
+      },
+      onExit: (_) {
+        setState(() => _isHovered = false);
+        _hoverController.reverse();
+      },
+      cursor: SystemMouseCursors.click,
+      child: Stack(
+        children: [
+          ListenableBuilder(
+            listenable: _hoverController,
+            builder: (context, child) {
+              return Transform.scale(
+                scale: _hoverScale.value,
+                child: child,
+              );
             },
-          ),
-        ),
-        if (isSelected)
-          Positioned(
-            right: 0,
-            top: 12,
-            bottom: 12,
-            child: Container(
-              width: 5,
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 250),
+              curve: Curves.easeOutCubic,
+              margin: const EdgeInsets.symmetric(
+                horizontal: kspacing * 2,
+                vertical: 4,
+              ),
               decoration: BoxDecoration(
-                color: primaryColor,
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(10),
-                  bottomLeft: Radius.circular(10),
+                color: widget.isSelected
+                    ? primaryColor.withValues(alpha: 0.08)
+                    : _isHovered
+                        ? primaryColor.withValues(alpha: 0.04)
+                        : Colors.transparent,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: ListTile(
+                dense: true,
+                visualDensity: const VisualDensity(vertical: -1),
+                leading: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 200),
+                  child: SvgPicture.asset(
+                    widget.iconPath,
+                    key: ValueKey(widget.isSelected),
+                    colorFilter: ColorFilter.mode(
+                      widget.isSelected ? primaryColor : grey,
+                      BlendMode.srcIn,
+                    ),
+                    width: 24,
+                    height: 24,
+                  ),
+                ),
+                title: AnimatedDefaultTextStyle(
+                  duration: const Duration(milliseconds: 200),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleMedium!.copyWith(
+                    color: widget.isSelected ? primaryColor : grey,
+                    fontSize: 16,
+                    fontWeight: widget.isSelected
+                        ? FontWeight.w600
+                        : FontWeight.w500,
+                  ),
+                  child: Text(widget.label ?? ''),
+                ),
+                onTap: () {
+                  context.router.push(widget.destination);
+                },
+              ),
+            ),
+          ),
+          AnimatedPositioned(
+            duration: const Duration(milliseconds: 250),
+            curve: Curves.easeOutCubic,
+            right: 0,
+            top: widget.isSelected ? 12 : 22,
+            bottom: widget.isSelected ? 12 : 22,
+            child: AnimatedOpacity(
+              duration: const Duration(milliseconds: 200),
+              opacity: widget.isSelected ? 1.0 : 0.0,
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 250),
+                width: widget.isSelected ? 5 : 0,
+                decoration: BoxDecoration(
+                  color: primaryColor,
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(10),
+                    bottomLeft: Radius.circular(10),
+                  ),
                 ),
               ),
             ),
           ),
-      ],
+        ],
+      ),
     );
   }
 }

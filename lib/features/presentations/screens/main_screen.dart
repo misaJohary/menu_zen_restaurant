@@ -5,7 +5,6 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domains/entities/user_entity.dart';
 import '../managers/auths/auth_bloc.dart';
-import '../../../core/constants/constants.dart';
 import '../../../core/navigation/app_router.gr.dart';
 
 import '../controllers/main_controller.dart';

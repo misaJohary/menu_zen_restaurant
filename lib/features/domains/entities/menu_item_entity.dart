@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:logger/logger.dart';
 import 'package:menu_zen_restaurant/features/domains/entities/category_entity.dart';
 import 'package:menu_zen_restaurant/features/domains/entities/translation_base.dart';
 

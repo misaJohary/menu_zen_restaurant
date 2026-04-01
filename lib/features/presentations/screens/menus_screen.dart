@@ -1,11 +1,8 @@
 import 'package:auto_route/annotations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:menu_zen_restaurant/core/extensions/list_extension.dart';
 import 'package:menu_zen_restaurant/features/presentations/controllers/menus_controller.dart';
-import 'package:menu_zen_restaurant/features/presentations/widgets/add_item_widget.dart';
-import 'package:skeletonizer/skeletonizer.dart';
 
 import '../../../core/constants/constants.dart';
 import '../../../core/enums/bloc_status.dart';
@@ -13,12 +10,8 @@ import '../../domains/entities/menu_entity.dart';
 import '../managers/auths/auth_bloc.dart';
 import '../managers/languages/languages_bloc.dart';
 import '../managers/menus/menus_bloc.dart';
-import '../widgets/board_title_widget.dart';
-import '../widgets/card_list_tile.dart';
-import '../widgets/edit_delete_icon.dart';
 import '../widgets/loading_widget.dart';
 import '../widgets/logo.dart';
-import '../widgets/multilingual_field.dart';
 
 @RoutePage()
 class MenuScreen extends StatefulWidget {
@@ -192,10 +185,8 @@ class _MenuHeader extends StatelessWidget {
                 String? profileUrl;
                 return CircleAvatar(
                   radius: 20,
-                  backgroundImage: profileUrl != null
-                      ? NetworkImage(profileUrl)
-                      : null,
-                  child: profileUrl == null ? const Icon(Icons.person) : null,
+                  backgroundImage: null,
+                  child: const Icon(Icons.person),
                 );
               },
             ),
@@ -379,7 +370,7 @@ class _MenuCard extends StatelessWidget {
                   Switch(
                     value: menu.active ?? false,
                     onChanged: onToggleActive,
-                    activeColor: primaryColor,
+                    activeThumbColor: primaryColor,
                     activeTrackColor: primaryColor.withOpacity(0.3),
                   ),
                 ],
@@ -677,7 +668,7 @@ class _AddEditMenuDialogState extends State<_AddEditMenuDialog> {
                     Switch(
                       value: _isActive,
                       onChanged: (val) => setState(() => _isActive = val),
-                      activeColor: primaryColor,
+                      activeThumbColor: primaryColor,
                       activeTrackColor: primaryColor.withOpacity(0.3),
                     ),
                   ],
