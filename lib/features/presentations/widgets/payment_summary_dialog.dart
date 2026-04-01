@@ -1,22 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:menu_zen_restaurant/core/constants/constants.dart';
 import 'package:menu_zen_restaurant/features/domains/entities/order_entity.dart';
 import 'package:menu_zen_restaurant/features/domains/entities/order_menu_item.dart';
+import 'package:menu_zen_restaurant/features/presentations/managers/auths/auth_bloc.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:printing/printing.dart';
+import 'package:intl/intl.dart';
 
-enum PaymentMethod {
-  orangeMoney,
-  mvola,
-  cash,
-  visa,
-}
+enum PaymentMethod { orangeMoney, mvola, cash, visa }
 
 class PaymentSummaryDialog extends StatefulWidget {
   final OrderEntity order;
 
-  const PaymentSummaryDialog({
-    super.key,
-    required this.order,
-  });
+  const PaymentSummaryDialog({super.key, required this.order});
 
   @override
   State<PaymentSummaryDialog> createState() => _PaymentSummaryDialogState();
@@ -24,6 +22,107 @@ class PaymentSummaryDialog extends StatefulWidget {
 
 class _PaymentSummaryDialogState extends State<PaymentSummaryDialog> {
   PaymentMethod _selectedMethod = PaymentMethod.cash;
+  final TextEditingController _amountController = TextEditingController();
+
+  @override
+  void dispose() {
+    _amountController.dispose();
+    super.dispose();
+  }
+
+  double _calculateChange() {
+    final given = double.tryParse(_amountController.text) ?? 0.0;
+    return given - widget.order.totalAmount;
+  }
+
+  Future<void> _generateAndPrintPDF() async {
+    final authState = context.read<AuthBloc>().state;
+    final restaurantName =
+        authState.userRestaurant?.restaurant.name ?? 'Menu Zen';
+
+    final pdf = pw.Document();
+
+    pdf.addPage(
+      pw.Page(
+        pageFormat: PdfPageFormat.roll80,
+        build: (pw.Context context) {
+          return pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
+            children: [
+              pw.Center(
+                child: pw.Text(
+                  restaurantName,
+                  style: pw.TextStyle(
+                    fontSize: 24,
+                    fontWeight: pw.FontWeight.bold,
+                  ),
+                ),
+              ),
+              pw.SizedBox(height: 10),
+              pw.Text('Commande #${widget.order.id}'),
+              pw.Text(
+                'Date: ${DateFormat('dd/MM/yyyy HH:mm').format(DateTime.now())}',
+              ),
+              pw.Text('Paiement: ${_selectedMethod.name}'),
+              pw.Divider(),
+              ...widget.order.orderMenuItems.map((item) {
+                return pw.Row(
+                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                  children: [
+                    pw.Text(
+                      '${item.quantity}x ${item.menuItem.translations.isNotEmpty ? item.menuItem.translations.first.name : 'Article'}',
+                    ),
+                    pw.Text(
+                      '${(item.unitPrice * item.quantity).toStringAsFixed(0)} Ar',
+                    ),
+                  ],
+                );
+              }),
+              pw.Divider(),
+              pw.Row(
+                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                children: [
+                  pw.Text(
+                    'TOTAL',
+                    style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                  ),
+                  pw.Text(
+                    '${widget.order.totalAmount.toStringAsFixed(0)} Ar',
+                    style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                  ),
+                ],
+              ),
+              if (_selectedMethod == PaymentMethod.cash) ...[
+                pw.SizedBox(height: 5),
+                pw.Row(
+                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                  children: [
+                    pw.Text('Reçu'),
+                    pw.Text(
+                      '${(double.tryParse(_amountController.text) ?? 0).toStringAsFixed(0)} Ar',
+                    ),
+                  ],
+                ),
+                pw.Row(
+                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                  children: [
+                    pw.Text('Rendu'),
+                    pw.Text('${_calculateChange().toStringAsFixed(0)} Ar'),
+                  ],
+                ),
+              ],
+              pw.SizedBox(height: 20),
+              pw.Center(child: pw.Text('Merci pour votre visite !')),
+            ],
+          );
+        },
+      ),
+    );
+
+    await Printing.layoutPdf(
+      onLayout: (PdfPageFormat format) async => pdf.save(),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,11 +155,8 @@ class _PaymentSummaryDialogState extends State<PaymentSummaryDialog> {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // Left: Payment Methods
-                  Expanded(
-                    flex: 6,
-                    child: _buildPaymentMethods(context, isDark),
-                  ),
+                  // Left: Order Summary (without Total)
+                  Expanded(flex: 4, child: _buildOrderSummary(context, isDark)),
 
                   // Divider
                   VerticalDivider(
@@ -69,11 +165,8 @@ class _PaymentSummaryDialogState extends State<PaymentSummaryDialog> {
                     color: isDark ? Colors.white12 : Colors.black12,
                   ),
 
-                  // Right: Order Summary
-                  Expanded(
-                    flex: 4,
-                    child: _buildOrderSummary(context, isDark),
-                  ),
+                  // Right: Payment Methods and Total Section
+                  Expanded(flex: 6, child: _buildRightSide(context, isDark)),
                 ],
               ),
             ),
@@ -86,14 +179,132 @@ class _PaymentSummaryDialogState extends State<PaymentSummaryDialog> {
     );
   }
 
+  Widget _buildRightSide(BuildContext context, bool isDark) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Expanded(child: _buildPaymentMethods(context, isDark)),
+        if (_selectedMethod == PaymentMethod.cash)
+          Padding(
+            padding: const EdgeInsets.only(bottom: kspacing * 3),
+            child: _buildCashCalculator(isDark),
+          ),
+      ],
+    );
+  }
+
+  Widget _buildCashCalculator(bool isDark) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: kspacing * 4),
+      padding: const EdgeInsets.all(kspacing * 3),
+      decoration: BoxDecoration(
+        color: isDark ? Colors.white10 : Colors.black12,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: isDark ? Colors.white12 : Colors.black12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.payments_rounded, color: Colors.green, size: 24),
+              const SizedBox(width: kspacing * 2),
+              Text(
+                'Calculateur de change',
+                style: Theme.of(
+                  context,
+                ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+          const SizedBox(height: kspacing * 3),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: _amountController,
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true,
+                  ),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
+                  decoration: InputDecoration(
+                    labelText: 'Montant reçu',
+                    filled: true,
+                    fillColor: Theme.of(context).colorScheme.surface,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none,
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(
+                        color: Colors.green,
+                        width: 2,
+                      ),
+                    ),
+                    suffixText: 'Ar',
+                  ),
+                  onChanged: (value) => setState(() {}),
+                ),
+              ),
+              const SizedBox(width: kspacing * 2),
+              Expanded(
+                child: Container(
+                  height: 56,
+                  padding: const EdgeInsets.symmetric(horizontal: kspacing * 2),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.surface,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: _calculateChange() >= 0
+                          ? Colors.green.withValues(alpha: 0.5)
+                          : Colors.red.withValues(alpha: 0.5),
+                      width: 2,
+                    ),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        'Rendu',
+                        style: TextStyle(
+                          fontSize: 10,
+                          color: isDark ? Colors.white54 : Colors.black54,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        '${_calculateChange().toStringAsFixed(0)} Ar',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w900,
+                          fontSize: 16,
+                          color: _calculateChange() >= 0
+                              ? Colors.green
+                              : Colors.red,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildHeader(BuildContext context, bool isDark) {
     return Container(
       padding: const EdgeInsets.all(kspacing * 3),
       decoration: BoxDecoration(
         border: Border(
-          bottom: BorderSide(
-            color: isDark ? Colors.white12 : Colors.black12,
-          ),
+          bottom: BorderSide(color: isDark ? Colors.white12 : Colors.black12),
         ),
       ),
       child: Row(
@@ -116,14 +327,14 @@ class _PaymentSummaryDialogState extends State<PaymentSummaryDialog> {
                   Text(
                     'Paiement',
                     style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   Text(
                     'Commande #${widget.order.id}',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: isDark ? Colors.grey[400] : Colors.grey[600],
-                        ),
+                      color: isDark ? Colors.grey[400] : Colors.grey[600],
+                    ),
                   ),
                 ],
               ),
@@ -149,9 +360,9 @@ class _PaymentSummaryDialogState extends State<PaymentSummaryDialog> {
         children: [
           Text(
             'Mode de paiement',
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: kspacing * 4),
           Expanded(
@@ -182,7 +393,7 @@ class _PaymentSummaryDialogState extends State<PaymentSummaryDialog> {
                 ),
                 _buildMethodCard(
                   PaymentMethod.visa,
-                  'Visa / MasterCard',
+                  'Visa/MC',
                   Colors.blue.shade900,
                   icon: Icons.credit_card_rounded,
                 ),
@@ -203,7 +414,8 @@ class _PaymentSummaryDialogState extends State<PaymentSummaryDialog> {
   }) {
     final bool isSelected = _selectedMethod == method;
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
-    final Color effectiveIconColor = iconColor ??
+    final Color effectiveIconColor =
+        iconColor ??
         (isSelected ? color : (isDark ? Colors.white70 : Colors.black87));
 
     return Material(
@@ -250,9 +462,9 @@ class _PaymentSummaryDialogState extends State<PaymentSummaryDialog> {
                     Text(
                       label,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: isSelected ? color : null,
-                          ),
+                        fontWeight: FontWeight.bold,
+                        color: isSelected ? color : null,
+                      ),
                     ),
                   ],
                 ),
@@ -267,17 +479,17 @@ class _PaymentSummaryDialogState extends State<PaymentSummaryDialog> {
   Widget _buildOrderSummary(BuildContext context, bool isDark) {
     return Container(
       color: isDark
-          ? Colors.white.withOpacity(0.02)
-          : Colors.black.withOpacity(0.02),
+          ? Colors.white.withValues(alpha: 0.02)
+          : Colors.black.withValues(alpha: 0.02),
       padding: const EdgeInsets.all(kspacing * 4),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             'Résumé de la commande',
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: kspacing * 4),
           Expanded(
@@ -344,48 +556,82 @@ class _PaymentSummaryDialogState extends State<PaymentSummaryDialog> {
 
   Widget _buildTotalSection(bool isDark) {
     return Container(
-      padding: const EdgeInsets.all(kspacing * 3),
+      padding: const EdgeInsets.all(kspacing * 2.5),
       decoration: BoxDecoration(
-        color: primaryColor.withOpacity(0.1),
+        color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
         borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: isDark ? Colors.white24 : Colors.black12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Column(
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text('Sous-total'),
-              Text('${widget.order.totalAmount.toStringAsFixed(0)} Ar'),
+              Text(
+                'Sous-total',
+                style: TextStyle(
+                  color: isDark ? Colors.white54 : Colors.black54,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              Text(
+                '${widget.order.totalAmount.toStringAsFixed(0)} Ar',
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
             ],
           ),
           const SizedBox(height: kspacing),
-          const Row(
+          Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('Taxe (0%)'),
-              Text('0 Ar'),
+              Text(
+                'Taxe (0%)',
+                style: TextStyle(
+                  color: isDark ? Colors.white54 : Colors.black54,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const Text('0 Ar', style: TextStyle(fontWeight: FontWeight.bold)),
             ],
           ),
           const Padding(
-            padding: EdgeInsets.symmetric(vertical: kspacing * 2),
-            child: Divider(),
+            padding: EdgeInsets.symmetric(vertical: kspacing * 1.5),
+            child: Divider(height: 1),
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 'TOTAL',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: primaryColor,
-                    ),
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 1.2,
+                ),
               ),
-              Text(
-                '${widget.order.totalAmount.toStringAsFixed(0)} Ar',
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: primaryColor,
-                    ),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: kspacing * 2,
+                  vertical: kspacing,
+                ),
+                decoration: BoxDecoration(
+                  color: primaryColor,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  '${widget.order.totalAmount.toStringAsFixed(0)} Ar',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                    fontSize: 16,
+                  ),
+                ),
               ),
             ],
           ),
@@ -399,9 +645,7 @@ class _PaymentSummaryDialogState extends State<PaymentSummaryDialog> {
       padding: const EdgeInsets.all(kspacing * 3),
       decoration: BoxDecoration(
         border: Border(
-          top: BorderSide(
-            color: isDark ? Colors.white12 : Colors.black12,
-          ),
+          top: BorderSide(color: isDark ? Colors.white12 : Colors.black12),
         ),
       ),
       child: Row(
@@ -411,32 +655,49 @@ class _PaymentSummaryDialogState extends State<PaymentSummaryDialog> {
             onPressed: () => Navigator.of(context).pop(),
             style: TextButton.styleFrom(
               padding: const EdgeInsets.symmetric(
-                  horizontal: kspacing * 4, vertical: kspacing * 2),
+                horizontal: kspacing * 4,
+                vertical: kspacing * 2,
+              ),
             ),
             child: const Text('Annuler'),
           ),
           const SizedBox(width: kspacing * 2),
           OutlinedButton.icon(
-            onPressed: () => Navigator.of(context)
-                .pop({'action': 'print_and_pay', 'method': _selectedMethod}),
+            onPressed: () async {
+              final nav = Navigator.of(context);
+              await _generateAndPrintPDF();
+              if (mounted) {
+                nav.pop({'action': 'print_and_pay', 'method': _selectedMethod});
+              }
+            },
             icon: const Icon(Icons.print_rounded),
             label: const Text('Imprimer et Payer'),
             style: OutlinedButton.styleFrom(
               padding: const EdgeInsets.symmetric(
-                  horizontal: kspacing * 4, vertical: kspacing * 2),
+                horizontal: kspacing * 4,
+                vertical: kspacing * 2,
+              ),
               side: BorderSide(color: primaryColor),
               foregroundColor: primaryColor,
             ),
           ),
           const SizedBox(width: kspacing * 2),
           ElevatedButton(
-            onPressed: () => Navigator.of(context)
-                .pop({'action': 'pay', 'method': _selectedMethod}),
+            onPressed: () async {
+              // Now "Payer" also generates PDF per requirements
+              final nav = Navigator.of(context);
+              await _generateAndPrintPDF();
+              if (mounted) {
+                nav.pop({'action': 'pay', 'method': _selectedMethod});
+              }
+            },
             style: ElevatedButton.styleFrom(
               backgroundColor: primaryColor,
               foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(
-                  horizontal: kspacing * 6, vertical: kspacing * 2),
+                horizontal: kspacing * 6,
+                vertical: kspacing * 2,
+              ),
               elevation: 0,
             ),
             child: const Text(

@@ -10,6 +10,7 @@ import 'package:menu_zen_restaurant/features/presentations/managers/orders/order
 import '../../../core/constants/constants.dart';
 import '../../domains/entities/order_entity.dart';
 import '../../domains/entities/order_menu_item.dart';
+import '../widgets/logo.dart';
 import '../widgets/payment_summary_dialog.dart';
 
 @RoutePage()
@@ -44,6 +45,7 @@ class _CashierScreenState extends State<CashierScreen> {
     );
 
     if (shouldLogout == true) {
+      if (!context.mounted) return;
       context.read<AuthBloc>().add(AuthLoggedOut());
       context.router.replaceAll([const LoginRoute()]);
     }
@@ -64,8 +66,20 @@ class _CashierScreenState extends State<CashierScreen> {
           return Scaffold(
             backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             body: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildNavbar(),
+                SafeArea(
+                  bottom: false,
+                  child: Padding(
+                    padding: const EdgeInsets.all(kspacing * 2),
+                    child: _buildNavbar(),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: kspacing * 3),
+                  child: _buildStatusToggles(),
+                ),
+                const SizedBox(height: kspacing * 2),
                 Expanded(
                   child: BlocBuilder<OrdersBloc, OrdersState>(
                     builder: (context, state) {
@@ -75,8 +89,9 @@ class _CashierScreenState extends State<CashierScreen> {
                       }
 
                       final filteredOrders = state.orders.where((order) {
-                        if (order.orderStatus != OrderStatus.served)
+                        if (order.orderStatus != OrderStatus.served) {
                           return false;
+                        }
 
                         if (showCompleted) {
                           return order.paymentStatus == PaymentStatus.paid ||
@@ -178,13 +193,20 @@ class _CashierScreenState extends State<CashierScreen> {
   ThemeData _buildLightTheme() {
     final base = ThemeData.light();
     return base.copyWith(
-      scaffoldBackgroundColor: const Color(0xFFF5F5F5),
+      scaffoldBackgroundColor: const Color(0xFFF5F9F4),
       dividerColor: const Color(0xFFE0E0E0),
       colorScheme: base.colorScheme.copyWith(
-        primary: const Color(0xFF2D2D2D),
-        secondary: const Color(0xFF00897B),
+        primary: const Color(0xFF9CCC65),
+        secondary: const Color(0xFF90CAF9),
         surface: Colors.white,
         onSurface: Colors.black87,
+      ),
+      textTheme: base.textTheme.copyWith(
+        headlineSmall: const TextStyle(
+          color: Colors.black,
+          fontWeight: FontWeight.bold,
+          fontSize: 24,
+        ),
       ),
     );
   }
@@ -206,43 +228,94 @@ class _CashierScreenState extends State<CashierScreen> {
   Widget _buildNavbar() {
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
+        final user = state.userRestaurant?.user;
+        final initials =
+            (user?.firstname != null &&
+                user!.firstname!.isNotEmpty &&
+                user.lastname != null &&
+                user.lastname!.isNotEmpty)
+            ? "${user.firstname![0]}${user.lastname![0]}".toUpperCase()
+            : (user?.fullName?.isNotEmpty ?? false
+                      ? user!.fullName![0]
+                      : (user?.username.isNotEmpty ?? false
+                            ? user!.username[0]
+                            : "?"))
+                  .toUpperCase();
+
         final bool isDark = Theme.of(context).brightness == Brightness.dark;
-        final Color navbarColor = isDark
-            ? const Color(0xFF1B1B1B)
-            : const Color(0xFF2D2D2D);
-        final Color controlBg = isDark
-            ? const Color(0xFF2E2E2E)
-            : const Color(0xFF4A4A4A);
-        final restaurantName =
-            state.userRestaurant?.restaurant.name ?? "La Botica";
-        final userName =
-            state.userRestaurant?.user.fullName ??
-            state.userRestaurant?.user.username ??
-            "";
 
         return Container(
-          color: navbarColor,
           padding: const EdgeInsets.symmetric(
-            horizontal: kspacing * 3,
-            vertical: kspacing,
+            horizontal: kspacing * 2,
+            vertical: kspacing / 2,
+          ),
+          decoration: BoxDecoration(
+            color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(isDark ? 0.35 : 0.05),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
           ),
           child: Row(
             children: [
-              Text(
-                restaurantName,
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
+              const Logo(),
+              const Spacer(),
+              Row(
+                children: [
+                  Icon(
+                    isDark ? Icons.dark_mode : Icons.light_mode,
+                    color: Colors.grey.shade600,
+                    size: 18,
+                  ),
+                  const SizedBox(width: 8),
+                  Switch(
+                    value: isDarkMode,
+                    onChanged: (value) => setState(() => isDarkMode = value),
+                    activeColor: const Color(0xFF2E7D32),
+                  ),
+                ],
+              ),
+              const SizedBox(width: kspacing * 2),
+              GestureDetector(
+                onTap: () {},
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(4),
+                  child: Image.network(
+                    'https://flagcdn.com/w40/fr.png',
+                    width: 24,
+                    height: 18,
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
-              const SizedBox(width: kspacing * 4),
-              _buildStationDropdown(state, controlBg),
-              const Spacer(),
-              _buildStatusToggles(),
-              const SizedBox(width: kspacing * 4),
-              _buildThemeToggle(),
               const SizedBox(width: kspacing * 2),
-              _buildSettingsButton(userName),
+              GestureDetector(
+                onTap: () => context.router.push(const ProfileRoute()),
+                child: CircleAvatar(
+                  radius: 16,
+                  backgroundColor: const Color(0xFFE8F5E9),
+                  child: Text(
+                    initials,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF2E7D32),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: kspacing),
+              IconButton(
+                onPressed: () => _confirmLogout(),
+                icon: const Icon(Icons.logout),
+                color: const Color(0xFF9CCC65),
+                padding: const EdgeInsets.all(kspacing),
+                constraints: const BoxConstraints(),
+              ),
             ],
           ),
         );
@@ -250,35 +323,9 @@ class _CashierScreenState extends State<CashierScreen> {
     );
   }
 
-  Widget _buildStationDropdown(AuthState state, Color backgroundColor) {
-    final stationName =
-        state.userRestaurant?.user.roleName?.toUpperCase() ?? "CAISSE";
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: kspacing * 2,
-        vertical: kspacing / 2,
-      ),
-      decoration: BoxDecoration(
-        color: backgroundColor,
-        borderRadius: BorderRadius.circular(4),
-      ),
-      child: Row(
-        children: [
-          Text("$stationName", style: const TextStyle(color: Colors.white)),
-          const SizedBox(width: kspacing),
-          const Icon(Icons.keyboard_arrow_down, color: Colors.white, size: 20),
-        ],
-      ),
-    );
-  }
-
   Widget _buildStatusToggles() {
     return BlocBuilder<OrdersBloc, OrdersState>(
       builder: (context, state) {
-        final bool isDark = Theme.of(context).brightness == Brightness.dark;
-        final Color containerColor = isDark
-            ? const Color(0xFF2E2E2E)
-            : const Color(0xFF4A4A4A);
         final openCount = state.orders
             .where(
               (o) =>
@@ -295,112 +342,77 @@ class _CashierScreenState extends State<CashierScreen> {
             )
             .length;
 
-        return Container(
-          decoration: BoxDecoration(
-            color: containerColor,
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Row(
-            children: [
-              _buildToggleButton(
-                label: "Ouvertes ($openCount)",
-                isActive: !showCompleted,
-                onTap: () => setState(() => showCompleted = false),
-                activeColor: const Color(0xFF00897B),
-              ),
-              _buildToggleButton(
-                label: "Terminées ($completedCount)",
-                isActive: showCompleted,
-                onTap: () => setState(() => showCompleted = true),
-                activeColor: isDark ? const Color(0xFFE0E0E0) : Colors.white,
-                activeTextColor: Colors.black87,
-              ),
-            ],
-          ),
+        final openCountStr = openCount.toString().padLeft(2, '0');
+        final completedCountStr = completedCount.toString().padLeft(2, '0');
+
+        return Row(
+          children: [
+            _buildTabButton(
+              label: "$openCountStr ( À Payer )",
+              isActive: !showCompleted,
+              onTap: () => setState(() => showCompleted = false),
+              activeColor: const Color(0xFFD1D1EB),
+              iconColor: const Color(0xFF3F51B5),
+            ),
+            const SizedBox(width: kspacing * 2),
+            _buildTabButton(
+              label: "$completedCountStr ( Terminées )",
+              isActive: showCompleted,
+              onTap: () => setState(() => showCompleted = true),
+              activeColor: const Color(0xFFFFE0B2),
+              iconColor: const Color(0xFFF36D21),
+            ),
+          ],
         );
       },
     );
   }
 
-  Widget _buildToggleButton({
+  Widget _buildTabButton({
     required String label,
     required bool isActive,
     required VoidCallback onTap,
     required Color activeColor,
-    Color activeTextColor = Colors.white,
+    required Color iconColor,
   }) {
     return GestureDetector(
       onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: kspacing * 3,
-          vertical: kspacing * 1.5,
-        ),
-        decoration: BoxDecoration(
-          color: isActive ? activeColor : Colors.transparent,
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            color: isActive ? activeTextColor : Colors.white70,
-            fontWeight: FontWeight.bold,
+      child: Opacity(
+        opacity: isActive ? 1.0 : 0.6,
+        child: Container(
+          padding: const EdgeInsets.symmetric(
+            horizontal: kspacing * 2,
+            vertical: kspacing * 0.75,
+          ),
+          decoration: BoxDecoration(
+            color: isActive ? activeColor : Colors.grey.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: isActive ? activeColor : Colors.grey.withOpacity(0.2),
+            ),
+          ),
+          child: Row(
+            children: [
+              Icon(Icons.access_time, size: 16, color: iconColor),
+              const SizedBox(width: 6),
+              Text(
+                label,
+                style: TextStyle(
+                  color: iconColor,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 13,
+                ),
+              ),
+            ],
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildSettingsButton(String userName) {
-    return PopupMenuButton<String>(
-      icon: Row(
-        children: [
-          Text(
-            userName,
-            style: const TextStyle(color: Colors.white70, fontSize: 13),
-          ),
-          const SizedBox(width: kspacing),
-          const Icon(Icons.settings, color: Colors.white),
-        ],
-      ),
-      onSelected: (value) async {
-        if (value == 'logout') {
-          await _confirmLogout();
-        }
-      },
-      itemBuilder: (BuildContext context) => [
-        const PopupMenuItem<String>(
-          value: 'logout',
-          child: Text('Déconnexion'),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildThemeToggle() {
-    final bool isDark = Theme.of(context).brightness == Brightness.dark;
-    return Row(
-      children: [
-        Icon(
-          isDark ? Icons.dark_mode : Icons.light_mode,
-          color: Colors.white70,
-          size: 18,
-        ),
-        const SizedBox(width: kspacing),
-        Switch(
-          value: isDarkMode,
-          onChanged: (value) => setState(() => isDarkMode = value),
-          activeColor: const Color(0xFF26A69A),
-          inactiveThumbColor: Colors.white70,
-          inactiveTrackColor: Colors.white24,
-        ),
-      ],
     );
   }
 }
 
 class CashierOrderCard extends StatelessWidget {
-  final _CardSlot slot;
+  final CardSlot slot;
 
   const CashierOrderCard({super.key, required this.slot});
 
@@ -413,8 +425,6 @@ class CashierOrderCard extends StatelessWidget {
         order.paymentStatus == PaymentStatus.paid ||
         order.paymentStatus == PaymentStatus.prepaid;
 
-    final Color headerColor = isPaid ? primaryColor : const Color(0xFF4A4A4A);
-
     final String timeStr = order.createdAt != null
         ? DateFormat('hh:mm a').format(order.createdAt!)
         : '--:--';
@@ -423,12 +433,12 @@ class CashierOrderCard extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(isDark ? 0.35 : 0.05),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -436,79 +446,83 @@ class CashierOrderCard extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Header
           if (showHeader) ...[
-            Container(
-              padding: const EdgeInsets.all(kspacing),
-              decoration: BoxDecoration(
-                color: headerColor,
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(8),
-                ),
-              ),
+            Padding(
+              padding: const EdgeInsets.all(kspacing * 2),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Container(
+                    width: 44,
+                    height: 44,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF2E7D32),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      order.rTable?.name ?? "T-",
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: kspacing * 1.5),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          order.clientName ?? "Client",
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                        Text(
+                          timeStr,
+                          style: TextStyle(
+                            color: Colors.grey.shade600,
+                            fontSize: 13,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: kspacing),
                   Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Text(
                         "Commande #${order.id}",
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
+                        style: TextStyle(
+                          color: Colors.grey.shade400,
+                          fontSize: 12,
                         ),
                       ),
-                      Text(
-                        timeStr,
-                        style: const TextStyle(
-                          color: Colors.white70,
-                          fontSize: 10,
-                        ),
-                      ),
-                    ],
-                  ),
-                  Icon(Icons.payments, color: Colors.white, size: 24),
-                ],
-              ),
-            ),
-            // Subheader
-            Padding(
-              padding: const EdgeInsets.all(kspacing),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    order.rTable?.name ?? order.clientName ?? "À emporter",
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  Row(
-                    children: [
+                      const SizedBox(height: 4),
                       Icon(
-                        Icons.person,
-                        size: 14,
-                        color: isDark ? Colors.white54 : Colors.grey,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        order.server?.fullName ??
-                            order.server?.username ??
-                            "Serveur",
-                        style: Theme.of(context).textTheme.bodyMedium,
+                        Icons.payments,
+                        color: isPaid ? const Color(0xFF9CCC65) : Colors.grey,
+                        size: 24,
                       ),
                     ],
                   ),
                 ],
               ),
             ),
-            const Divider(height: 1),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: kspacing * 2),
+              child: Divider(height: 1),
+            ),
           ],
-          // Continued Top
           if (slot.showContinuedTop)
             _buildContinuedIndicator(context, "Suite...", Icons.arrow_upward),
-          // Items
+
           Padding(
-            padding: const EdgeInsets.all(kspacing),
+            padding: const EdgeInsets.symmetric(horizontal: kspacing * 2),
             child: Column(
               children: [
                 for (final item in slot.items)
@@ -516,72 +530,83 @@ class CashierOrderCard extends StatelessWidget {
               ],
             ),
           ),
-          // Details (Total Amount) and Actions
-          if (slot.showButton) ...[
-            Padding(
-              padding: const EdgeInsets.all(kspacing),
-              child: Align(
-                alignment: Alignment.centerRight,
-                child: Text(
-                  "Total: ${(order.totalAmount).toStringAsFixed(0)} Ar",
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                ),
-              ),
-            ),
-            if (isUnpaid)
-              Padding(
-                padding: const EdgeInsets.fromLTRB(
-                  kspacing,
-                  0,
-                  kspacing,
-                  kspacing,
-                ),
-                child: ElevatedButton(
-                  onPressed: () async {
-                    final result = await showDialog<Map<String, dynamic>>(
-                      context: context,
-                      builder: (context) => PaymentSummaryDialog(
-                        order: order,
-                      ),
-                    );
 
-                    if (result != null) {
-                      context.read<OrdersBloc>().add(
-                        OrderUpdated(
-                          order.copyWith(paymentStatus: PaymentStatus.paid),
-                        ),
-                      );
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: kspacing * 2),
+            child: Divider(height: 1),
+          ),
 
-                      if (result['action'] == 'print_and_pay') {
-                        // TODO: Implement printing logic
-                      }
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: primaryColor,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(
-                      vertical: kspacing * 1.5,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                  ),
-                  child: const Text(
-                    "Payer",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ),
-          ],
-          // Continued Bottom
           if (slot.showContinuedBottom)
             _buildContinuedIndicator(context, "Suite...", Icons.arrow_downward),
 
-          if (isPaid)
+          if (slot.showButton) ...[
+            Padding(
+              padding: const EdgeInsets.all(kspacing * 2),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        "Total:",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                      Text(
+                        "${(order.totalAmount).toStringAsFixed(0)} Ar",
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ],
+                  ),
+                  if (isUnpaid) ...[
+                    const SizedBox(height: 12),
+                    ElevatedButton(
+                      onPressed: () async {
+                        final result = await showDialog<Map<String, dynamic>>(
+                          context: context,
+                          builder: (context) =>
+                              PaymentSummaryDialog(order: order),
+                        );
+
+                        if (result != null) {
+                          if (!context.mounted) return;
+                          context.read<OrdersBloc>().add(
+                            OrderUpdated(
+                              order.copyWith(paymentStatus: PaymentStatus.paid),
+                            ),
+                          );
+
+                          if (result['action'] == 'print_and_pay') {
+                            // TODO: Implement printing logic
+                          }
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF9CCC65),
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        minimumSize: const Size(double.infinity, 44),
+                        elevation: 0,
+                      ),
+                      child: const Text(
+                        "Payer",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ],
+
+          if (isPaid && slot.showButton)
             Padding(
               padding: const EdgeInsets.fromLTRB(
                 kspacing,
@@ -597,12 +622,12 @@ class CashierOrderCard extends StatelessWidget {
                     vertical: kspacing / 2,
                   ),
                   decoration: BoxDecoration(
-                    color: primaryColor,
+                    color: const Color(0xFF9CCC65),
                     borderRadius: BorderRadius.circular(6),
                   ),
-                  child: Text(
+                  child: const Text(
                     "Payé",
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
                       fontSize: 11,
@@ -624,7 +649,10 @@ class CashierOrderCard extends StatelessWidget {
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
     final Color muted = isDark ? Colors.white54 : Colors.grey;
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: kspacing, vertical: 4),
+      padding: const EdgeInsets.symmetric(
+        horizontal: kspacing * 2,
+        vertical: 4,
+      ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
@@ -648,66 +676,46 @@ class CashierOrderCard extends StatelessWidget {
     OrderEntity order,
     OrderMenuItem item,
   ) {
-    final bool isDark = Theme.of(context).brightness == Brightness.dark;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: kspacing / 2),
-      child: Column(
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "${item.quantity}",
-                style: TextStyle(fontWeight: FontWeight.w900, fontSize: 13),
-              ),
-              const SizedBox(width: kspacing * 1.5),
-              Expanded(
-                child: Text(
-                  item.menuItem.translations.isNotEmpty
-                      ? item.menuItem.translations.first.name
-                      : 'Nom',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 13,
-                  ),
-                ),
-              ),
-              const SizedBox(width: kspacing),
-              Text(
-                "${(item.unitPrice * item.quantity).toStringAsFixed(0)} Ar",
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 13,
-                ),
-              ),
-            ],
-          ),
-          if (item.notes != null && item.notes!.isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.only(left: kspacing * 3),
-              child: Text(
-                "${item.notes}",
-                style: TextStyle(
-                  fontSize: 11,
-                  color: isDark ? Colors.white60 : Colors.black54,
-                ),
-              ),
+          SizedBox(
+            width: 28,
+            child: Text(
+              "${item.quantity}",
+              style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 13),
             ),
+          ),
+          const SizedBox(width: kspacing * 1.5),
+          Expanded(
+            child: Text(
+              item.menuItem.translations.isNotEmpty
+                  ? item.menuItem.translations.first.name
+                  : 'Nom',
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+            ),
+          ),
+          const SizedBox(width: kspacing),
+          Text(
+            "${(item.unitPrice * item.quantity).toStringAsFixed(0)} Ar",
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+          ),
         ],
       ),
     );
   }
 }
 
-class _CardSlot {
+class CardSlot {
   final OrderEntity order;
   final List<OrderMenuItem> items;
   final bool showContinuedTop;
   final bool showContinuedBottom;
   final bool showButton;
 
-  _CardSlot({
+  CardSlot({
     required this.order,
     required this.items,
     required this.showContinuedTop,
@@ -716,27 +724,21 @@ class _CardSlot {
   });
 }
 
-List<List<_CardSlot>> _buildColumns(
+List<List<CardSlot>> _buildColumns(
   List<OrderEntity> orders,
   double columnHeight,
 ) {
-  const double headerHeight = 40;
-  const double subHeaderHeight = 100;
+  const double headerHeight = 77;
   const double dividerHeight = 1;
-  const double continuedHeight = 20;
-  const double buttonHeight =
-      100; // Increased to factor in total amount AND Payer button
+  const double continuedHeight = 24;
+  const double buttonHeight = 110;
   const double cardGap = kspacing * 2;
 
   double itemHeight(OrderMenuItem item) {
-    double h = 21;
-    if (item.notes != null && item.notes!.isNotEmpty) {
-      h += 11;
-    }
-    return h;
+    return 29;
   }
 
-  final List<List<_CardSlot>> columns = [[]];
+  final List<List<CardSlot>> columns = [[]];
   double usedHeight = 0;
 
   for (final order in orders) {
@@ -748,7 +750,7 @@ List<List<_CardSlot>> _buildColumns(
     while (remaining.isNotEmpty) {
       double available = columnHeight - usedHeight - cardGap;
       final double headerBlockHeight = isFirstSlice
-          ? (headerHeight + subHeaderHeight + dividerHeight)
+          ? (headerHeight + dividerHeight)
           : 0;
       final double minNeeded =
           headerBlockHeight +
@@ -765,7 +767,6 @@ List<List<_CardSlot>> _buildColumns(
       final List<OrderMenuItem> slice = [];
       double sliceHeight =
           headerBlockHeight + (isFirstSlice ? 0 : continuedHeight);
-      bool willContinue = false;
 
       for (int i = 0; i < remaining.length; i++) {
         final double nextItemH = itemHeight(remaining[i]);
@@ -777,13 +778,11 @@ List<List<_CardSlot>> _buildColumns(
           sliceHeight += nextItemH;
           slice.add(remaining[i]);
         } else {
-          willContinue = true;
           break;
         }
       }
 
       if (slice.isEmpty) {
-        // Prevent infinite loop if an item is simply too tall for an empty column
         if (available == columnHeight) {
           slice.add(remaining.first);
         } else {
@@ -796,7 +795,7 @@ List<List<_CardSlot>> _buildColumns(
       final bool isLastForOrder = slice.length == remaining.length;
 
       columns.last.add(
-        _CardSlot(
+        CardSlot(
           order: order,
           items: slice,
           showContinuedTop: !isFirstSlice,
