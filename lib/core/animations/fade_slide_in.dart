@@ -47,15 +47,9 @@ class _FadeSlideInState extends State<FadeSlideIn>
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: widget.duration,
-    );
+    _controller = AnimationController(vsync: this, duration: widget.duration);
 
-    _opacity = CurvedAnimation(
-      parent: _controller,
-      curve: widget.curve,
-    );
+    _opacity = CurvedAnimation(parent: _controller, curve: widget.curve);
 
     final begin = switch (widget.direction) {
       AxisDirection.up => Offset(0, widget.offset),
@@ -64,9 +58,10 @@ class _FadeSlideInState extends State<FadeSlideIn>
       AxisDirection.right => Offset(-widget.offset, 0),
     };
 
-    _position = Tween<Offset>(begin: begin, end: Offset.zero).animate(
-      CurvedAnimation(parent: _controller, curve: widget.curve),
-    );
+    _position = Tween<Offset>(
+      begin: begin,
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _controller, curve: widget.curve));
 
     if (widget.delay == Duration.zero) {
       _controller.forward();
@@ -87,10 +82,7 @@ class _FadeSlideInState extends State<FadeSlideIn>
   Widget build(BuildContext context) {
     return FadeTransition(
       opacity: _opacity,
-      child: SlideTransition(
-        position: _position,
-        child: widget.child,
-      ),
+      child: SlideTransition(position: _position, child: widget.child),
     );
   }
 }

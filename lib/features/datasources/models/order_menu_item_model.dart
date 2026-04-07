@@ -18,9 +18,7 @@ class OrderMenuItemModel extends OrderMenuItem {
     super.menuItemId,
     super.status,
     super.notes,
-  }) : super(
-         menuItem: menuItem,
-       );
+  }) : super(menuItem: menuItem);
 
   factory OrderMenuItemModel.fromJson(Map<String, dynamic> json) =>
       _$OrderMenuItemModelFromJson(json);

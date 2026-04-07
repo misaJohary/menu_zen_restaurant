@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -33,6 +34,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
   late OrderController controller;
   late final RestaurantWebSocketService _wsService;
   StreamSubscription<dynamic>? _wsSubscription;
+  final AudioPlayer _audioPlayer = AudioPlayer();
 
   bool showCompleted = false;
   bool isDarkMode = false;
@@ -76,6 +78,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
   void dispose() {
     searchController.dispose();
     _wsSubscription?.cancel();
+    _audioPlayer.dispose();
     super.dispose();
   }
 
@@ -116,12 +119,11 @@ class _OrdersScreenState extends State<OrdersScreen> {
   }
 
   void _handleNewOrder(BuildContext context, message) {
-    context.read<OrdersBloc>().add(
-      OrderAdded(OrderModel.fromJson(json.decode(message['order']))),
-    );
+    context.read<OrdersBloc>().add(const OrderFetched());
   }
 
   void _handleUpdateOrderStatus(BuildContext context, message) {
+    _audioPlayer.play(AssetSource('sounds/new_order.ogg'));
     context.read<OrdersBloc>().add(
       OrderStatusRemoteUpdated(
         message['order_id'],
@@ -131,6 +133,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
   }
 
   void _handleUpdateOrderMenuItemStatus(BuildContext context, message) {
+    _audioPlayer.play(AssetSource('sounds/new_order.ogg'));
     context.read<OrdersBloc>().add(
       OrderMenuItemStatusRemoteUpdated(
         message['order_id'],

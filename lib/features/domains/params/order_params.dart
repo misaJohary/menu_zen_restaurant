@@ -10,7 +10,12 @@ class OrderParams extends Equatable {
   final bool todayOnly;
   final String? search;
 
-  const OrderParams({this.page, this.limit, this.todayOnly = false, this.search});
+  const OrderParams({
+    this.page,
+    this.limit,
+    this.todayOnly = false,
+    this.search,
+  });
 
   @override
   List<Object?> get props => [page, limit, todayOnly, search];

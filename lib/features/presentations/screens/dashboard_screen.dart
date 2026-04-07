@@ -59,22 +59,38 @@ class _DashboardScreenState extends State<DashboardScreen> {
               const SizedBox(height: kspacing * 4),
               FadeSlideIn(
                 delay: const Duration(milliseconds: 300),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      flex: 4,
-                      child: Column(
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    final isPortrait = constraints.maxWidth < 900;
+                    if (isPortrait) {
+                      return Column(
                         children: [
                           _buildBanner(),
                           const SizedBox(height: kspacing * 2),
                           const TopMenuCard(),
+                          const SizedBox(height: kspacing * 4),
+                          const RevenueCard(),
                         ],
-                      ),
-                    ),
-                    const SizedBox(width: kspacing * 4),
-                    const Expanded(flex: 3, child: RevenueCard()),
-                  ],
+                      );
+                    }
+                    return Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          flex: 4,
+                          child: Column(
+                            children: [
+                              _buildBanner(),
+                              const SizedBox(height: kspacing * 2),
+                              const TopMenuCard(),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: kspacing * 4),
+                        const Expanded(flex: 3, child: RevenueCard()),
+                      ],
+                    );
+                  },
                 ),
               ),
             ],
@@ -308,11 +324,9 @@ class StatCard extends StatelessWidget {
                 textBaseline: TextBaseline.alphabetic,
                 children: [
                   AnimatedCountUp(
-                    end: double.tryParse(
-                          value.replaceAll(
-                            RegExp(r'[^0-9.]'),
-                            '',
-                          ),
+                    end:
+                        double.tryParse(
+                          value.replaceAll(RegExp(r'[^0-9.]'), ''),
                         ) ??
                         0,
                     suffix: value.contains('k') ? 'k' : '',

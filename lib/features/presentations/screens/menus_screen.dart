@@ -137,7 +137,9 @@ class _MenuHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, authState) {
-        return Row(
+        final isPortrait = MediaQuery.sizeOf(context).width < 900;
+        final titleContent = Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
             if (authState.userRestaurant != null)
               Logo(imageUrl: authState.userRestaurant!.restaurant.logo)
@@ -162,7 +164,12 @@ class _MenuHeader extends StatelessWidget {
                 ),
               ],
             ),
-            const Spacer(),
+          ],
+        );
+
+        final actionsContent = Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
             ElevatedButton.icon(
               onPressed: onAddPressed,
               icon: const Icon(Icons.add, size: 20),
@@ -182,7 +189,6 @@ class _MenuHeader extends StatelessWidget {
             const SizedBox(width: kspacing * 2),
             BlocBuilder<AuthBloc, AuthState>(
               builder: (context, state) {
-                String? profileUrl;
                 return CircleAvatar(
                   radius: 20,
                   backgroundImage: null,
@@ -205,6 +211,22 @@ class _MenuHeader extends StatelessWidget {
             _LanguageSelector(),
           ],
         );
+
+        if (isPortrait) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              titleContent,
+              const SizedBox(height: kspacing * 2),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: actionsContent,
+              ),
+            ],
+          );
+        }
+
+        return Row(children: [titleContent, const Spacer(), actionsContent]);
       },
     );
   }

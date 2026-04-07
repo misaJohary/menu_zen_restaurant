@@ -87,42 +87,46 @@ class _MenuItemScreenState extends State<MenuItemScreen> {
                           builder: (context, langState) {
                             final selectedLang =
                                 langState.selectedLanguage?.code ?? 'fr';
-                            return GridView.builder(
-                              gridDelegate:
-                                  const SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 3,
-                                    crossAxisSpacing: 24,
-                                    mainAxisSpacing: 24,
-                                    childAspectRatio: 1.15,
-                                  ),
-                              itemCount: state.menuItems.length,
-                              itemBuilder: (context, index) {
-                                final menu = state.menuItems[index];
-                                return StaggeredFadeIn(
-                                  index: index,
-                                  child: HoverScaleCard(
-                                    borderRadius: 24,
-                                    child: MenuItemCardWidget(
-                                      menuItem: menu,
-                                      selectedLanguage: selectedLang,
-                                      onEdit: () =>
-                                          _showMenuItemDialog(
+                            return LayoutBuilder(
+                              builder: (context, constraints) {
+                                final isPortrait = constraints.maxWidth < 600;
+                                return GridView.builder(
+                                  gridDelegate:
+                                      SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: isPortrait ? 2 : 3,
+                                        crossAxisSpacing: 24,
+                                        mainAxisSpacing: 24,
+                                        childAspectRatio: 1.15,
+                                      ),
+                                  itemCount: state.menuItems.length,
+                                  itemBuilder: (context, index) {
+                                    final menu = state.menuItems[index];
+                                    return StaggeredFadeIn(
+                                      index: index,
+                                      child: HoverScaleCard(
+                                        borderRadius: 24,
+                                        child: MenuItemCardWidget(
+                                          menuItem: menu,
+                                          selectedLanguage: selectedLang,
+                                          onEdit: () => _showMenuItemDialog(
                                             menuItem: menu,
                                           ),
-                                      onStatusChanged: (bool value) {
-                                        if (menu.active != value) {
-                                          context.read<MenuItemBloc>().add(
-                                            MenuItemUpdated(
-                                              MenuItemUpdateModel(
-                                                id: menu.id!,
-                                                active: value,
-                                              ),
-                                            ),
-                                          );
-                                        }
-                                      },
-                                    ),
-                                  ),
+                                          onStatusChanged: (bool value) {
+                                            if (menu.active != value) {
+                                              context.read<MenuItemBloc>().add(
+                                                MenuItemUpdated(
+                                                  MenuItemUpdateModel(
+                                                    id: menu.id!,
+                                                    active: value,
+                                                  ),
+                                                ),
+                                              );
+                                            }
+                                          },
+                                        ),
+                                      ),
+                                    );
+                                  },
                                 );
                               },
                             );
@@ -164,7 +168,9 @@ class _MenuItemScreenState extends State<MenuItemScreen> {
                   .toUpperCase()
             : 'U';
 
-        return Row(
+        final isPortrait = MediaQuery.sizeOf(context).width < 900;
+        final titleContent = Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
             if (state.userRestaurant != null)
               Logo(imageUrl: state.userRestaurant!.restaurant.logo)
@@ -189,7 +195,12 @@ class _MenuItemScreenState extends State<MenuItemScreen> {
                 ),
               ],
             ),
-            const Spacer(),
+          ],
+        );
+
+        final actionsContent = Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
             ElevatedButton.icon(
               onPressed: () => _showMenuItemDialog(),
               icon: const Icon(Icons.add, color: Colors.white, size: 20),
@@ -232,6 +243,22 @@ class _MenuItemScreenState extends State<MenuItemScreen> {
             _buildLanguageSelector(),
           ],
         );
+
+        if (isPortrait) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              titleContent,
+              const SizedBox(height: 16),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: actionsContent,
+              ),
+            ],
+          );
+        }
+
+        return Row(children: [titleContent, const Spacer(), actionsContent]);
       },
     );
   }

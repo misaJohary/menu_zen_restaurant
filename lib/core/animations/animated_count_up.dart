@@ -55,10 +55,7 @@ class _AnimatedCountUpState extends State<AnimatedCountUp>
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: widget.duration,
-    );
+    _controller = AnimationController(vsync: this, duration: widget.duration);
 
     _rebuildAnimation(0, widget.end);
 
@@ -72,9 +69,10 @@ class _AnimatedCountUpState extends State<AnimatedCountUp>
   }
 
   void _rebuildAnimation(double from, double to) {
-    _animation = Tween<double>(begin: from, end: to).animate(
-      CurvedAnimation(parent: _controller, curve: widget.curve),
-    );
+    _animation = Tween<double>(
+      begin: from,
+      end: to,
+    ).animate(CurvedAnimation(parent: _controller, curve: widget.curve));
   }
 
   @override

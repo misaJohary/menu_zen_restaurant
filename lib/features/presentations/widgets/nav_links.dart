@@ -24,8 +24,7 @@ class NavLink extends StatefulWidget {
   State<NavLink> createState() => _NavLinkState();
 }
 
-class _NavLinkState extends State<NavLink>
-    with SingleTickerProviderStateMixin {
+class _NavLinkState extends State<NavLink> with SingleTickerProviderStateMixin {
   late final AnimationController _hoverController;
   late final Animation<double> _hoverScale;
   bool _isHovered = false;
@@ -37,12 +36,10 @@ class _NavLinkState extends State<NavLink>
       vsync: this,
       duration: const Duration(milliseconds: 150),
     );
-    _hoverScale = Tween<double>(begin: 1.0, end: 1.02).animate(
-      CurvedAnimation(
-        parent: _hoverController,
-        curve: Curves.easeOut,
-      ),
-    );
+    _hoverScale = Tween<double>(
+      begin: 1.0,
+      end: 1.02,
+    ).animate(CurvedAnimation(parent: _hoverController, curve: Curves.easeOut));
   }
 
   @override
@@ -68,10 +65,7 @@ class _NavLinkState extends State<NavLink>
           ListenableBuilder(
             listenable: _hoverController,
             builder: (context, child) {
-              return Transform.scale(
-                scale: _hoverScale.value,
-                child: child,
-              );
+              return Transform.scale(scale: _hoverScale.value, child: child);
             },
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 250),
@@ -84,8 +78,8 @@ class _NavLinkState extends State<NavLink>
                 color: widget.isSelected
                     ? primaryColor.withValues(alpha: 0.08)
                     : _isHovered
-                        ? primaryColor.withValues(alpha: 0.04)
-                        : Colors.transparent,
+                    ? primaryColor.withValues(alpha: 0.04)
+                    : Colors.transparent,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: ListTile(
@@ -106,9 +100,7 @@ class _NavLinkState extends State<NavLink>
                 ),
                 title: AnimatedDefaultTextStyle(
                   duration: const Duration(milliseconds: 200),
-                  style: Theme.of(
-                    context,
-                  ).textTheme.titleMedium!.copyWith(
+                  style: Theme.of(context).textTheme.titleMedium!.copyWith(
                     color: widget.isSelected ? primaryColor : grey,
                     fontSize: 16,
                     fontWeight: widget.isSelected
@@ -189,10 +181,10 @@ List<Widget> navLinks(String currentRoute, Role? role) => [
   //   destination: const OrdersRoute(),
   // ),
   //if (role == Role.admin || role == Role.superAdmin)
-    NavLink(
-      label: 'Utilisateurs',
-      iconPath: 'assets/icons/user.svg', // Fallback for Users
-      isSelected: currentRoute == UsersRoute.name,
-      destination: const UsersRoute(),
-    ),
+  NavLink(
+    label: 'Utilisateurs',
+    iconPath: 'assets/icons/user.svg', // Fallback for Users
+    isSelected: currentRoute == UsersRoute.name,
+    destination: const UsersRoute(),
+  ),
 ];

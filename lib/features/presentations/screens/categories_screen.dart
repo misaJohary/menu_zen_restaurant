@@ -93,28 +93,32 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                             ),
                           );
                         }
-                        return GridView.builder(
-                          gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 3,
-                                crossAxisSpacing: 24,
-                                mainAxisSpacing: 24,
-                                childAspectRatio: 1.5,
-                              ),
-                          itemCount: state.categories.length,
-                          itemBuilder: (context, index) {
-                            final category = state.categories[index];
-                            return StaggeredFadeIn(
-                              index: index,
-                              child: HoverScaleCard(
-                                child: CategoryCard(
-                                  category: category,
-                                  onEdit: () =>
-                                      _showCategoryDialog(
+                        return LayoutBuilder(
+                          builder: (context, constraints) {
+                            final isPortrait = constraints.maxWidth < 600;
+                            return GridView.builder(
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: isPortrait ? 2 : 3,
+                                    crossAxisSpacing: 24,
+                                    mainAxisSpacing: 24,
+                                    childAspectRatio: 1.5,
+                                  ),
+                              itemCount: state.categories.length,
+                              itemBuilder: (context, index) {
+                                final category = state.categories[index];
+                                return StaggeredFadeIn(
+                                  index: index,
+                                  child: HoverScaleCard(
+                                    child: CategoryCard(
+                                      category: category,
+                                      onEdit: () => _showCategoryDialog(
                                         category: category,
                                       ),
-                                ),
-                              ),
+                                    ),
+                                  ),
+                                );
+                              },
                             );
                           },
                         );
@@ -154,7 +158,9 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                   .toUpperCase()
             : 'U';
 
-        return Row(
+        final isPortrait = MediaQuery.sizeOf(context).width < 900;
+        final titleContent = Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
             if (state.userRestaurant != null)
               Logo(imageUrl: state.userRestaurant!.restaurant.logo)
@@ -180,7 +186,12 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                 ),
               ],
             ),
-            const Spacer(),
+          ],
+        );
+
+        final actionsContent = Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
             ElevatedButton.icon(
               onPressed: () => _showCategoryDialog(),
               icon: const Icon(Icons.add, color: Colors.white, size: 20),
@@ -223,6 +234,22 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
             _buildLanguageSelector(),
           ],
         );
+
+        if (isPortrait) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              titleContent,
+              const SizedBox(height: 16),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: actionsContent,
+              ),
+            ],
+          );
+        }
+
+        return Row(children: [titleContent, const Spacer(), actionsContent]);
       },
     );
   }

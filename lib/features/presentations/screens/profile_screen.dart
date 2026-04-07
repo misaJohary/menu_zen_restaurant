@@ -384,25 +384,31 @@ class _RestaurantInfoCard extends StatelessWidget {
         try {
           final imageRepo = getIt<ImageRepository>();
           final result = await imageRepo.uploadImage(file);
-          
+
           if (!context.mounted) return;
           Navigator.pop(context); // close loading dialog
-          
+
           if (result.isSuccess) {
             final logoUrl = result.getSuccess;
-            final updatedRestaurant = RestaurantModel.fromEntity(restaurant).copyWith(logo: logoUrl);
-            context.read<AuthBloc>().add(AuthRestaurantUpdated(updatedRestaurant));
+            final updatedRestaurant = RestaurantModel.fromEntity(
+              restaurant,
+            ).copyWith(logo: logoUrl);
+            context.read<AuthBloc>().add(
+              AuthRestaurantUpdated(updatedRestaurant),
+            );
           } else {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Erreur lors de l\'upload de l\'image')),
+              const SnackBar(
+                content: Text('Erreur lors de l\'upload de l\'image'),
+              ),
             );
           }
         } catch (e) {
           if (!context.mounted) return;
           Navigator.pop(context); // close loading dialog
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Erreur inattendue')),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(const SnackBar(content: Text('Erreur inattendue')));
         }
       }
     }
@@ -452,7 +458,11 @@ class _RestaurantInfoCard extends StatelessWidget {
                           color: primaryColor.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        child: Icon(Icons.restaurant, size: 40, color: primaryColor),
+                        child: Icon(
+                          Icons.restaurant,
+                          size: 40,
+                          color: primaryColor,
+                        ),
                       ),
                     Positioned(
                       bottom: 0,
@@ -463,10 +473,7 @@ class _RestaurantInfoCard extends StatelessWidget {
                           color: Colors.white,
                           shape: BoxShape.circle,
                           boxShadow: [
-                            BoxShadow(
-                              color: Colors.black12,
-                              blurRadius: 4,
-                            ),
+                            BoxShadow(color: Colors.black12, blurRadius: 4),
                           ],
                         ),
                         child: Icon(Icons.edit, size: 16, color: primaryColor),

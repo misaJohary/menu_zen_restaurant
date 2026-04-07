@@ -30,11 +30,7 @@ class OrderModel extends OrderEntity {
     required super.restaurantTableId,
     super.createdAt,
     required super.totalAmount,
-  }) : super(
-         orderMenuItems: orderMenuItems,
-         rTable: rTable,
-         server: server,
-       );
+  }) : super(orderMenuItems: orderMenuItems, rTable: rTable, server: server);
 
   factory OrderModel.fromEntity(OrderEntity entity) {
     final orderMenuItems = entity.orderMenuItems.map((menu) {

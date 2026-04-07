@@ -12,17 +12,14 @@ class AppRouter extends RootStackRouter {
 
   @override
   RouteType get defaultRouteType => RouteType.custom(
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          return FadeTransition(
-            opacity: CurvedAnimation(
-              parent: animation,
-              curve: Curves.easeOut,
-            ),
-            child: child,
-          );
-        },
-        duration: const Duration(milliseconds: 300),
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      return FadeTransition(
+        opacity: CurvedAnimation(parent: animation, curve: Curves.easeOut),
+        child: child,
       );
+    },
+    duration: const Duration(milliseconds: 300),
+  );
 
   @override
   List<AutoRoute> get routes => [

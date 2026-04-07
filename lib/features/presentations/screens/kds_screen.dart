@@ -113,9 +113,7 @@ class _KdsScreenState extends State<KdsScreen> {
 
   void _handleNewOrder(BuildContext context, message) {
     _audioPlayer.play(AssetSource('sounds/new_order.ogg'));
-    context.read<OrdersBloc>().add(
-      OrderAdded(OrderModel.fromJson(json.decode(message['order']))),
-    );
+    context.read<OrdersBloc>().add(const OrderFetched());
   }
 
   void _handleUpdateOrderStatus(BuildContext context, message) {

@@ -43,21 +43,17 @@ class _HoverScaleCardState extends State<HoverScaleCard>
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: widget.duration,
-    );
+    _controller = AnimationController(vsync: this, duration: widget.duration);
 
     _scale = Tween<double>(
       begin: 1.0,
       end: widget.scaleOnHover,
-    ).animate(
-      CurvedAnimation(parent: _controller, curve: widget.curve),
-    );
+    ).animate(CurvedAnimation(parent: _controller, curve: widget.curve));
 
-    _elevation = Tween<double>(begin: 0, end: 8).animate(
-      CurvedAnimation(parent: _controller, curve: widget.curve),
-    );
+    _elevation = Tween<double>(
+      begin: 0,
+      end: 8,
+    ).animate(CurvedAnimation(parent: _controller, curve: widget.curve));
   }
 
   @override
@@ -83,9 +79,7 @@ class _HoverScaleCardState extends State<HoverScaleCard>
             scale: _scale.value,
             child: Container(
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(
-                  widget.borderRadius,
-                ),
+                borderRadius: BorderRadius.circular(widget.borderRadius),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withValues(

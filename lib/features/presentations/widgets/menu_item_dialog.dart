@@ -77,14 +77,12 @@ class _MenuItemDialogState extends State<MenuItemDialog> {
     final categoryId = widget.menuItem?.category?.id;
     final resolvedCategory = categoryId != null
         ? categoriesState.categories.cast<CategoryEntity?>().firstWhere(
-              (c) => c?.id == categoryId,
-              orElse: () => null,
-            )
+            (c) => c?.id == categoryId,
+            orElse: () => null,
+          )
         : null;
 
-    final menusState = context
-        .read<MenusBloc>()
-        .state;
+    final menusState = context.read<MenusBloc>().state;
     final desiredMenuIds =
         widget.menuItem?.menus.map((m) => m.id).toSet() ?? {};
     final resolvedMenus = menusState.menus
@@ -126,10 +124,7 @@ class _MenuItemDialogState extends State<MenuItemDialog> {
       child: Container(
         width: 650,
         constraints: BoxConstraints(
-          maxHeight: MediaQuery
-              .of(context)
-              .size
-              .height * 0.9,
+          maxHeight: MediaQuery.of(context).size.height * 0.9,
         ),
         padding: const EdgeInsets.all(32),
         child: SingleChildScrollView(
@@ -157,7 +152,9 @@ class _MenuItemDialogState extends State<MenuItemDialog> {
                       icon: Container(
                         padding: const EdgeInsets.all(4),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF91C14F).withValues(alpha: 0.12),
+                          color: const Color(
+                            0xFF91C14F,
+                          ).withValues(alpha: 0.12),
                           shape: BoxShape.circle,
                         ),
                         child: const Icon(
@@ -191,8 +188,7 @@ class _MenuItemDialogState extends State<MenuItemDialog> {
                           _formKey.currentState?.fields['name']?.didChange(
                             _translations[_selectedLanguage]?['name'] ?? '',
                           );
-                          _formKey.currentState?.fields['description']
-                              ?.didChange(
+                          _formKey.currentState?.fields['description']?.didChange(
                             _translations[_selectedLanguage]?['description'] ??
                                 '',
                           );
@@ -266,7 +262,7 @@ class _MenuItemDialogState extends State<MenuItemDialog> {
                 FormBuilderTextField(
                   name: 'description',
                   initialValue:
-                  _translations[_selectedLanguage]?['description'] ?? '',
+                      _translations[_selectedLanguage]?['description'] ?? '',
                   maxLines: 4,
                   decoration: InputDecoration(
                     hintText: "Description....",
@@ -288,101 +284,102 @@ class _MenuItemDialogState extends State<MenuItemDialog> {
                   builder: (context, _) {
                     final hasImage =
                         widget.controller.filePicked != null ||
-                            widget.menuItem?.picture != null;
+                        widget.menuItem?.picture != null;
                     return DottedBorder(
                       options: RoundedRectDottedBorderOptions(
-                           radius: const Radius.circular(12),
-                      dashPattern: const [6, 4],
-                      color: Colors.grey.shade400,),
+                        radius: const Radius.circular(12),
+                        dashPattern: const [6, 4],
+                        color: Colors.grey.shade400,
+                      ),
 
-                    child: Container(
-                    width: double.infinity,
-                    height: 180,
-                    decoration: BoxDecoration(
-                    color: Colors.grey.shade50,
-                    borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: InkWell(
-                    onTap: _pickImage,
-                    child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                    if (widget.controller.filePicked != null)
-                    ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: kIsWeb
-                    ? Image.network(
-                    widget.controller.filePicked!.path,
-                    width: double.infinity,
-                    height: 180,
-                    fit: BoxFit.cover,
-                    )
-                        : Image.file(
-                    File(
-                    widget.controller.filePicked!.path,
-                    ),
-                    width: double.infinity,
-                    height: 180,
-                    fit: BoxFit.cover,
-                    ),
-                    )
-                    else if (widget.menuItem?.picture != null)
-                    ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: Image.network(
-                    widget.menuItem!.picture!,
-                    width: double.infinity,
-                    height: 180,
-                    fit: BoxFit.cover,
-                    ),
-                    ),
-                    Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                    if (!hasImage)
-                    const Icon(
-                    Icons.image_outlined,
-                    size: 40,
-                    color: Colors.grey,
-                    ),
-                    if (!hasImage) const SizedBox(height: 12),
-                    if (!hasImage)
-                    const Text(
-                    "Veuillez choisir une image en JPG, \nJPEG ou PNG, Max 5 Mo",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                    color: Colors.grey,
-                    fontSize: 14,
-                    ),
-                    ),
-                    if (!hasImage) const SizedBox(height: 16),
-                    Container(
-                    padding: const EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 8,
-                    ),
-                    decoration: BoxDecoration(
-                    border: Border.all(
-                    color: const Color(0xFF91C14F),
-                    ),
-                    borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: const Text(
-                    "Ajouter",
-                    style: TextStyle(
-                    color: Color(0xFF91C14F),
-                    fontWeight: FontWeight.w600,
-                    ),
-                    ),
-                    ),
-                    ],
-                    ),
-                    ],
-                    ),
-                    ),
-                    ),
+                      child: Container(
+                        width: double.infinity,
+                        height: 180,
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade50,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: InkWell(
+                          onTap: _pickImage,
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              if (widget.controller.filePicked != null)
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(12),
+                                  child: kIsWeb
+                                      ? Image.network(
+                                          widget.controller.filePicked!.path,
+                                          width: double.infinity,
+                                          height: 180,
+                                          fit: BoxFit.cover,
+                                        )
+                                      : Image.file(
+                                          File(
+                                            widget.controller.filePicked!.path,
+                                          ),
+                                          width: double.infinity,
+                                          height: 180,
+                                          fit: BoxFit.cover,
+                                        ),
+                                )
+                              else if (widget.menuItem?.picture != null)
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(12),
+                                  child: Image.network(
+                                    widget.menuItem!.picture!,
+                                    width: double.infinity,
+                                    height: 180,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  if (!hasImage)
+                                    const Icon(
+                                      Icons.image_outlined,
+                                      size: 40,
+                                      color: Colors.grey,
+                                    ),
+                                  if (!hasImage) const SizedBox(height: 12),
+                                  if (!hasImage)
+                                    const Text(
+                                      "Veuillez choisir une image en JPG, \nJPEG ou PNG, Max 5 Mo",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        color: Colors.grey,
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  if (!hasImage) const SizedBox(height: 16),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 20,
+                                      vertical: 8,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                        color: const Color(0xFF91C14F),
+                                      ),
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    child: const Text(
+                                      "Ajouter",
+                                      style: TextStyle(
+                                        color: Color(0xFF91C14F),
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                     );
-                    },
+                  },
                 ),
                 const SizedBox(height: 24),
 
@@ -428,7 +425,7 @@ class _MenuItemDialogState extends State<MenuItemDialog> {
                           child: Text(
                             category.translations.getField(
                               _selectedLanguage,
-                                  (t) => t.name,
+                              (t) => t.name,
                             ),
                           ),
                         );
@@ -460,7 +457,7 @@ class _MenuItemDialogState extends State<MenuItemDialog> {
                           child: Text(
                             menu.translations.getField(
                               _selectedLanguage,
-                                  (t) => t.name,
+                              (t) => t.name,
                             ),
                           ),
                         );
@@ -529,22 +526,21 @@ class _MenuItemDialogState extends State<MenuItemDialog> {
     final ImagePicker picker = ImagePicker();
     final source = await showModalBottomSheet<ImageSource>(
       context: context,
-      builder: (context) =>
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                leading: const Icon(Icons.camera_alt),
-                title: const Text("Appareil photo"),
-                onTap: () => Navigator.pop(context, ImageSource.camera),
-              ),
-              ListTile(
-                leading: const Icon(Icons.photo_library),
-                title: const Text("Galerie"),
-                onTap: () => Navigator.pop(context, ImageSource.gallery),
-              ),
-            ],
+      builder: (context) => Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ListTile(
+            leading: const Icon(Icons.camera_alt),
+            title: const Text("Appareil photo"),
+            onTap: () => Navigator.pop(context, ImageSource.camera),
           ),
+          ListTile(
+            leading: const Icon(Icons.photo_library),
+            title: const Text("Galerie"),
+            onTap: () => Navigator.pop(context, ImageSource.gallery),
+          ),
+        ],
+      ),
     );
 
     if (source != null) {

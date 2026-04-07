@@ -57,7 +57,7 @@ class OrderMenuItemBloc extends Bloc<OrderMenuItemEvent, OrderMenuItemState> {
     final List<OrderMenuItem> orders = List.from(state.orderMenuItems);
     Logger().e(orders);
     if (orders.isEmpty) return;
-    
+
     List<OrderMenuItem> orderedItems = [];
     for (final orderItem in event.order.orderMenuItems) {
       final index = orders.indexWhere(
@@ -81,7 +81,9 @@ class OrderMenuItemBloc extends Bloc<OrderMenuItemEvent, OrderMenuItemState> {
     for (var e in state.orderMenuItems) {
       orderMenuItems.add(e.copyWith(quantity: 0));
     }
-    emit(state.copyWith(orderMenuItems: orderMenuItems, orderedItems: const []));
+    emit(
+      state.copyWith(orderMenuItems: orderMenuItems, orderedItems: const []),
+    );
   }
 
   _onOrderMenuItemFetched(
@@ -122,9 +124,14 @@ class OrderMenuItemBloc extends Bloc<OrderMenuItemEvent, OrderMenuItemState> {
       final item = orderMenuItems[event.index];
       final newItem = item.copyWith(quantity: item.quantity + 1);
       orderMenuItems[event.index] = newItem;
-      
+
       final orderedItems = _updateOrderedItems(state.orderedItems, newItem);
-      emit(state.copyWith(orderMenuItems: orderMenuItems, orderedItems: orderedItems));
+      emit(
+        state.copyWith(
+          orderMenuItems: orderMenuItems,
+          orderedItems: orderedItems,
+        ),
+      );
     }
   }
 
@@ -138,9 +145,14 @@ class OrderMenuItemBloc extends Bloc<OrderMenuItemEvent, OrderMenuItemState> {
       if (item.quantity > 0) {
         final newItem = item.copyWith(quantity: item.quantity - 1);
         orderMenuItems[event.index] = newItem;
-        
+
         final orderedItems = _updateOrderedItems(state.orderedItems, newItem);
-        emit(state.copyWith(orderMenuItems: orderMenuItems, orderedItems: orderedItems));
+        emit(
+          state.copyWith(
+            orderMenuItems: orderMenuItems,
+            orderedItems: orderedItems,
+          ),
+        );
       }
     }
   }
@@ -158,9 +170,14 @@ class OrderMenuItemBloc extends Bloc<OrderMenuItemEvent, OrderMenuItemState> {
       if (item.quantity > 0) {
         final newItem = item.copyWith(quantity: 0);
         orderMenuItems[index] = newItem;
-        
+
         final orderedItems = _updateOrderedItems(state.orderedItems, newItem);
-        emit(state.copyWith(orderMenuItems: orderMenuItems, orderedItems: orderedItems));
+        emit(
+          state.copyWith(
+            orderMenuItems: orderMenuItems,
+            orderedItems: orderedItems,
+          ),
+        );
       }
     } else {
       final newItem = event.orderMenuItem.copyWith(quantity: 0);

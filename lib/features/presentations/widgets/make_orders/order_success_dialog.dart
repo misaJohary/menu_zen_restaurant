@@ -49,8 +49,10 @@ class OrderSuccessDialog extends StatelessWidget {
             Row(
               children: [
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 10,
+                  ),
                   decoration: BoxDecoration(
                     color: const Color(0xFF2E6B1D),
                     borderRadius: BorderRadius.circular(6),
@@ -119,7 +121,10 @@ class OrderSuccessDialog extends StatelessWidget {
                   child: Center(
                     child: Text(
                       'Qte',
-                      style: TextStyle(color: Colors.grey.shade400, fontSize: 16),
+                      style: TextStyle(
+                        color: Colors.grey.shade400,
+                        fontSize: 16,
+                      ),
                     ),
                   ),
                 ),
@@ -129,7 +134,10 @@ class OrderSuccessDialog extends StatelessWidget {
                     alignment: Alignment.centerRight,
                     child: Text(
                       'Prix (Ar)',
-                      style: TextStyle(color: Colors.grey.shade400, fontSize: 16),
+                      style: TextStyle(
+                        color: Colors.grey.shade400,
+                        fontSize: 16,
+                      ),
                     ),
                   ),
                 ),
@@ -146,8 +154,10 @@ class OrderSuccessDialog extends StatelessWidget {
                         langState.selectedLanguage?.code ?? 'en';
                     return Column(
                       children: order.orderMenuItems.map((item) {
-                        final itemName = item.menuItem.translations
-                            .getField(selectedLang, (t) => t.name);
+                        final itemName = item.menuItem.translations.getField(
+                          selectedLang,
+                          (t) => t.name,
+                        );
                         return Padding(
                           padding: const EdgeInsets.symmetric(vertical: 8.0),
                           child: Row(
@@ -206,10 +216,7 @@ class OrderSuccessDialog extends StatelessWidget {
               children: [
                 const Text(
                   'Total',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 Text(
                   order.totalAmount.formatMoney,
@@ -228,14 +235,13 @@ class OrderSuccessDialog extends StatelessWidget {
               children: [
                 const Text(
                   'Statut',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                  ),
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                 ),
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
                   decoration: BoxDecoration(
                     color: const Color(0xFFE9ECEF),
                     borderRadius: BorderRadius.circular(20),

@@ -171,14 +171,13 @@ class MenuItemController
             ? CategoryModel.fromEntity(formData['category'] as CategoryEntity)
             : null;
 
-        final menus = (formData['menus'] as List?)
-                ?.map((menu) {
-                  if (menu is MenuEntity) {
-                    return MenuModel.fromEntity(menu).toJson();
-                  }
-                  return menu;
-                })
-                .toList() ??
+        final menus =
+            (formData['menus'] as List?)?.map((menu) {
+              if (menu is MenuEntity) {
+                return MenuModel.fromEntity(menu).toJson();
+              }
+              return menu;
+            }).toList() ??
             [];
 
         formData.addAll({
