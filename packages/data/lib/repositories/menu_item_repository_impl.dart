@@ -21,9 +21,9 @@ class MenuItemRepositoryImpl implements MenuItemRepository {
 
   @override
   Future<MultiResult<Failure, MenuItemEntity>> addMenuItem(
-    MenuItemEntity params,
-    File picture,
-  ) {
+    MenuItemEntity params, [
+    File? picture,
+  ]) {
     return executeWithErrorHandling(() async {
       final model = MenuItemModel.fromEntity(params);
       final res = await rest.createMenuItems(
