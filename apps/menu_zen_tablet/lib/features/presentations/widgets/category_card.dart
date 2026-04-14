@@ -17,7 +17,7 @@ class CategoryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<LanguagesBloc, LanguagesState>(
       builder: (context, langState) {
-        final selectedLang = langState.selectedLanguage?.code ?? 'en';
+        final selectedLang = langState.selectedLanguage?.code ?? 'fr';
         final categoryName = category.translations.getField(
           selectedLang,
           (t) => t.name,
