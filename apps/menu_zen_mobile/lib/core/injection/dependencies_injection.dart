@@ -26,9 +26,11 @@ Future<void> configureDependencies() async {
   // SharedPreferences — needed by DbService (registered in DataPackageModule)
   gh.lazySingleton<SharedPreferencesAsync>(() => SharedPreferencesAsync());
 
-  // Base URL string — needed by RestClient (registered in DataPackageModule)
+  // Empty string so RestClient falls back to dio.options.baseUrl dynamically.
+  // Updating dio.options.baseUrl (e.g. after the server-URL dialog) then takes
+  // effect immediately without requiring an app restart.
   gh.factory<String>(
-    () => BaseUrlConfig.current,
+    () => '',
     instanceName: 'BaseUrl',
   );
 
@@ -56,11 +58,13 @@ Future<void> configureDependencies() async {
   // Data package: registers DbService, RestClient, all repositories
   await DataPackageModule().init(gh);
 
-  // WebSocket service — singleton so the connection is shared
+  // WebSocket service — singleton so the connection is shared.
+  // Reads BaseUrlConfig.current at first instantiation (lazy), so it picks up
+  // whatever URL the user configured before the first WebSocket connection.
   gh.lazySingleton<RestaurantWebSocketService>(
     () => RestaurantWebSocketService(
       dbService: getIt<DbService>(),
-      baseUrl: getIt<String>(instanceName: 'BaseUrl'),
+      baseUrl: BaseUrlConfig.current,
     ),
   );
 

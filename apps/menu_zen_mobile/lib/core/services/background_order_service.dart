@@ -9,7 +9,10 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 
 /// Keys shared with the main isolate via SharedPreferences.
 const _kUserRestaurant = 'userRestaurant'; // written by DbService (Async API)
-const _kWsBaseUrl = 'ws_base_url'; // written by configMain (Async API)
+
+/// Public so login_page can update it when the user changes the server URL.
+const kWsBaseUrlKey = 'ws_base_url'; // written by configMain (Async API)
+const _kWsBaseUrl = kWsBaseUrlKey;
 const _kAppForeground = 'app_foreground'; // written by OrdersPage
 
 /// Notification channel used for order alerts.
@@ -57,6 +60,11 @@ Future<void> initBackgroundService() async {
       playSound: true,
     ),
   );
+
+  // Android 13+ (API 33+) requires explicit runtime permission for
+  // notifications. Without this, show() silently does nothing on a
+  // fresh Play Store install.
+  await androidPlugin?.requestNotificationsPermission();
 
   final service = FlutterBackgroundService();
 

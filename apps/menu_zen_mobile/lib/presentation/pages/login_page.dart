@@ -1,5 +1,6 @@
 import 'package:data/config/base_url_config.dart';
 import 'package:dio/dio.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:domain/params/login_params.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,6 +11,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/constants/constants.dart';
 import '../../core/enums/bloc_status.dart';
 import '../../core/injection/dependencies_injection.dart';
+import '../../core/services/background_order_service.dart';
 import '../bloc/auth/auth_bloc.dart';
 
 class LoginPage extends StatefulWidget {
@@ -103,6 +105,8 @@ class _LoginPageState extends State<LoginPage> {
       return;
     }
     await BaseUrlConfig.set(trimmed);
+    // Keep the background-service isolate in sync — it reads this key directly.
+    await SharedPreferencesAsync().setString(kWsBaseUrlKey, trimmed);
     if (getIt.isRegistered<Dio>(instanceName: 'withInterceptor')) {
       getIt<Dio>(instanceName: 'withInterceptor').options.baseUrl =
           BaseUrlConfig.current;
