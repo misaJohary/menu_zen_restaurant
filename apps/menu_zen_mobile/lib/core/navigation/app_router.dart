@@ -55,6 +55,22 @@ GoRouter buildRouter() {
               ),
             ],
           ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/main/notifications',
+                builder: (context, state) => const NotificationsPage(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/main/profile',
+                builder: (context, state) => const ProfilePage(),
+              ),
+            ],
+          ),
         ],
       ),
       GoRoute(
@@ -70,14 +86,6 @@ GoRouter buildRouter() {
           final order = state.extra as OrderEntity?;
           return MakeOrderPage(order: order);
         },
-      ),
-      GoRoute(
-        path: '/profile',
-        builder: (context, state) => const ProfilePage(),
-      ),
-      GoRoute(
-        path: '/notifications',
-        builder: (context, state) => const NotificationsPage(),
       ),
     ],
   );
