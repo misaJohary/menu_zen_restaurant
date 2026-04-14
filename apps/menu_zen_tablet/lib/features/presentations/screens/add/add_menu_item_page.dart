@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:menu_zen_restaurant/features/presentations/controllers/menu_item_controller.dart';
 import 'package:menu_zen_restaurant/features/presentations/managers/categories/categories_bloc.dart';
@@ -105,6 +106,15 @@ class _AddMenuItemPageState extends State<AddMenuItemPage> {
       AddItemWidget.getTranslations(_addItemWidgetKey);
 
   void _onSubmit() {
+    final frenchName = translations?['fr']?['name'];
+    if (frenchName == null || frenchName.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Le nom en français est requis'),
+        ),
+      );
+      return;
+    }
     controller.validateWithTranslations(translations);
   }
 
@@ -142,12 +152,14 @@ class _AddMenuItemPageState extends State<AddMenuItemPage> {
                   name: 'price',
                   keyboardType: TextInputType.number,
                   decoration: const InputDecoration(label: Text("Prix (Ar)")),
+                  validator: FormBuilderValidators.required(),
                 ),
                 BlocBuilder<CategoriesBloc, CategoriesState>(
                   builder: (context, state) {
                     return FormBuilderDropdown(
                       name: 'category',
                       hint: const Text("Sélectionner une catégorie"),
+                      validator: FormBuilderValidators.required(),
                       items: state.categories
                           .map(
                             (category) => DropdownMenuItem(
