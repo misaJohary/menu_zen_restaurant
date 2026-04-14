@@ -3,7 +3,7 @@ description: "Menu Zen mobile app for restaurant servers."
 publish_to: 'none'
 resolution: workspace
 
-version: 1.0.2+3
+version: 1.0.6+7
 
 environment:
   sdk: ^3.10.0

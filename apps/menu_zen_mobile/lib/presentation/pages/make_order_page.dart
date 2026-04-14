@@ -60,6 +60,7 @@ class _MakeOrderPageState extends State<MakeOrderPage> {
         result.add(cat);
       }
     }
+    result.sort((a, b) => (a.id ?? 0).compareTo(b.id ?? 0));
     return result;
   }
 
@@ -110,7 +111,7 @@ class _MakeOrderPageState extends State<MakeOrderPage> {
         }
       },
       child: Scaffold(
-        backgroundColor: const Color(0xFFF5F5F5),
+        backgroundColor: Colors.white,
         appBar: AppBar(
           backgroundColor: Colors.white,
           elevation: 0,
@@ -223,6 +224,7 @@ class _MakeOrderPageState extends State<MakeOrderPage> {
               ),
             ),
             const SizedBox(height: 8),
+            const Divider(height: 1, thickness: 1),
 
             // ── Body: category rail + item grid ──────────────────────────
             Expanded(
@@ -240,13 +242,19 @@ class _MakeOrderPageState extends State<MakeOrderPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // ── Category rail ──────────────────────────────────
-                      if (_searchQuery.isEmpty)
+                      if (_searchQuery.isEmpty) ...[
                         _CategoryRail(
                           categories: categories,
                           selected: _selectedCategory,
                           onSelect: (cat) =>
                               setState(() => _selectedCategory = cat),
                         ),
+                        const VerticalDivider(
+                          width: 1,
+                          thickness: 1,
+                          color: Color(0xFFE0E0E0),
+                        ),
+                      ],
 
                       // ── Item grid ──────────────────────────────────────
                       Expanded(
@@ -290,6 +298,7 @@ class _MakeOrderPageState extends State<MakeOrderPage> {
             ),
 
             // ── Custom item quick-add ────────────────────────────────────
+            const Divider(height: 1, thickness: 1),
             BlocBuilder<OrderMenuItemBloc, OrderMenuItemState>(
               buildWhen: (prev, curr) =>
                   prev.customAddStatus != curr.customAddStatus,
@@ -301,6 +310,7 @@ class _MakeOrderPageState extends State<MakeOrderPage> {
                 onAdd: _addCustomItem,
               ),
             ),
+            const Divider(height: 1, thickness: 1),
           ],
         ),
         ),
@@ -325,7 +335,7 @@ class _CategoryRail extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 90,
+      width: 110,
       color: Colors.grey.shade100,
       child: ListView(
         padding: const EdgeInsets.symmetric(vertical: 8),
@@ -368,19 +378,31 @@ class _CategoryItem extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
         decoration: BoxDecoration(
+          color: isSelected ? Colors.white : Colors.transparent,
           border: isSelected
               ? const Border(
-                  left: BorderSide(color: primaryColor, width: 3),
+                  left: BorderSide(color: primaryColor, width: 4),
                 )
+              : const Border(
+                  left: BorderSide(color: Colors.transparent, width: 4),
+                ),
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.06),
+                    blurRadius: 4,
+                    offset: const Offset(1, 0),
+                  ),
+                ]
               : null,
         ),
         child: Text(
           label,
+          textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 11,
-            fontWeight:
-                isSelected ? FontWeight.w700 : FontWeight.w500,
-            color: isSelected ? primaryColor : Colors.grey.shade600,
+            fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+            color: isSelected ? primaryColor : Colors.grey.shade700,
             letterSpacing: 0.3,
           ),
         ),
@@ -416,23 +438,41 @@ class _ItemGrid extends StatelessWidget {
         ),
       );
     }
-    return GridView.builder(
-      padding: const EdgeInsets.all(10),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 10,
-        mainAxisSpacing: 10,
-        childAspectRatio: 1.1,
-      ),
-      itemCount: items.length,
-      itemBuilder: (context, index) {
-        final item = items[index];
-        final count = badgeCount(item.menuItem.id);
-        return _MenuItemCard(
-          item: item,
-          badge: count,
-          onTap: () => onTap(index),
-          onLongPress: () => onLongPress(index),
+    final rowCount = (items.length / 2).ceil();
+    return ListView.builder(
+      padding: const EdgeInsets.all(14),
+      itemCount: rowCount,
+      itemBuilder: (context, rowIndex) {
+        final firstIndex = rowIndex * 2;
+        final secondIndex = firstIndex + 1;
+        final hasSecond = secondIndex < items.length;
+
+        Widget buildCard(int index) {
+          final item = items[index];
+          final count = badgeCount(item.menuItem.id);
+          return _MenuItemCard(
+            item: item,
+            badge: count,
+            onTap: () => onTap(index),
+            onLongPress: () => onLongPress(index),
+          );
+        }
+
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 14),
+          child: SizedBox(
+            height: 120,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Expanded(child: buildCard(firstIndex)),
+                if (hasSecond) ...[
+                  const SizedBox(width: 10),
+                  Expanded(child: buildCard(secondIndex)),
+                ],
+              ],
+            ),
+          ),
         );
       },
     );
@@ -509,12 +549,14 @@ class _MenuItemCardState extends State<_MenuItemCard>
           clipBehavior: Clip.none,
           children: [
             Container(
+              width: double.infinity,
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(14),
-                border: isSelected
-                    ? Border.all(color: primaryColor, width: 2)
-                    : Border.all(color: Colors.grey.shade200),
+                border: Border.all(
+                  color: isSelected ? primaryColor : Colors.grey.shade300,
+                  width: isSelected ? 2 : 1,
+                ),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withValues(alpha: 0.04),
@@ -523,7 +565,7 @@ class _MenuItemCardState extends State<_MenuItemCard>
                   ),
                 ],
               ),
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,

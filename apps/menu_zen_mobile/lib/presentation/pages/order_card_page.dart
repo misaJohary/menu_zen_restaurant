@@ -509,30 +509,30 @@ class _SummarySection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        _SummaryRow(label: 'SOUS-TOTAL', value: formatPriceFull(subtotal)),
-        const SizedBox(height: 8),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-          decoration: BoxDecoration(
-            color: Colors.grey.shade100,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Row(
-            children: [
-              const Text(
-                'TVA (20%)',
-                style: TextStyle(color: Colors.black45, fontSize: 14),
-              ),
-              const SizedBox(width: 6),
-              const Icon(Icons.edit, size: 14, color: Colors.black38),
-              const Spacer(),
-              Text(
-                '—',
-                style: TextStyle(color: Colors.black38, fontSize: 14),
-              ),
-            ],
-          ),
-        ),
+        //_SummaryRow(label: 'SOUS-TOTAL', value: formatPriceFull(subtotal)),
+        // const SizedBox(height: 8),
+        // Container(
+        //   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        //   decoration: BoxDecoration(
+        //     color: Colors.grey.shade100,
+        //     borderRadius: BorderRadius.circular(12),
+        //   ),
+        //   child: Row(
+        //     children: [
+        //       const Text(
+        //         'TVA (20%)',
+        //         style: TextStyle(color: Colors.black45, fontSize: 14),
+        //       ),
+        //       const SizedBox(width: 6),
+        //       const Icon(Icons.edit, size: 14, color: Colors.black38),
+        //       const Spacer(),
+        //       Text(
+        //         '—',
+        //         style: TextStyle(color: Colors.black38, fontSize: 14),
+        //       ),
+        //     ],
+        //   ),
+        // ),
         const SizedBox(height: 8),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
@@ -546,7 +546,7 @@ class _SummarySection extends StatelessWidget {
           child: Row(
             children: [
               const Text(
-                'TOTAL À PAYER',
+                'TOTAL',
                 style: TextStyle(
                   fontWeight: FontWeight.w700,
                   fontSize: 13,

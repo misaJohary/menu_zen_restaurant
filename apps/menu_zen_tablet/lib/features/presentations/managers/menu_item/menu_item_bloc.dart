@@ -38,7 +38,7 @@ class MenuItemBloc extends Bloc<MenuItemEvent, MenuItemState> {
           picture: state.uploadedPictureUrl,
         ),
       ),
-      event.file!,
+      event.file,
     );
     if (res.isSuccess) {
       final updatedMenuItems = List<MenuItemEntity>.from(state.menuItems)

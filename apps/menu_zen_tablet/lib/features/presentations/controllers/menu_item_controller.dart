@@ -77,7 +77,10 @@ class MenuItemController
           );
           return updateItem(updatedModel);
         }
-        addCreateEvent(model, file: File(filePicked!.path));
+        addCreateEvent(
+          model,
+          file: filePicked != null ? File(filePicked!.path) : null,
+        );
       }
     } catch (e) {
       Logger().e(e);
@@ -212,7 +215,10 @@ class MenuItemController
           return updateItem(updatedModel);
         }
 
-        addCreateEvent(model, file: File(filePicked!.path));
+        addCreateEvent(
+          model,
+          file: filePicked != null ? File(filePicked!.path) : null,
+        );
       }
     } catch (e) {
       Logger().e('Error in validateWithTranslations: $e');
