@@ -17,7 +17,7 @@ class UserModel extends UserEntity {
     super.password,
     @JsonKey(name: 'role_name') super.role,
     @JsonKey(name: 'role_id') super.roleId,
-    @JsonKey(includeFromJson: false, includeToJson: false) super.roleName,
+    @JsonKey(name: 'role_name', includeToJson: false) super.roleName,
     @JsonKey(name: 'must_change_password') super.mustChangePassword,
   });
 
