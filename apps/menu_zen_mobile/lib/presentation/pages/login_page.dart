@@ -319,17 +319,16 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
 
-            // ── Settings button ────────────────────────────────────────────
+            // ── Settings button (hidden, double-tap to open) ───────────────
             SafeArea(
               child: Align(
                 alignment: Alignment.topRight,
                 child: Padding(
                   padding: const EdgeInsets.all(8),
-                  child: IconButton(
-                    tooltip: 'URL du serveur',
-                    onPressed: _openBaseUrlDialog,
-                    icon: const Icon(Icons.settings_outlined),
-                    color: Colors.grey,
+                  child: GestureDetector(
+                    onDoubleTap: _openBaseUrlDialog,
+                    behavior: HitTestBehavior.opaque,
+                    child: const SizedBox(width: 48, height: 48),
                   ),
                 ),
               ),
