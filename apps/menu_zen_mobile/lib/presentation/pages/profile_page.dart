@@ -22,11 +22,11 @@ class ProfilePage extends StatelessWidget {
         appBar: AppBar(
           backgroundColor: Colors.white,
           elevation: 0,
-          leading: const BackButton(color: Colors.black87),
+          automaticallyImplyLeading: false,
           title: const Text(
             'Profil',
             style: TextStyle(
-              color: Colors.black87,
+              color: primaryColor,
               fontWeight: FontWeight.bold,
               fontSize: 18,
             ),
@@ -109,6 +109,13 @@ class ProfilePage extends StatelessWidget {
                           label: 'Téléphone',
                           value: user.phone!,
                         ),
+                      // if (user?.roleName != null &&
+                      //     user!.roleName!.isNotEmpty)
+                      //   _InfoRow(
+                      //     icon: Icons.work_outline,
+                      //     label: 'Rôle',
+                      //     value: user.roleName!,
+                      //   ),
                       if (restaurant != null)
                         _InfoRow(
                           icon: Icons.restaurant_outlined,
