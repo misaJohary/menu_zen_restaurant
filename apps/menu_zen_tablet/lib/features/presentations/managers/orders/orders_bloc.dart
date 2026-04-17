@@ -240,7 +240,7 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
   _onOrderFetched(OrderFetched event, Emitter<OrdersState> emit) async {
     emit(state.copyWith(status: BlocStatus.loading));
     final result = await repo.getOrders(
-      OrderParams(todayOnly: false, search: event.search),
+      OrderParams(todayOnly: true, search: event.search),
     );
     if (result.isSuccess) {
       emit(

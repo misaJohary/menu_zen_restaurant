@@ -13,7 +13,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../core/constants/constants.dart';
 import '../../core/enums/bloc_status.dart';
-import '../bloc/auth/auth_bloc.dart';
 import '../bloc/notifications/notification_cubit.dart';
 import '../bloc/orders/orders_bloc.dart';
 
@@ -179,60 +178,11 @@ class _OrdersPageState extends State<OrdersPage> with WidgetsBindingObserver {
         title: const Text(
           'Mes commandes',
           style: TextStyle(
-            color: Colors.black87,
+            color: primaryColor,
             fontWeight: FontWeight.bold,
             fontSize: 18,
           ),
         ),
-        actions: [
-          BlocBuilder<NotificationCubit, NotificationState>(
-            builder: (context, state) {
-              final count =
-                  state is NotificationLoaded ? state.unreadCount : 0;
-              return Stack(
-                alignment: Alignment.center,
-                children: [
-                  IconButton(
-                    icon: const Icon(
-                      Icons.notifications_outlined,
-                      color: Colors.black87,
-                    ),
-                    onPressed: () => context.push('/notifications'),
-                  ),
-                  if (count > 0)
-                    Positioned(
-                      right: 6,
-                      top: 6,
-                      child: _NotificationBadge(count: count),
-                    ),
-                ],
-              );
-            },
-          ),
-          BlocBuilder<AuthBloc, AuthState>(
-            builder: (context, state) {
-              final initials = _initials(state.userRestaurant?.user.username);
-              return Padding(
-                padding: const EdgeInsets.only(right: 12),
-                child: GestureDetector(
-                  onTap: () => context.push('/profile'),
-                  child: CircleAvatar(
-                    radius: 18,
-                    backgroundColor: primaryColor,
-                    child: Text(
-                      initials,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 13,
-                      ),
-                    ),
-                  ),
-                ),
-              );
-            },
-          ),
-        ],
       ),
       body: Column(
         children: [
@@ -282,10 +232,6 @@ class _OrdersPageState extends State<OrdersPage> with WidgetsBindingObserver {
     );
   }
 
-  String _initials(String? username) {
-    if (username == null || username.isEmpty) return '?';
-    return username[0].toUpperCase();
-  }
 }
 
 // ─── Search Bar ──────────────────────────────────────────────────────────────
@@ -625,32 +571,6 @@ class _OrderCardState extends State<_OrderCard> {
           ],
         ),
       ),
-      ),
-    );
-  }
-}
-
-class _NotificationBadge extends StatelessWidget {
-  final int count;
-  const _NotificationBadge({required this.count});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(3),
-      decoration: const BoxDecoration(
-        color: Colors.red,
-        shape: BoxShape.circle,
-      ),
-      constraints: const BoxConstraints(minWidth: 16, minHeight: 16),
-      child: Text(
-        count > 99 ? '99+' : '$count',
-        style: const TextStyle(
-          color: Colors.white,
-          fontSize: 9,
-          fontWeight: FontWeight.bold,
-        ),
-        textAlign: TextAlign.center,
       ),
     );
   }
