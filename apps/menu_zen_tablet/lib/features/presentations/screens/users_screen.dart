@@ -5,11 +5,9 @@ import '../../../core/constants/constants.dart';
 import '../../../core/enums/bloc_status.dart';
 import 'package:data/models/user_model.dart';
 import 'package:domain/entities/user_entity.dart';
-import '../managers/auths/auth_bloc.dart';
 import '../managers/users/users_bloc.dart';
-import '../widgets/board_title_widget.dart';
 import '../widgets/loading_widget.dart';
-import '../widgets/logo.dart';
+import '../widgets/screen_header_widget.dart';
 
 @RoutePage()
 class UsersScreen extends StatefulWidget {
@@ -35,29 +33,11 @@ class _UsersScreenState extends State<UsersScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            BlocBuilder<AuthBloc, AuthState>(
-              builder: (context, authState) {
-                return Row(
-                  children: [
-                    if (authState.userRestaurant != null)
-                      Logo(imageUrl: authState.userRestaurant!.restaurant.logo)
-                    else
-                      const SizedBox(height: 40),
-                    const SizedBox(width: kspacing * 2),
-                    Expanded(
-                      child: BoardTitleWidget(
-                        title: 'Gestion des Utilisateurs',
-                        description: 'Gèrer les membres de votre équipe',
-                        labelButton: 'Ajouter un Utilisateur',
-                        contentPadding: EdgeInsets.zero,
-                        onButtonPressed: () {
-                          _showAddUserDialog();
-                        },
-                      ),
-                    ),
-                  ],
-                );
-              },
+            ScreenHeader(
+              title: 'Gestion des Utilisateurs',
+              description: 'Gèrer les membres de votre équipe',
+              onAddPressed: _showAddUserDialog,
+              showLanguage: false,
             ),
             Expanded(
               child: BlocBuilder<UsersBloc, UsersState>(

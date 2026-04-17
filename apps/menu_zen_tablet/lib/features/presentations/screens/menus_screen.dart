@@ -7,11 +7,10 @@ import 'package:menu_zen_restaurant/features/presentations/controllers/menus_con
 import '../../../core/constants/constants.dart';
 import '../../../core/enums/bloc_status.dart';
 import 'package:domain/entities/menu_entity.dart';
-import '../managers/auths/auth_bloc.dart';
 import '../managers/languages/languages_bloc.dart';
 import '../managers/menus/menus_bloc.dart';
 import '../widgets/loading_widget.dart';
-import '../widgets/logo.dart';
+import '../widgets/screen_header_widget.dart';
 
 @RoutePage()
 class MenuScreen extends StatefulWidget {
@@ -23,11 +22,18 @@ class MenuScreen extends StatefulWidget {
 
 class _MenuScreenState extends State<MenuScreen> {
   late MenusController controller;
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     controller = MenusController(context: context)..addFetchEvent();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
   @override
@@ -43,10 +49,11 @@ class _MenuScreenState extends State<MenuScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _MenuHeader(
-                onAddPressed: () {
-                  _showAddEditDialog();
-                },
+              ScreenHeader(
+                title: 'Gestion de menus',
+                description: 'Géré le menu de ton restaurant',
+                onAddPressed: _showAddEditDialog,
+                searchController: _searchController,
               ),
               const SizedBox(height: kspacing * 4),
               Expanded(
@@ -128,161 +135,6 @@ class _MenuScreenState extends State<MenuScreen> {
   }
 }
 
-class _MenuHeader extends StatelessWidget {
-  final VoidCallback onAddPressed;
-
-  const _MenuHeader({required this.onAddPressed});
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<AuthBloc, AuthState>(
-      builder: (context, authState) {
-        final isPortrait = MediaQuery.sizeOf(context).width < 900;
-        final titleContent = Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (authState.userRestaurant != null)
-              Logo(imageUrl: authState.userRestaurant!.restaurant.logo)
-            else
-              const SizedBox(height: 40),
-            const SizedBox(width: kspacing * 2),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Gestion de menus',
-                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
-                ),
-                Text(
-                  'Géré le menu de ton restaurant',
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodyMedium?.copyWith(color: grey),
-                ),
-              ],
-            ),
-          ],
-        );
-
-        final actionsContent = Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ElevatedButton.icon(
-              onPressed: onAddPressed,
-              icon: const Icon(Icons.add, size: 20),
-              label: const Text('AJOUTER'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: primaryColor,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 12,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-            ),
-            const SizedBox(width: kspacing * 2),
-            BlocBuilder<AuthBloc, AuthState>(
-              builder: (context, state) {
-                return CircleAvatar(
-                  radius: 20,
-                  backgroundImage: null,
-                  child: const Icon(Icons.person),
-                );
-              },
-            ),
-            const SizedBox(width: kspacing * 2),
-            IconButton(
-              onPressed: () {},
-              icon: Icon(Icons.search, color: grey),
-              style: IconButton.styleFrom(
-                backgroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-            ),
-            const SizedBox(width: kspacing * 2),
-            _LanguageSelector(),
-          ],
-        );
-
-        if (isPortrait) {
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              titleContent,
-              const SizedBox(height: kspacing * 2),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: actionsContent,
-              ),
-            ],
-          );
-        }
-
-        return Row(children: [titleContent, const Spacer(), actionsContent]);
-      },
-    );
-  }
-}
-
-class _LanguageSelector extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<LanguagesBloc, LanguagesState>(
-      builder: (context, state) {
-        final selectedLang = state.selectedLanguage;
-        return Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.05),
-                blurRadius: 10,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (selectedLang?.code == 'fr')
-                const Text('🇫🇷 ', style: TextStyle(fontSize: 16)),
-              if (selectedLang?.code == 'en')
-                const Text('🇺🇸 ', style: TextStyle(fontSize: 16)),
-              if (selectedLang?.code == 'zh')
-                const Text('🇨🇳 ', style: TextStyle(fontSize: 16)),
-              Text(
-                selectedLang?.name ?? 'French',
-                style: const TextStyle(
-                  fontWeight: FontWeight.w500,
-                  fontSize: 14,
-                  color: Colors.black54,
-                ),
-              ),
-              const SizedBox(width: 8),
-              const Icon(Icons.check, size: 14, color: Color(0xFF81C784)),
-              const SizedBox(width: 4),
-              const Icon(
-                Icons.keyboard_arrow_down,
-                size: 20,
-                color: Colors.grey,
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-}
 
 class _MenuCard extends StatelessWidget {
   final MenuEntity menu;

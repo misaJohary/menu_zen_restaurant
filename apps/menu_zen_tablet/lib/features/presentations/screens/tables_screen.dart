@@ -8,13 +8,11 @@ import '../../../core/constants/constants.dart';
 import '../../../core/enums/bloc_status.dart';
 import 'package:domain/entities/table_entity.dart';
 import '../controllers/table_controller.dart';
-import '../managers/auths/auth_bloc.dart';
 import '../managers/menus/menus_bloc.dart';
 import '../managers/tables/table_bloc.dart';
-import '../widgets/board_title_widget.dart';
 import '../widgets/card_list_tile.dart';
 import '../widgets/edit_delete_icon.dart';
-import '../widgets/logo.dart';
+import '../widgets/screen_header_widget.dart';
 
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 
@@ -45,30 +43,13 @@ class _TablesScreenState extends State<TablesScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            BlocBuilder<AuthBloc, AuthState>(
-              builder: (context, authState) {
-                return Row(
-                  children: [
-                    if (authState.userRestaurant != null)
-                      Logo(imageUrl: authState.userRestaurant!.restaurant.logo)
-                    else
-                      const SizedBox(height: 40),
-                    const SizedBox(width: kspacing * 2),
-                    Expanded(
-                      child: BoardTitleWidget(
-                        title: 'Gestion des Tables',
-                        description: 'Gère les tables de ton restaurant',
-                        labelButton: 'Ajouter Table',
-                        contentPadding: EdgeInsets.zero,
-                        onButtonPressed: () async {
-                          controller.showField(false);
-                          await Future.delayed(resetFieldDuration);
-                          controller.showField(true);
-                        },
-                      ),
-                    ),
-                  ],
-                );
+            ScreenHeader(
+              title: 'Gestion des Tables',
+              description: 'Gère les tables de ton restaurant',
+              onAddPressed: () async {
+                controller.showField(false);
+                await Future.delayed(resetFieldDuration);
+                controller.showField(true);
               },
             ),
             Expanded(
