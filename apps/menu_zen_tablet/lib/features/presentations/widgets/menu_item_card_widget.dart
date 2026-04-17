@@ -12,12 +12,14 @@ class MenuItemCardWidget extends StatelessWidget {
     required this.onEdit,
     required this.onStatusChanged,
     required this.selectedLanguage,
+    this.kitchenName,
   });
 
   final MenuItemEntity menuItem;
   final VoidCallback onEdit;
   final Function(bool) onStatusChanged;
   final String selectedLanguage;
+  final String? kitchenName;
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +34,9 @@ class MenuItemCardWidget extends StatelessWidget {
         ) ??
         '';
 
-    return Container(
+    return GestureDetector(
+      onTap: onEdit,
+      child: Container(
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(24),
@@ -60,15 +64,32 @@ class MenuItemCardWidget extends StatelessWidget {
                     fontSize: 18,
                   ),
                 ),
-                IconButton(
-                  onPressed: onEdit,
-                  icon: const Icon(
-                    Icons.edit_outlined,
-                    color: Color(0xFF91C14F),
-                    size: 22,
+                GestureDetector(
+                  onTap: () {},
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'Disp.',
+                        style: TextStyle(
+                          color: Colors.grey.shade600,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      Transform.scale(
+                        scale: 0.8,
+                        child: Switch(
+                          value: menuItem.active ?? true,
+                          onChanged: onStatusChanged,
+                          activeThumbColor: const Color(0xFF91C14F),
+                          activeTrackColor: const Color(
+                            0xFF91C14F,
+                          ).withOpacity(0.3),
+                        ),
+                      ),
+                    ],
                   ),
-                  padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(),
                 ),
               ],
             ),
@@ -191,35 +212,34 @@ class MenuItemCardWidget extends StatelessWidget {
                   )
                 else
                   const SizedBox.shrink(),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      'Disponible',
-                      style: TextStyle(
-                        color: Colors.grey.shade600,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w500,
+                if (kitchenName != null)
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.kitchen,
+                        size: 14,
+                        color: Colors.grey.shade500,
                       ),
-                    ),
-                    const SizedBox(width: 4),
-                    Transform.scale(
-                      scale: 0.8,
-                      child: Switch(
-                        value: menuItem.active ?? true,
-                        onChanged: onStatusChanged,
-                        activeThumbColor: const Color(0xFF91C14F),
-                        activeTrackColor: const Color(
-                          0xFF91C14F,
-                        ).withOpacity(0.3),
+                      const SizedBox(width: 4),
+                      Text(
+                        kitchenName!,
+                        style: TextStyle(
+                          color: Colors.grey.shade600,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        overflow: TextOverflow.ellipsis,
                       ),
-                    ),
-                  ],
-                ),
+                    ],
+                  )
+                else
+                  const SizedBox.shrink(),
               ],
             ),
           ),
         ],
+      ),
       ),
     );
   }

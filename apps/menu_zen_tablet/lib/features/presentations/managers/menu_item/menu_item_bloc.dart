@@ -77,6 +77,7 @@ class MenuItemBloc extends Bloc<MenuItemEvent, MenuItemState> {
       categoryId: event.menu.categoryId,
       active: event.menu.active,
       translations: event.menu.translations,
+      kitchenId: event.menu.kitchenId,
     );
     final res = await repo.updateMenuItem(params);
     if (res.isSuccess) {

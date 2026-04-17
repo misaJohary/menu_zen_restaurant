@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:ui';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:logger/logger.dart';
@@ -11,6 +12,7 @@ import 'package:data/models/menu_item_model.dart';
 import 'package:data/models/menu_item_update_model.dart';
 import 'package:data/models/menu_model.dart';
 import 'package:domain/entities/category_entity.dart';
+import 'package:domain/entities/kitchen_entity.dart';
 import 'package:domain/entities/menu_item_entity.dart';
 import '../managers/menu_item/menu_item_bloc.dart';
 import 'base_controller.dart';
@@ -18,6 +20,20 @@ import 'base_controller.dart';
 class MenuItemController
     extends BaseController<MenuItemBloc, MenuItemModel, MenuItemEntity> {
   MenuItemController({required super.context});
+
+  CategoryEntity? selectedCategory;
+  final TextEditingController searchController = TextEditingController();
+
+  void selectCategory(CategoryEntity? category) {
+    selectedCategory = category;
+    notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
+  }
 
   Color? _themeColor;
 
@@ -134,6 +150,7 @@ class MenuItemController
         categoryId: entity.category?.id,
         translations: entity.translations,
         active: entity.active,
+        kitchenId: entity.kitchenId,
       );
       bloc.add(MenuItemUpdated(updateModel));
     }
@@ -183,12 +200,17 @@ class MenuItemController
             }).toList() ??
             [];
 
+        final kitchen = formData['kitchen'];
+        final kitchenId = kitchen is KitchenEntity ? kitchen.id : null;
+
         formData.addAll({
           'picture': filePicked,
           'price': price ?? 0.0,
           'category': category?.toJson(),
           'menus': menus,
+          'kitchen_id': kitchenId,
         });
+        formData.remove('kitchen');
 
         // Transform translations map to list format expected by model
         if (translations != null && translations.isNotEmpty) {

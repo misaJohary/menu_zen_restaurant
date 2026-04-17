@@ -69,7 +69,6 @@ class _MainScreenState extends State<MainScreen> {
                               ? const SizedBox.shrink()
                               : MainNavigationPannelWidget(
                                   currentRoute: controller.currentRoute,
-                                  controller: controller,
                                   onHidePressed: () {
                                     context.router.push(MakeOrderRoute());
                                   },

@@ -12,6 +12,7 @@ import 'package:domain/entities/menu_entity.dart';
 import 'package:domain/entities/menu_item_entity.dart';
 import 'package:menu_zen_restaurant/features/presentations/controllers/menu_item_controller.dart';
 import 'package:menu_zen_restaurant/features/presentations/managers/categories/categories_bloc.dart';
+import 'package:menu_zen_restaurant/features/presentations/managers/kitchens/kitchens_bloc.dart';
 import 'package:menu_zen_restaurant/features/presentations/managers/menus/menus_bloc.dart';
 
 import 'package:domain/entities/category_entity.dart';
@@ -46,6 +47,12 @@ class _MenuItemDialogState extends State<MenuItemDialog> {
     for (var lang in _languages) {
       _translations[lang['code']!] = {'name': '', 'description': ''};
     }
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (context.read<KitchensBloc>().state.kitchens.isEmpty) {
+        context.read<KitchensBloc>().add(const KitchensFetched());
+      }
+    });
 
     if (widget.menuItem != null) {
       for (var translation in widget.menuItem!.translations) {
@@ -89,10 +96,21 @@ class _MenuItemDialogState extends State<MenuItemDialog> {
         .where((m) => desiredMenuIds.contains(m.id))
         .toList();
 
+    final kitchenId = widget.menuItem?.kitchenId;
+    final resolvedKitchen = kitchenId != null
+        ? context
+              .read<KitchensBloc>()
+              .state
+              .kitchens
+              .where((k) => k.id == kitchenId)
+              .firstOrNull
+        : null;
+
     _formKey.currentState?.patchValue({
       'price': widget.menuItem!.price.toString(),
       'category': resolvedCategory,
       'menus': resolvedMenus,
+      if (resolvedKitchen != null) 'kitchen': resolvedKitchen,
     });
   }
 
@@ -462,6 +480,39 @@ class _MenuItemDialogState extends State<MenuItemDialog> {
                           ),
                         );
                       }).toList(),
+                    );
+                  },
+                ),
+                const SizedBox(height: 24),
+
+                const Text(
+                  "Cuisine",
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+                ),
+                const SizedBox(height: 8),
+                BlocBuilder<KitchensBloc, KitchensState>(
+                  builder: (context, kitchensState) {
+                    return FormBuilderDropdown<dynamic>(
+                      name: 'kitchen',
+                      decoration: InputDecoration(
+                        hintText: "Aucune cuisine assignée",
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.grey.shade300),
+                        ),
+                      ),
+                      items: [
+                        const DropdownMenuItem(
+                          value: null,
+                          child: Text('Aucune'),
+                        ),
+                        ...kitchensState.kitchens.map(
+                          (k) => DropdownMenuItem(
+                            value: k,
+                            child: Text(k.name),
+                          ),
+                        ),
+                      ],
                     );
                   },
                 ),
