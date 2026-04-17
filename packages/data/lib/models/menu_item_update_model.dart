@@ -12,6 +12,7 @@ class MenuItemUpdateModel extends Equatable {
   final int? categoryId;
   final bool? active;
   final List<MenuItemTranslationModel>? translations;
+  final int? kitchenId;
 
   const MenuItemUpdateModel({
     required this.id,
@@ -20,6 +21,7 @@ class MenuItemUpdateModel extends Equatable {
     this.categoryId,
     this.active,
     this.translations,
+    this.kitchenId,
   });
 
   @override
@@ -30,6 +32,7 @@ class MenuItemUpdateModel extends Equatable {
     categoryId,
     active,
     translations,
+    kitchenId,
   ];
 
   Map<String, dynamic> toJson() => _$MenuItemUpdateModelToJson(this);

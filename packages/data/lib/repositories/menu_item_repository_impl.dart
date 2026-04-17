@@ -61,6 +61,7 @@ class MenuItemRepositoryImpl implements MenuItemRepository {
         categoryId: params.categoryId,
         active: params.active,
         translations: params.translations?.cast<MenuItemTranslationModel>(),
+        kitchenId: params.kitchenId,
       );
       return await rest.updateMenuItems(model.id, model);
     });

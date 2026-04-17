@@ -26,6 +26,7 @@ class MenuItemEntity extends Equatable {
   final bool? active;
   final CategoryEntity? category;
   final List<MenuEntity> menus;
+  final int? kitchenId;
 
   const MenuItemEntity({
     required this.id,
@@ -35,6 +36,7 @@ class MenuItemEntity extends Equatable {
     this.active,
     this.category,
     this.menus = const [],
+    this.kitchenId,
   });
 
   /// Create a copyWith method to allow for easy copying with modifications
@@ -47,6 +49,7 @@ class MenuItemEntity extends Equatable {
     bool? active,
     CategoryEntity? category,
     List<MenuEntity>? menus,
+    int? kitchenId,
   }) {
     return MenuItemEntity(
       id: id ?? this.id,
@@ -56,6 +59,7 @@ class MenuItemEntity extends Equatable {
       active: active ?? this.active,
       category: category ?? this.category,
       menus: menus ?? this.menus,
+      kitchenId: kitchenId ?? this.kitchenId,
     );
   }
 
@@ -68,5 +72,6 @@ class MenuItemEntity extends Equatable {
     active,
     category,
     menus,
+    kitchenId,
   ];
 }

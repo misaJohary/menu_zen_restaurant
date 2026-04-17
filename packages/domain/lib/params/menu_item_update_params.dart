@@ -9,6 +9,7 @@ class MenuItemUpdateParams extends Equatable {
   final int? categoryId;
   final bool? active;
   final List<MenuItemTranslation>? translations;
+  final int? kitchenId;
 
   const MenuItemUpdateParams({
     required this.id,
@@ -17,6 +18,7 @@ class MenuItemUpdateParams extends Equatable {
     this.categoryId,
     this.active,
     this.translations,
+    this.kitchenId,
   });
 
   @override
@@ -27,5 +29,6 @@ class MenuItemUpdateParams extends Equatable {
     categoryId,
     active,
     translations,
+    kitchenId,
   ];
 }

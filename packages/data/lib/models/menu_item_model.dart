@@ -32,6 +32,7 @@ class MenuItemModel extends MenuItemEntity {
     required this.menus,
     required this.translations,
     this.categoryId,
+    super.kitchenId,
   }) : super(translations: translations);
 
   factory MenuItemModel.fromEntity(MenuItemEntity entity) {
@@ -49,6 +50,7 @@ class MenuItemModel extends MenuItemEntity {
             (translation) => MenuItemTranslationModel.fromEntity(translation),
           )
           .toList(),
+      kitchenId: entity.kitchenId,
     );
   }
 
@@ -72,6 +74,7 @@ class MenuItemModel extends MenuItemEntity {
     CategoryEntity? category,
     List<MenuEntity>? menus,
     int? categoryId,
+    int? kitchenId,
   }) {
     return MenuItemModel(
       id: id ?? this.id,
@@ -90,6 +93,7 @@ class MenuItemModel extends MenuItemEntity {
                 .toList()
           : this.translations,
       categoryId: categoryId ?? this.categoryId,
+      kitchenId: kitchenId ?? this.kitchenId,
     );
   }
 }
