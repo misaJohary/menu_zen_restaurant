@@ -16,6 +16,7 @@ import 'package:data/models/revenues_model.dart';
 import 'package:data/models/role_model.dart';
 import 'package:data/models/table_model.dart';
 import 'package:data/models/token.dart';
+import 'package:data/models/kitchen_model.dart';
 import 'package:data/models/top_menu_item_model.dart';
 import 'package:data/models/user_model.dart';
 
@@ -164,6 +165,36 @@ abstract class RestClient {
 
   @PATCH('/tables/{id}')
   Future<TableModel> updateTables(@Path() int id, @Body() TableModel params);
+
+  @GET('/kitchens')
+  Future<List<KitchenModel>> getKitchens();
+
+  @GET('/kitchens/{kitchen_id}')
+  Future<KitchenModel> getKitchen(@Path('kitchen_id') int kitchenId);
+
+  @POST('/kitchens')
+  Future<KitchenModel> createKitchen(@Body() KitchenModel params);
+
+  @PATCH('/kitchens/{kitchen_id}')
+  Future<KitchenModel> updateKitchen(
+    @Path('kitchen_id') int kitchenId,
+    @Body() KitchenModel params,
+  );
+
+  @DELETE('/kitchens/{kitchen_id}')
+  Future<void> deleteKitchen(@Path('kitchen_id') int kitchenId);
+
+  @POST('/kitchens/{kitchen_id}/users/{user_id}')
+  Future<void> assignCookToKitchen(
+    @Path('kitchen_id') int kitchenId,
+    @Path('user_id') int userId,
+  );
+
+  @DELETE('/kitchens/{kitchen_id}/users/{user_id}')
+  Future<void> removeCookFromKitchen(
+    @Path('kitchen_id') int kitchenId,
+    @Path('user_id') int userId,
+  );
 
   @GET('/languages')
   Future<List<LanguageModel>> getLanguages();
