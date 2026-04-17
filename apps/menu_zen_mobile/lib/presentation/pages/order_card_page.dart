@@ -132,17 +132,32 @@ class _OrderCardPageState extends State<OrderCardPage> {
         appBar: AppBar(
           backgroundColor: Colors.white,
           elevation: 0,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            color: primaryColor,
-            onPressed: () => context.pop(),
-          ),
-          title: const Text(
-            'Confirmation',
-            style: TextStyle(
-              color: primaryColor,
-              fontWeight: FontWeight.bold,
-            ),
+          automaticallyImplyLeading: false,
+          title: BlocBuilder<OrderMenuItemBloc, OrderMenuItemState>(
+            builder: (context, menuState) {
+              final count = menuState.orderedItems.length;
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Articles commandés',
+                    style: TextStyle(
+                      color: primaryColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                    ),
+                  ),
+                  Text(
+                    '$count plat${count > 1 ? 's' : ''}',
+                    style: TextStyle(
+                      color: Colors.grey.shade500,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              );
+            },
           ),
         ),
         body: BlocBuilder<OrderMenuItemBloc, OrderMenuItemState>(
@@ -182,40 +197,6 @@ class _OrderCardPageState extends State<OrderCardPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // ── Items header ──────────────────────────────
-                        Row(
-                          children: [
-                            const Text(
-                              'ARTICLES COMMANDÉS',
-                              style: TextStyle(
-                                fontSize: 11,
-                                fontWeight: FontWeight.w700,
-                                letterSpacing: 1,
-                                color: Colors.black54,
-                              ),
-                            ),
-                            const Spacer(),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 10,
-                                vertical: 4,
-                              ),
-                              decoration: BoxDecoration(
-                                color: Colors.grey.shade200,
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: Text(
-                                '${ordered.length} PLATS',
-                                style: const TextStyle(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 12),
-
                         // ── Item cards ────────────────────────────────
                         ...ordered.asMap().entries.map((entry) {
                           final index = entry.key;
@@ -567,40 +548,6 @@ class _SummarySection extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-}
-
-class _SummaryRow extends StatelessWidget {
-  final String label;
-  final String value;
-
-  const _SummaryRow({required this.label, required this.value});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        children: [
-          Text(
-            label,
-            style: const TextStyle(
-              fontSize: 12,
-              letterSpacing: 0.5,
-              color: Colors.black54,
-            ),
-          ),
-          const Spacer(),
-          Text(
-            value,
-            style: const TextStyle(
-              fontWeight: FontWeight.w600,
-              fontSize: 14,
-            ),
-          ),
-        ],
-      ),
     );
   }
 }
