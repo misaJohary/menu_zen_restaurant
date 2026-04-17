@@ -1,7 +1,8 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:menu_zen_restaurant/features/presentations/controllers/main_controller.dart';
 
 import '../../../core/constants/constants.dart';
+import '../../../core/navigation/app_router.gr.dart';
 import 'logo.dart';
 import 'nav_links.dart';
 
@@ -12,43 +13,33 @@ class MainNavigationPannelWidget extends StatelessWidget {
   const MainNavigationPannelWidget({
     super.key,
     required this.currentRoute,
-    required this.controller,
     required this.onHidePressed,
   });
 
   final String currentRoute;
-  final MainController controller;
   final VoidCallback onHidePressed;
-
-  Future<void> _confirmLogout(BuildContext context) async {
-    final bool? shouldLogout = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Confirmer la déconnexion'),
-        content: const Text('Voulez-vous vraiment vous déconnecter ?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Annuler'),
-          ),
-          ElevatedButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Se déconnecter'),
-          ),
-        ],
-      ),
-    );
-
-    if (shouldLogout == true) {
-      controller.logout();
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
         final role = state.userRestaurant?.user.role;
+        final user = state.userRestaurant?.user;
+
+        final fullName =
+            user?.fullName ??
+            '${user?.firstname ?? ''} ${user?.lastname ?? ''}'.trim();
+        final displayName =
+            fullName.isNotEmpty ? fullName : (user?.username ?? '');
+        final initials = displayName.isNotEmpty
+            ? displayName
+                  .split(' ')
+                  .map((n) => n[0])
+                  .take(2)
+                  .join()
+                  .toUpperCase()
+            : '?';
+
         return Container(
           width: 280,
           color: Colors.white,
@@ -66,35 +57,101 @@ class MainNavigationPannelWidget extends StatelessWidget {
               ...navLinks(currentRoute, role),
               const Spacer(),
               Padding(
-                padding: EdgeInsets.all(kspacing * 3),
-                child: ElevatedButton.icon(
-                  onPressed: () async {
-                    await _confirmLogout(context);
-                  },
-                  icon: const Icon(Icons.logout, color: Colors.white),
-                  label: const Text(
-                    'DÉCONNEXION',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 1.1,
-                    ),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: primaryColor,
-                    minimumSize: const Size(double.infinity, 50),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    elevation: 0,
-                  ),
+                padding: EdgeInsets.symmetric(
+                  horizontal: kspacing * 3,
+                  vertical: kspacing * 3,
+                ),
+                child: _UserProfileTile(
+                  initials: initials,
+                  displayName: displayName,
+                  onTap: () => context.router.push(const ProfileRoute()),
                 ),
               ),
-              const SizedBox(height: kspacing * 2),
             ],
           ),
         );
       },
+    );
+  }
+}
+
+class _UserProfileTile extends StatefulWidget {
+  const _UserProfileTile({
+    required this.initials,
+    required this.displayName,
+    required this.onTap,
+  });
+
+  final String initials;
+  final String displayName;
+  final VoidCallback onTap;
+
+  @override
+  State<_UserProfileTile> createState() => _UserProfileTileState();
+}
+
+class _UserProfileTileState extends State<_UserProfileTile> {
+  bool _isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: widget.onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: EdgeInsets.symmetric(
+            horizontal: kspacing * 2,
+            vertical: kspacing * 2,
+          ),
+          decoration: BoxDecoration(
+            color: _isHovered
+                ? primaryColor.withValues(alpha: 0.08)
+                : Colors.transparent,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: LinearGradient(
+                    colors: [primaryColor, primaryColor.withValues(alpha: 0.7)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                ),
+                child: Center(
+                  child: Text(
+                    widget.initials,
+                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(width: kspacing * 2),
+              Expanded(
+                child: Text(
+                  widget.displayName,
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: grey,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              Icon(Icons.chevron_right, size: 18, color: grey),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
