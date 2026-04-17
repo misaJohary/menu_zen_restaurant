@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../core/constants/constants.dart';
 import '../../core/models/app_notification.dart';
 import '../bloc/notifications/notification_cubit.dart';
 
@@ -26,11 +27,11 @@ class _NotificationsPageState extends State<NotificationsPage> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        leading: const BackButton(color: Colors.black87),
+        automaticallyImplyLeading: false,
         title: const Text(
           'Notifications',
           style: TextStyle(
-            color: Colors.black87,
+            color: primaryColor,
             fontWeight: FontWeight.bold,
             fontSize: 18,
           ),
