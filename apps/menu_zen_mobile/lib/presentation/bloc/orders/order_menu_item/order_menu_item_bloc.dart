@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'package:domain/entities/category_entity.dart';
 import 'package:domain/entities/menu_item_entity.dart';
 import 'package:domain/entities/order_entity.dart';
 import 'package:domain/entities/order_menu_item.dart';
@@ -268,6 +269,7 @@ class OrderMenuItemBloc
         _SimpleTranslation(name: event.name, languageCode: 'fr'),
       ],
       price: event.price,
+      category: event.category,
       menus: const [],
     );
 
@@ -287,6 +289,7 @@ class OrderMenuItemBloc
     );
     emit(state.copyWith(
       customAddStatus: BlocStatus.loaded,
+      orderMenuItems: [...state.orderMenuItems, customItem],
       orderedItems: [...state.orderedItems, customItem],
     ));
   }

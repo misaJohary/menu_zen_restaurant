@@ -74,11 +74,12 @@ class OrderMenuItemOffered extends OrderMenuItemEvent {
 
 /// Add a custom item (name + price) typed by the user directly.
 class OrderMenuItemCustomAdded extends OrderMenuItemEvent {
-  const OrderMenuItemCustomAdded(this.name, this.price);
+  const OrderMenuItemCustomAdded(this.name, this.price, {this.category});
   final String name;
   final double price;
+  final CategoryEntity? category;
   @override
-  List<Object?> get props => [name, price];
+  List<Object?> get props => [name, price, category];
 }
 
 /// Increment quantity of an item directly in orderedItems (not in catalog).
