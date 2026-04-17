@@ -15,6 +15,7 @@ import 'package:dio/dio.dart' as _i361;
 import 'package:domain/repositories/auth_repository.dart' as _i427;
 import 'package:domain/repositories/categories_repository.dart' as _i485;
 import 'package:domain/repositories/image_repository.dart' as _i500;
+import 'package:domain/repositories/kitchen_repository.dart' as _i242;
 import 'package:domain/repositories/languages_repository.dart' as _i40;
 import 'package:domain/repositories/menu_item_repository.dart' as _i981;
 import 'package:domain/repositories/menus_repository.dart' as _i44;
@@ -29,6 +30,8 @@ import 'package:shared_preferences/shared_preferences.dart' as _i460;
 import '../../features/presentations/managers/auths/auth_bloc.dart' as _i788;
 import '../../features/presentations/managers/categories/categories_bloc.dart'
     as _i562;
+import '../../features/presentations/managers/kitchens/kitchens_bloc.dart'
+    as _i345;
 import '../../features/presentations/managers/languages/languages_bloc.dart'
     as _i288;
 import '../../features/presentations/managers/menu_item/menu_item_bloc.dart'
@@ -97,6 +100,9 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i288.LanguagesBloc(
         languagesRepository: gh<_i40.LanguagesRepository>(),
       ),
+    );
+    gh.factory<_i345.KitchensBloc>(
+      () => _i345.KitchensBloc(gh<_i242.KitchenRepository>()),
     );
     gh.factory<_i98.PhotonException>(
       () => _i98.PhotonException(gh<String>(), gh<int>()),

@@ -5,6 +5,7 @@ import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:menu_zen_restaurant/features/presentations/controllers/menu_item_controller.dart';
 import 'package:menu_zen_restaurant/features/presentations/managers/categories/categories_bloc.dart';
+import 'package:menu_zen_restaurant/features/presentations/managers/kitchens/kitchens_bloc.dart';
 import 'package:menu_zen_restaurant/features/presentations/managers/menu_item/menu_item_bloc.dart';
 import 'package:menu_zen_restaurant/features/presentations/managers/menus/menus_bloc.dart';
 import 'package:menu_zen_restaurant/features/presentations/widgets/add_item_widget.dart';
@@ -34,6 +35,9 @@ class _AddMenuItemPageState extends State<AddMenuItemPage> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       controller.initEdit();
       _patchNonMultilingual();
+      if (context.read<KitchensBloc>().state.kitchens.isEmpty) {
+        context.read<KitchensBloc>().add(const KitchensFetched());
+      }
     });
   }
 
@@ -45,6 +49,7 @@ class _AddMenuItemPageState extends State<AddMenuItemPage> {
     void patchWithReferences() {
       final categoriesState = context.read<CategoriesBloc>().state;
       final menusState = context.read<MenusBloc>().state;
+      final kitchensState = context.read<KitchensBloc>().state;
 
       final categoryId = currentModel.category?.id;
       final resolvedCategory = categoryId != null
@@ -63,10 +68,16 @@ class _AddMenuItemPageState extends State<AddMenuItemPage> {
           .where((m) => desiredMenuIds.contains(m.id))
           .toList();
 
+      final kitchenId = currentModel.kitchenId;
+      final resolvedKitchen = kitchenId != null
+          ? kitchensState.kitchens.where((k) => k.id == kitchenId).firstOrNull
+          : null;
+
       formState.patchValue({
         'price': currentModel.price.toString(),
         'category': resolvedCategory,
         'menus': resolvedMenus.isNotEmpty ? resolvedMenus : currentModel.menus,
+        if (resolvedKitchen != null) 'kitchen': resolvedKitchen,
       });
     }
 
@@ -76,10 +87,13 @@ class _AddMenuItemPageState extends State<AddMenuItemPage> {
         .categories
         .isNotEmpty;
     final menusLoaded = context.read<MenusBloc>().state.menus.isNotEmpty;
+    final kitchensLoaded =
+        context.read<KitchensBloc>().state.kitchens.isNotEmpty;
     if (!categoriesLoaded) {
       context.read<CategoriesBloc>().add(CategoriesFetched());
     }
     if (!menusLoaded) context.read<MenusBloc>().add(MenusFetched());
+    if (!kitchensLoaded) context.read<KitchensBloc>().add(const KitchensFetched());
 
     patchWithReferences();
     WidgetsBinding.instance.addPostFrameCallback((_) => patchWithReferences());
@@ -187,6 +201,29 @@ class _AddMenuItemPageState extends State<AddMenuItemPage> {
                             ),
                           )
                           .toList(),
+                    );
+                  },
+                ),
+                BlocBuilder<KitchensBloc, KitchensState>(
+                  builder: (context, state) {
+                    return FormBuilderDropdown(
+                      name: 'kitchen',
+                      hint: const Text('Aucune cuisine assignée'),
+                      decoration: const InputDecoration(
+                        label: Text('Cuisine'),
+                      ),
+                      items: [
+                        const DropdownMenuItem(
+                          value: null,
+                          child: Text('Aucune'),
+                        ),
+                        ...state.kitchens.map(
+                          (k) => DropdownMenuItem(
+                            value: k,
+                            child: Text(k.name),
+                          ),
+                        ),
+                      ],
                     );
                   },
                 ),

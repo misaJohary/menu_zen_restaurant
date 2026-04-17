@@ -10,6 +10,7 @@ import 'package:data/http/rest_client.dart' as _i533;
 import 'package:data/repositories/auth_repository_impl.dart' as _i819;
 import 'package:data/repositories/categories_repository_impl.dart' as _i453;
 import 'package:data/repositories/image_repository_impl.dart' as _i489;
+import 'package:data/repositories/kitchen_repository_impl.dart' as _i111;
 import 'package:data/repositories/languages_repository_impl.dart' as _i486;
 import 'package:data/repositories/menu_item_repository_impl.dart' as _i261;
 import 'package:data/repositories/menus_repository_impl.dart' as _i237;
@@ -22,6 +23,7 @@ import 'package:dio/dio.dart' as _i361;
 import 'package:domain/repositories/auth_repository.dart' as _i427;
 import 'package:domain/repositories/categories_repository.dart' as _i485;
 import 'package:domain/repositories/image_repository.dart' as _i500;
+import 'package:domain/repositories/kitchen_repository.dart' as _i242;
 import 'package:domain/repositories/languages_repository.dart' as _i40;
 import 'package:domain/repositories/menu_item_repository.dart' as _i981;
 import 'package:domain/repositories/menus_repository.dart' as _i44;
@@ -67,5 +69,7 @@ class DataPackageModule extends _i526.MicroPackageModule {
               rest: gh<_i533.RestClient>(),
               db: gh<_i1071.DbService>(),
             ));
+    gh.lazySingleton<_i242.KitchenRepository>(
+        () => _i111.KitchenRepositoryImpl(rest: gh<_i533.RestClient>()));
   }
 }

@@ -5,6 +5,7 @@ import 'package:menu_zen_restaurant/features/presentations/managers/orders/order
 import 'package:menu_zen_restaurant/features/presentations/managers/orders/orders_bloc.dart';
 import 'package:menu_zen_restaurant/features/presentations/managers/stats/stats_bloc.dart';
 import 'package:menu_zen_restaurant/features/presentations/managers/tables/table_bloc.dart';
+import 'package:menu_zen_restaurant/features/presentations/managers/kitchens/kitchens_bloc.dart';
 import 'package:menu_zen_restaurant/features/presentations/managers/users/users_bloc.dart';
 
 import 'core/injection/dependencies_injection.dart';
@@ -37,6 +38,7 @@ class App extends StatelessWidget {
         BlocProvider(create: (context) => getIt<LanguagesBloc>()),
         BlocProvider(create: (context) => getIt<StatsBloc>()),
         BlocProvider(create: (context) => getIt<UsersBloc>()),
+        BlocProvider(create: (context) => getIt<KitchensBloc>()),
       ],
       child: MaterialApp.router(
         title: 'Menu Zen',
