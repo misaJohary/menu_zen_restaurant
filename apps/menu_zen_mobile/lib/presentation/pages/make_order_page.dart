@@ -3,7 +3,6 @@ import 'package:domain/entities/order_entity.dart';
 import 'package:domain/entities/order_menu_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../core/constants/constants.dart';
 import '../../core/enums/bloc_status.dart';
@@ -91,7 +90,11 @@ class _MakeOrderPageState extends State<MakeOrderPage> {
     final price = double.tryParse(_customPriceController.text.trim());
     if (name.isEmpty || price == null) return;
     context.read<OrderMenuItemBloc>().add(
-          OrderMenuItemCustomAdded(name, price),
+          OrderMenuItemCustomAdded(
+            name,
+            price,
+            category: _selectedCategory,
+          ),
         );
     _customNameController.clear();
     _customPriceController.clear();
@@ -100,10 +103,6 @@ class _MakeOrderPageState extends State<MakeOrderPage> {
 
   @override
   Widget build(BuildContext context) {
-    final authState = context.watch<AuthBloc>().state;
-    final restaurantName =
-        authState.userRestaurant?.restaurant.name ?? 'Menu Zen';
-
     return PopScope(
       onPopInvokedWithResult: (_, __) {
         if (widget.order != null) {
@@ -115,72 +114,14 @@ class _MakeOrderPageState extends State<MakeOrderPage> {
         appBar: AppBar(
           backgroundColor: Colors.white,
           elevation: 0,
-          leading: widget.order != null
-              ? IconButton(
-                  icon: const Icon(Icons.arrow_back),
-                  color: primaryColor,
-                  onPressed: () => context.pop(),
-                )
-              : Builder(
-                  builder: (ctx) => IconButton(
-                    icon: const Icon(Icons.menu),
-                    color: primaryColor,
-                    onPressed: () => Scaffold.of(ctx).openDrawer(),
-                  ),
-                ),
-          title: Text(
-            restaurantName,
-            style: const TextStyle(
+          title: const Text(
+            'Click Menu Zen',
+            style: TextStyle(
               color: primaryColor,
               fontWeight: FontWeight.bold,
               fontSize: 18,
             ),
           ),
-          actions: [
-            if (widget.order == null)
-              BlocBuilder<OrderMenuItemBloc, OrderMenuItemState>(
-                builder: (context, state) {
-                  final count = state.orderedItems.fold(
-                    0,
-                    (sum, i) => sum + i.quantity,
-                  );
-                  return Stack(
-                    children: [
-                      IconButton(
-                        icon: const Icon(
-                          Icons.shopping_cart_outlined,
-                          color: primaryColor,
-                        ),
-                        onPressed: () => context.go('/main/panier'),
-                      ),
-                      if (count > 0)
-                        Positioned(
-                          right: 6,
-                          top: 6,
-                          child: Container(
-                            width: 16,
-                            height: 16,
-                            decoration: const BoxDecoration(
-                              color: primaryColor,
-                              shape: BoxShape.circle,
-                            ),
-                            child: Center(
-                              child: Text(
-                                '$count',
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 9,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                    ],
-                  );
-                },
-              ),
-          ],
         ),
         body: BlocListener<OrderMenuItemBloc, OrderMenuItemState>(
           listenWhen: (prev, curr) =>
