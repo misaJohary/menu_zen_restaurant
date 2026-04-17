@@ -20,6 +20,10 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   late final PageController _pageController;
 
+  /// True while a tab-tap animation is in progress.
+  /// Prevents [_onPageChanged] from calling [goBranch] for intermediate pages.
+  bool _programmaticChange = false;
+
   static const _pages = [
     MakeOrderPage(),
     OrderCardPage(),
@@ -42,11 +46,16 @@ class _MainPageState extends State<MainPage> {
     final newIndex = widget.shell.currentIndex;
     if (oldWidget.shell.currentIndex != newIndex &&
         _pageController.page?.round() != newIndex) {
-      _pageController.animateToPage(
-        newIndex,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
+      _programmaticChange = true;
+      _pageController
+          .animateToPage(
+            newIndex,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+          )
+          .then((_) {
+        if (mounted) _programmaticChange = false;
+      });
     }
   }
 
@@ -57,6 +66,8 @@ class _MainPageState extends State<MainPage> {
   }
 
   void _onPageChanged(int index) {
+    // Ignore intermediate pages triggered by a programmatic animateToPage.
+    if (_programmaticChange) return;
     widget.shell.goBranch(
       index,
       initialLocation: index == widget.shell.currentIndex,
@@ -64,14 +75,10 @@ class _MainPageState extends State<MainPage> {
   }
 
   void _onTabTap(int index) {
+    // Only update the shell; didUpdateWidget will drive the PageController.
     widget.shell.goBranch(
       index,
       initialLocation: index == widget.shell.currentIndex,
-    );
-    _pageController.animateToPage(
-      index,
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
     );
   }
 
