@@ -187,4 +187,10 @@ List<Widget> navLinks(String currentRoute, Role? role) => [
     isSelected: currentRoute == UsersRoute.name,
     destination: const UsersRoute(),
   ),
+  NavLink(
+    label: 'Cuisines',
+    iconPath: 'assets/icons/food.svg', // Fallback for Kitchens
+    isSelected: currentRoute == KitchensRoute.name,
+    destination: const KitchensRoute(),
+  ),
 ];
