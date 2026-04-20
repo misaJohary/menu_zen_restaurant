@@ -1,12 +1,13 @@
 import 'dart:io' as io;
 
-import 'package:auto_route/annotations.dart';
+import 'package:auto_route/auto_route.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../core/constants/constants.dart';
 import '../../../core/enums/bloc_status.dart';
+import '../../../core/navigation/app_router.gr.dart';
 import 'package:domain/entities/restaurant_entity.dart';
 import 'package:domain/entities/user_entity.dart';
 import 'package:domain/entities/user_restaurant_entity.dart';
@@ -34,49 +35,79 @@ class _ProfileScreenState extends State<ProfileScreen> {
     context.read<AuthBloc>().add(AuthUserGot());
   }
 
+  Future<void> _confirmLogout(BuildContext context) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Confirmer la déconnexion'),
+        content: const Text('Êtes-vous sûr de vouloir vous déconnecter ?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: const Text('Annuler'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(dialogContext, true),
+            child: const Text('Déconnexion'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed == true && context.mounted) {
+      context.read<AuthBloc>().add(AuthLoggedOut());
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Profil'), elevation: 0),
       body: SafeArea(
-        child: BlocBuilder<AuthBloc, AuthState>(
-          builder: (context, state) {
-            if (state.status == BlocStatus.loading) {
-              return const Center(child: CircularProgressIndicator());
+        child: BlocListener<AuthBloc, AuthState>(
+          listenWhen: (previous, current) =>
+              previous.authStatus != current.authStatus,
+          listener: (context, state) {
+            if (state.authStatus == AuthStatus.unauthenticated) {
+              context.router.replaceAll([const LoginRoute()]);
             }
-            if (state.userRestaurant == null) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.person_off, size: 64, color: grey),
-                    SizedBox(height: kspacing * 2),
-                    Text(
-                      'Aucune information utilisateur disponible',
-                      style: Theme.of(
-                        context,
-                      ).textTheme.bodyLarge?.copyWith(color: grey),
-                    ),
-                    SizedBox(height: kspacing * 3),
-                    ElevatedButton.icon(
-                      onPressed: () {
-                        context.read<AuthBloc>().add(AuthUserGot());
-                      },
-                      icon: const Icon(Icons.refresh),
-                      label: const Text('Rafraîchir'),
-                    ),
-                  ],
-                ),
-              );
-            }
-            final userRestaurant = state.userRestaurant!;
-            return _ProfileView(
-              userRestaurant: userRestaurant,
-              onLogout: () {
-                context.read<AuthBloc>().add(AuthLoggedOut());
-              },
-            );
           },
+          child: BlocBuilder<AuthBloc, AuthState>(
+            builder: (context, state) {
+              if (state.status == BlocStatus.loading) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              if (state.userRestaurant == null) {
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.person_off, size: 64, color: grey),
+                      SizedBox(height: kspacing * 2),
+                      Text(
+                        'Aucune information utilisateur disponible',
+                        style: Theme.of(
+                          context,
+                        ).textTheme.bodyLarge?.copyWith(color: grey),
+                      ),
+                      SizedBox(height: kspacing * 3),
+                      ElevatedButton.icon(
+                        onPressed: () {
+                          context.read<AuthBloc>().add(AuthUserGot());
+                        },
+                        icon: const Icon(Icons.refresh),
+                        label: const Text('Rafraîchir'),
+                      ),
+                    ],
+                  ),
+                );
+              }
+              final userRestaurant = state.userRestaurant!;
+              return _ProfileView(
+                userRestaurant: userRestaurant,
+                onLogout: () => _confirmLogout(context),
+              );
+            },
+          ),
         ),
       ),
     );
