@@ -36,6 +36,9 @@ Failure handleDioException(DioException e) {
           'Mauvaise requête',
     );
   }
+  if (e.response?.statusCode == 401) {
+    return ServerFailure(message: 'Identifiants incorrects');
+  }
   if (e.response?.statusCode == 403) {
     return ServerFailure(
       message: 'Accès refusé. Vous n\'avez pas les permissions nécessaires.',

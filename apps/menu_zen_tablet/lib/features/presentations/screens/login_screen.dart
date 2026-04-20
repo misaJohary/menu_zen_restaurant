@@ -331,13 +331,6 @@ class _LoginScreenState extends State<LoginScreen>
                     listener: (context, state) {
                       if (state.authStatus == AuthStatus.authenticated) {
                         context.read<AuthBloc>().add(AuthUserGot());
-                      } else if (state.authStatus ==
-                          AuthStatus.unauthenticated) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('Login failed, please try again'),
-                          ),
-                        );
                       }
                     },
                   ),
@@ -640,7 +633,28 @@ class _LoginScreenState extends State<LoginScreen>
                                         ),
                                       ),
                                     ),
-                                    SizedBox(height: 32),
+                                    SizedBox(height: 16),
+                                    BlocBuilder<AuthBloc, AuthState>(
+                                      buildWhen: (prev, curr) =>
+                                          prev.status != curr.status ||
+                                          prev.errorMessage !=
+                                              curr.errorMessage,
+                                      builder: (context, state) {
+                                        if (state.status !=
+                                                BlocStatus.failed ||
+                                            state.errorMessage == null) {
+                                          return SizedBox.shrink();
+                                        }
+                                        return Padding(
+                                          padding: const EdgeInsets.only(
+                                            bottom: 16,
+                                          ),
+                                          child: _LoginErrorBanner(
+                                            message: state.errorMessage!,
+                                          ),
+                                        );
+                                      },
+                                    ),
                                     BlocBuilder<AuthBloc, AuthState>(
                                       builder: (context, state) {
                                         if (state.status ==
@@ -769,6 +783,41 @@ class _LoginScreenState extends State<LoginScreen>
                     ),
                   ],
                 ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _LoginErrorBanner extends StatelessWidget {
+  const _LoginErrorBanner({required this.message});
+
+  final String message;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      decoration: BoxDecoration(
+        color: Colors.red.shade50,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: Colors.red.shade200),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(Icons.error_outline, color: Colors.red.shade600, size: 20),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              message,
+              style: TextStyle(
+                color: Colors.red.shade700,
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
               ),
             ),
           ),

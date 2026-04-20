@@ -25,7 +25,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     AuthLoggedIn event,
     Emitter<AuthState> emit,
   ) async {
-    emit(state.copyWith(status: BlocStatus.loading));
+    emit(state.copyWith(status: BlocStatus.loading, clearError: true));
     final res = await repo.login(event.loginParams);
     if (res.isSuccess) {
       emit(state.copyWith(authStatus: AuthStatus.authenticated));
@@ -33,6 +33,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(state.copyWith(
         status: BlocStatus.failed,
         authStatus: AuthStatus.unauthenticated,
+        errorMessage:
+            res.getError?.message ?? 'Identifiants incorrects',
       ));
     }
   }

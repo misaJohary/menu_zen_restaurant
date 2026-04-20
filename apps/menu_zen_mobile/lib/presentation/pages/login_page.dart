@@ -146,12 +146,6 @@ class _LoginPageState extends State<LoginPage> {
             listener: (context, state) {
               if (state.authStatus == AuthStatus.authenticated) {
                 context.read<AuthBloc>().add(const AuthUserGot());
-              } else if (state.authStatus == AuthStatus.unauthenticated) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Identifiants incorrects'),
-                  ),
-                );
               }
             },
           ),
@@ -245,7 +239,26 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                               validator: FormBuilderValidators.required(),
                             ),
-                            const SizedBox(height: 28),
+                            const SizedBox(height: 20),
+
+                            // Inline error banner
+                            BlocBuilder<AuthBloc, AuthState>(
+                              buildWhen: (prev, curr) =>
+                                  prev.status != curr.status ||
+                                  prev.errorMessage != curr.errorMessage,
+                              builder: (context, state) {
+                                if (state.status != BlocStatus.failed ||
+                                    state.errorMessage == null) {
+                                  return const SizedBox.shrink();
+                                }
+                                return Padding(
+                                  padding: const EdgeInsets.only(bottom: 12),
+                                  child: _ErrorBanner(
+                                    message: state.errorMessage!,
+                                  ),
+                                );
+                              },
+                            ),
 
                             // Submit button
                             BlocBuilder<AuthBloc, AuthState>(
@@ -398,6 +411,40 @@ class _FieldLabel extends StatelessWidget {
         fontWeight: FontWeight.w700,
         letterSpacing: 1.2,
         color: Colors.black87,
+      ),
+    );
+  }
+}
+
+class _ErrorBanner extends StatelessWidget {
+  final String message;
+  const _ErrorBanner({required this.message});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      decoration: BoxDecoration(
+        color: Colors.red.shade50,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: Colors.red.shade200),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(Icons.error_outline, color: Colors.red.shade600, size: 20),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              message,
+              style: TextStyle(
+                color: Colors.red.shade700,
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
