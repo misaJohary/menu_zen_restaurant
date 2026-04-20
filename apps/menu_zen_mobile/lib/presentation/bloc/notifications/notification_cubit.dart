@@ -34,17 +34,34 @@ class NotificationCubit extends Cubit<NotificationState> {
     emit(NotificationLoaded(list));
   }
 
-  Future<void> addNotification(String message) async {
-    final current =
-        state is NotificationLoaded ? (state as NotificationLoaded).notifications : <AppNotification>[];
+  Future<void> addNotification(
+    String message, {
+    int? orderId,
+  }) async {
+    final current = state is NotificationLoaded
+        ? (state as NotificationLoaded).notifications
+        : <AppNotification>[];
 
     final notification = AppNotification(
       id: DateTime.now().microsecondsSinceEpoch.toString(),
       message: message,
       timestamp: DateTime.now(),
+      orderId: orderId,
     );
 
-    final updated = [notification, ...current].take(_maxNotifications).toList();
+    final updated =
+        [notification, ...current].take(_maxNotifications).toList();
+    await _save(updated);
+    emit(NotificationLoaded(updated));
+  }
+
+  Future<void> markRead(String id) async {
+    if (state is! NotificationLoaded) return;
+    final current = (state as NotificationLoaded).notifications;
+    final updated = current
+        .map((n) =>
+            n.id == id ? n.copyWith(isRead: true, isSeen: true) : n)
+        .toList();
     await _save(updated);
     emit(NotificationLoaded(updated));
   }
@@ -52,7 +69,21 @@ class NotificationCubit extends Cubit<NotificationState> {
   Future<void> markAllRead() async {
     if (state is! NotificationLoaded) return;
     final current = (state as NotificationLoaded).notifications;
-    final updated = current.map((n) => n.copyWith(isRead: true)).toList();
+    final updated = current
+        .map((n) => n.copyWith(isRead: true, isSeen: true))
+        .toList();
+    await _save(updated);
+    emit(NotificationLoaded(updated));
+  }
+
+  /// Marks every notification as seen so the badge resets to zero.
+  /// Does not mark tiles as read — individual items keep their
+  /// "new" highlight until the user taps them.
+  Future<void> markAllSeen() async {
+    if (state is! NotificationLoaded) return;
+    final current = (state as NotificationLoaded).notifications;
+    if (current.every((n) => n.isSeen)) return;
+    final updated = current.map((n) => n.copyWith(isSeen: true)).toList();
     await _save(updated);
     emit(NotificationLoaded(updated));
   }

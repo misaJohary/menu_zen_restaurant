@@ -1,4 +1,5 @@
 import 'package:domain/entities/order_entity.dart';
+import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:data/services/db_service.dart';
@@ -12,8 +13,17 @@ import '../../presentation/pages/notifications_page.dart';
 import '../../presentation/pages/profile_page.dart';
 import '../injection/dependencies_injection.dart';
 
-GoRouter buildRouter() {
-  return GoRouter(
+/// Global router instance — used by the local-notification tap handler
+/// to navigate without a BuildContext.
+GoRouter? appRouter;
+
+/// Route stored during cold-start (app was killed) before the router exists.
+/// Drained by the router's [redirect] on the first navigation.
+String? pendingNotificationRoute;
+
+GoRouter buildRouter({required GlobalKey<NavigatorState> navigatorKey}) {
+  appRouter = GoRouter(
+    navigatorKey: navigatorKey,
     initialLocation: '/main/commande',
     redirect: (context, state) async {
       final db = getIt<DbService>();
@@ -89,4 +99,5 @@ GoRouter buildRouter() {
       ),
     ],
   );
+  return appRouter!;
 }

@@ -11,7 +11,7 @@
     <application
         android:label="menu_zen_mobile"
         android:name=".Application"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_notification_restaurant">
         <activity
             android:name=".MainActivity"
             android:exported="true"

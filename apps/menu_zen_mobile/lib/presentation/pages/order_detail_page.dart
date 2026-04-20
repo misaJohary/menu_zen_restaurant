@@ -6,16 +6,40 @@ import '../../core/constants/constants.dart';
 import '../../core/enums/bloc_status.dart';
 import '../bloc/orders/orders_bloc.dart';
 
-class OrderDetailPage extends StatelessWidget {
+class OrderDetailPage extends StatefulWidget {
   final int orderId;
   const OrderDetailPage({required this.orderId, super.key});
+
+  @override
+  State<OrderDetailPage> createState() => _OrderDetailPageState();
+}
+
+class _OrderDetailPageState extends State<OrderDetailPage> {
+  @override
+  void initState() {
+    super.initState();
+    // Fetch orders if the bloc is empty — happens on cold-start deep-link
+    // when OrdersPage has never been visited.
+    final bloc = context.read<OrdersBloc>();
+    if (bloc.state.orders.isEmpty &&
+        bloc.state.status != BlocStatus.loading) {
+      bloc.add(const OrderFetched());
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<OrdersBloc, OrdersState>(
       builder: (context, state) {
+        if (state.status == BlocStatus.loading && state.orders.isEmpty) {
+          return Scaffold(
+            appBar: AppBar(title: const Text('Commande')),
+            body: const Center(child: CircularProgressIndicator()),
+          );
+        }
+
         final order = state.orders.cast<OrderEntity?>().firstWhere(
-              (o) => o?.id == orderId,
+              (o) => o?.id == widget.orderId,
               orElse: () => null,
             );
 

@@ -1,19 +1,12 @@
 import 'dart:async';
 
-import 'package:audioplayers/audioplayers.dart';
-import 'package:data/models/order_model.dart';
 import 'package:domain/entities/order_entity.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:go_router/go_router.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../core/constants/constants.dart';
 import '../../core/enums/bloc_status.dart';
-import '../bloc/notifications/notification_cubit.dart';
 import '../bloc/orders/orders_bloc.dart';
 
 class OrdersPage extends StatefulWidget {
@@ -23,133 +16,22 @@ class OrdersPage extends StatefulWidget {
   State<OrdersPage> createState() => _OrdersPageState();
 }
 
-class _OrdersPageState extends State<OrdersPage> with WidgetsBindingObserver {
+class _OrdersPageState extends State<OrdersPage> {
   bool _showDone = false;
   final _searchController = TextEditingController();
   String _search = '';
 
-  late final AudioPlayer _audioPlayer;
-  StreamSubscription<Map<String, dynamic>?>? _bgServiceSub;
-
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addObserver(this);
-    _audioPlayer = AudioPlayer();
     context.read<OrdersBloc>().add(const OrderFetched());
     _searchController.addListener(
       () => setState(() => _search = _searchController.text.trim()),
     );
-    _setForegroundFlag(true);
-    _listenToBackgroundService();
-    _requestNotificationPermission();
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    _setForegroundFlag(state == AppLifecycleState.resumed);
-  }
-
-  void _setForegroundFlag(bool value) {
-    SharedPreferencesAsync().setBool('app_foreground', value);
-  }
-
-  void _requestNotificationPermission() {
-    FlutterLocalNotificationsPlugin()
-        .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
-        ?.requestNotificationsPermission();
-  }
-
-  void _listenToBackgroundService() {
-    _bgServiceSub = FlutterBackgroundService()
-        .on('ws_event')
-        .cast<Map<String, dynamic>?>()
-        .listen((data) {
-      if (data == null || !mounted) return;
-      _handleWsMessage(data);
-    });
-  }
-
-  void _handleWsMessage(Map<String, dynamic> data) {
-    switch (data['type'] as String?) {
-      case 'update_order_menu_item_status':
-        _onItemStatusUpdate(data);
-      case 'update_order_status':
-        _onOrderStatusUpdate(data);
-      case 'new_order':
-        context.read<OrdersBloc>().add(const OrderFetched());
-      case 'order_deleted':
-        context.read<OrdersBloc>().add(
-              OrderRemoteDeleted(data['order_id'] as int),
-            );
-      case 'order_updated':
-        final model = OrderModel.fromJson(
-          data['order'] as Map<String, dynamic>,
-        );
-        context.read<OrdersBloc>().add(OrderRemoteUpdated(model));
-    }
-  }
-
-  void _onItemStatusUpdate(Map<String, dynamic> data) {
-    final orderId = data['order_id'] as int;
-    final itemId = data['item_id'] as int;
-    final newStatus = data['new_status'] as String;
-
-    context.read<OrdersBloc>().add(
-          OrderMenuItemStatusRemoteUpdated(orderId, itemId, newStatus),
-        );
-
-    if (newStatus == 'ready') {
-      _playAndVibrate();
-      _addItemReadyNotification(orderId, itemId);
-    }
-  }
-
-  void _onOrderStatusUpdate(Map<String, dynamic> data) {
-    context.read<OrdersBloc>().add(
-          OrderStatusRemoteUpdated(
-            data['order_id'] as int,
-            OrderStatus.fromString(data['new_status'] as String),
-          ),
-        );
-    _playAndVibrate();
-  }
-
-  void _addItemReadyNotification(int orderId, int itemId) {
-    final orders = context.read<OrdersBloc>().state.orders;
-    final order = orders.cast<OrderEntity?>().firstWhere(
-          (o) => o?.id == orderId,
-          orElse: () => null,
-        );
-    if (order == null) return;
-
-    final item = order.orderMenuItems.cast<dynamic>().firstWhere(
-          (i) => i.id == itemId,
-          orElse: () => null,
-        );
-    final itemName = (item != null &&
-            item.menuItem.translations.isNotEmpty == true)
-        ? (item.menuItem.translations.first.name as String)
-        : 'Un article';
-    final tableName =
-        order.rTable?.name ?? 'Table ${order.restaurantTableId}';
-
-    context.read<NotificationCubit>().addNotification(
-          '$itemName est prêt à servir pour $tableName',
-        );
-  }
-
-  void _playAndVibrate() {
-    _audioPlayer.play(AssetSource('sounds/new_order.ogg'));
-    HapticFeedback.mediumImpact();
   }
 
   @override
   void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    _bgServiceSub?.cancel();
-    _audioPlayer.dispose();
     _searchController.dispose();
     super.dispose();
   }

@@ -10,5 +10,8 @@ class NotificationLoaded extends NotificationState {
 
   final List<AppNotification> notifications;
 
-  int get unreadCount => notifications.where((n) => !n.isRead).length;
+  /// Counts notifications the user has not yet seen (badge count).
+  /// A notification is "seen" once the user opens the notifications page,
+  /// even if individual tiles remain marked as unread.
+  int get unreadCount => notifications.where((n) => !n.isSeen).length;
 }

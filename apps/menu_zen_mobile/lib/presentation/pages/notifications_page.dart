@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../core/constants/constants.dart';
 import '../../core/models/app_notification.dart';
@@ -16,8 +17,9 @@ class _NotificationsPageState extends State<NotificationsPage> {
   @override
   void initState() {
     super.initState();
-    // Mark all as read when the screen opens.
-    context.read<NotificationCubit>().markAllRead();
+    // Reset the badge as soon as the user opens the page (Facebook-style):
+    // individual tiles stay highlighted until tapped, but the counter clears.
+    context.read<NotificationCubit>().markAllSeen();
   }
 
   @override
@@ -39,7 +41,8 @@ class _NotificationsPageState extends State<NotificationsPage> {
         actions: [
           BlocBuilder<NotificationCubit, NotificationState>(
             builder: (context, state) {
-              if (state is! NotificationLoaded || state.notifications.isEmpty) {
+              if (state is! NotificationLoaded ||
+                  state.notifications.isEmpty) {
                 return const SizedBox.shrink();
               }
               return TextButton(
@@ -87,8 +90,18 @@ class _NotificationsPageState extends State<NotificationsPage> {
             padding: const EdgeInsets.symmetric(vertical: 8),
             itemCount: notifications.length,
             separatorBuilder: (_, __) => const Divider(height: 1),
-            itemBuilder: (context, i) =>
-                _NotificationTile(notification: notifications[i]),
+            itemBuilder: (context, i) => _NotificationTile(
+              notification: notifications[i],
+              onTap: () {
+                final notif = notifications[i];
+                context
+                    .read<NotificationCubit>()
+                    .markRead(notif.id);
+                if (notif.orderId != null) {
+                  context.push('/order-detail/${notif.orderId}');
+                }
+              },
+            ),
           );
         },
       ),
@@ -98,76 +111,90 @@ class _NotificationsPageState extends State<NotificationsPage> {
 
 class _NotificationTile extends StatelessWidget {
   final AppNotification notification;
-  const _NotificationTile({required this.notification});
+  final VoidCallback onTap;
+
+  const _NotificationTile({
+    required this.notification,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
     final isNew = !notification.isRead;
 
-    return Container(
-      color: isNew ? const Color(0xFFFFF8E1) : Colors.white,
-      child: IntrinsicHeight(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            if (isNew)
-              Container(width: 4, color: Colors.amber.shade600)
-            else
-              const SizedBox(width: 4),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 14,
-                ),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      margin: const EdgeInsets.only(top: 2, right: 12),
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: isNew
-                            ? Colors.amber.withValues(alpha: 0.15)
-                            : Colors.grey.shade100,
-                        shape: BoxShape.circle,
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        color: isNew ? const Color(0xFFE8F5F5) : Colors.white,
+        child: IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              if (isNew)
+                Container(width: 4, color: primaryColor)
+              else
+                const SizedBox(width: 4),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 14,
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        margin: const EdgeInsets.only(top: 2, right: 12),
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: isNew
+                              ? primaryColor.withValues(alpha: 0.12)
+                              : Colors.grey.shade100,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.restaurant,
+                          size: 18,
+                          color: isNew ? primaryColor : Colors.grey,
+                        ),
                       ),
-                      child: Icon(
-                        Icons.restaurant,
-                        size: 18,
-                        color: isNew ? Colors.amber.shade700 : Colors.grey,
-                      ),
-                    ),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            notification.message,
-                            style: TextStyle(
-                              fontWeight: isNew
-                                  ? FontWeight.w600
-                                  : FontWeight.normal,
-                              color: Colors.black87,
-                              fontSize: 14,
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              notification.message,
+                              style: TextStyle(
+                                fontWeight: isNew
+                                    ? FontWeight.w600
+                                    : FontWeight.normal,
+                                color: Colors.black87,
+                                fontSize: 14,
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            _relativeTime(notification.timestamp),
-                            style: TextStyle(
-                              color: Colors.grey.shade500,
-                              fontSize: 12,
+                            const SizedBox(height: 4),
+                            Text(
+                              _relativeTime(notification.timestamp),
+                              style: TextStyle(
+                                color: Colors.grey.shade500,
+                                fontSize: 12,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                      if (notification.orderId != null)
+                        Icon(
+                          Icons.chevron_right,
+                          color: Colors.grey.shade400,
+                          size: 18,
+                        ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

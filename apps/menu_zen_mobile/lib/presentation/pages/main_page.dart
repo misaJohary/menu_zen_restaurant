@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../bloc/notifications/notification_cubit.dart';
 import '../bloc/orders/order_menu_item/order_menu_item_bloc.dart';
 import 'make_order_page.dart';
 import 'notifications_page.dart';
@@ -91,53 +92,67 @@ class _MainPageState extends State<MainPage> {
         children:
             _pages.map((page) => _KeepAlivePage(child: page)).toList(),
       ),
-      bottomNavigationBar:
-          BlocBuilder<OrderMenuItemBloc, OrderMenuItemState>(
-        builder: (context, state) {
-          final cartCount = state.orderedItems.fold(
-            0,
-            (sum, i) => sum + i.quantity,
-          );
-          return BottomNavigationBar(
-            currentIndex: widget.shell.currentIndex,
-            onTap: _onTabTap,
-            showSelectedLabels: false,
-            showUnselectedLabels: false,
-            items: [
-              const BottomNavigationBarItem(
-                icon: Icon(Icons.add_outlined),
-                activeIcon: Icon(Icons.add),
-                label: '',
-              ),
-              BottomNavigationBarItem(
-                icon: Badge(
-                  isLabelVisible: cartCount > 0,
-                  label: Text('$cartCount'),
-                  child: const Icon(Icons.shopping_cart_outlined),
-                ),
-                activeIcon: Badge(
-                  isLabelVisible: cartCount > 0,
-                  label: Text('$cartCount'),
-                  child: const Icon(Icons.shopping_cart),
-                ),
-                label: '',
-              ),
-              const BottomNavigationBarItem(
-                icon: Icon(Icons.receipt_long_outlined),
-                activeIcon: Icon(Icons.receipt_long),
-                label: '',
-              ),
-              const BottomNavigationBarItem(
-                icon: Icon(Icons.notifications_outlined),
-                activeIcon: Icon(Icons.notifications),
-                label: '',
-              ),
-              const BottomNavigationBarItem(
-                icon: Icon(Icons.person_outlined),
-                activeIcon: Icon(Icons.person),
-                label: '',
-              ),
-            ],
+      bottomNavigationBar: BlocBuilder<NotificationCubit, NotificationState>(
+        builder: (context, notifState) {
+          final unreadCount = notifState is NotificationLoaded
+              ? notifState.unreadCount
+              : 0;
+          return BlocBuilder<OrderMenuItemBloc, OrderMenuItemState>(
+            builder: (context, state) {
+              final cartCount = state.orderedItems.fold(
+                0,
+                (sum, i) => sum + i.quantity,
+              );
+              return BottomNavigationBar(
+                currentIndex: widget.shell.currentIndex,
+                onTap: _onTabTap,
+                showSelectedLabels: false,
+                showUnselectedLabels: false,
+                items: [
+                  const BottomNavigationBarItem(
+                    icon: Icon(Icons.add_outlined),
+                    activeIcon: Icon(Icons.add),
+                    label: '',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Badge(
+                      isLabelVisible: cartCount > 0,
+                      label: Text('$cartCount'),
+                      child: const Icon(Icons.shopping_cart_outlined),
+                    ),
+                    activeIcon: Badge(
+                      isLabelVisible: cartCount > 0,
+                      label: Text('$cartCount'),
+                      child: const Icon(Icons.shopping_cart),
+                    ),
+                    label: '',
+                  ),
+                  const BottomNavigationBarItem(
+                    icon: Icon(Icons.receipt_long_outlined),
+                    activeIcon: Icon(Icons.receipt_long),
+                    label: '',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Badge(
+                      isLabelVisible: unreadCount > 0,
+                      label: Text('$unreadCount'),
+                      child: const Icon(Icons.notifications_outlined),
+                    ),
+                    activeIcon: Badge(
+                      isLabelVisible: unreadCount > 0,
+                      label: Text('$unreadCount'),
+                      child: const Icon(Icons.notifications),
+                    ),
+                    label: '',
+                  ),
+                  const BottomNavigationBarItem(
+                    icon: Icon(Icons.person_outlined),
+                    activeIcon: Icon(Icons.person),
+                    label: '',
+                  ),
+                ],
+              );
+            },
           );
         },
       ),
