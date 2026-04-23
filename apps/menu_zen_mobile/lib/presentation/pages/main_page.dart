@@ -9,6 +9,7 @@ import 'notifications_page.dart';
 import 'order_card_page.dart';
 import 'orders_page.dart';
 import 'profile_page.dart';
+import 'tables_page.dart';
 
 class MainPage extends StatefulWidget {
   final StatefulNavigationShell shell;
@@ -29,6 +30,7 @@ class _MainPageState extends State<MainPage> {
     MakeOrderPage(),
     OrderCardPage(),
     OrdersPage(),
+    TablesPage(),
     NotificationsPage(),
     ProfilePage(),
   ];
@@ -36,9 +38,7 @@ class _MainPageState extends State<MainPage> {
   @override
   void initState() {
     super.initState();
-    _pageController = PageController(
-      initialPage: widget.shell.currentIndex,
-    );
+    _pageController = PageController(initialPage: widget.shell.currentIndex);
   }
 
   @override
@@ -55,8 +55,8 @@ class _MainPageState extends State<MainPage> {
             curve: Curves.easeInOut,
           )
           .then((_) {
-        if (mounted) _programmaticChange = false;
-      });
+            if (mounted) _programmaticChange = false;
+          });
     }
   }
 
@@ -89,8 +89,7 @@ class _MainPageState extends State<MainPage> {
       body: PageView(
         controller: _pageController,
         onPageChanged: _onPageChanged,
-        children:
-            _pages.map((page) => _KeepAlivePage(child: page)).toList(),
+        children: _pages.map((page) => _KeepAlivePage(child: page)).toList(),
       ),
       bottomNavigationBar: BlocBuilder<NotificationCubit, NotificationState>(
         builder: (context, notifState) {
@@ -130,6 +129,11 @@ class _MainPageState extends State<MainPage> {
                   const BottomNavigationBarItem(
                     icon: Icon(Icons.receipt_long_outlined),
                     activeIcon: Icon(Icons.receipt_long),
+                    label: '',
+                  ),
+                  const BottomNavigationBarItem(
+                    icon: Icon(Icons.table_restaurant_outlined),
+                    activeIcon: Icon(Icons.table_restaurant),
                     label: '',
                   ),
                   BottomNavigationBarItem(

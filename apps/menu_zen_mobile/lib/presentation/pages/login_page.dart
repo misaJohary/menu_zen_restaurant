@@ -52,12 +52,14 @@ class _LoginPageState extends State<LoginPage> {
   Future<bool> _ping(String baseUrl) async {
     final uri = Uri.tryParse(baseUrl);
     if (uri == null || !uri.hasScheme || uri.host.isEmpty) return false;
-    final dio = Dio(BaseOptions(
-      baseUrl: baseUrl,
-      connectTimeout: const Duration(seconds: 3),
-      receiveTimeout: const Duration(seconds: 3),
-      validateStatus: (s) => s != null,
-    ));
+    final dio = Dio(
+      BaseOptions(
+        baseUrl: baseUrl,
+        connectTimeout: const Duration(seconds: 3),
+        receiveTimeout: const Duration(seconds: 3),
+        validateStatus: (s) => s != null,
+      ),
+    );
     try {
       final res = await dio.get('/');
       return res.statusCode != null;
@@ -99,9 +101,9 @@ class _LoginPageState extends State<LoginPage> {
     final uri = Uri.tryParse(trimmed);
     if (uri == null || !uri.hasScheme || uri.host.isEmpty) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('URL invalide')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('URL invalide')));
       return;
     }
     await BaseUrlConfig.set(trimmed);
@@ -125,10 +127,8 @@ class _LoginPageState extends State<LoginPage> {
       final username = _formKey.currentState?.fields['username']?.value;
       final password = _formKey.currentState?.fields['password']?.value;
       context.read<AuthBloc>().add(
-            AuthLoggedIn(
-              LoginParams(username: username, password: password),
-            ),
-          );
+        AuthLoggedIn(LoginParams(username: username, password: password)),
+      );
     }
   }
 
@@ -141,8 +141,7 @@ class _LoginPageState extends State<LoginPage> {
       body: MultiBlocListener(
         listeners: [
           BlocListener<AuthBloc, AuthState>(
-            listenWhen: (prev, curr) =>
-                prev.authStatus != curr.authStatus,
+            listenWhen: (prev, curr) => prev.authStatus != curr.authStatus,
             listener: (context, state) {
               if (state.authStatus == AuthStatus.authenticated) {
                 context.read<AuthBloc>().add(const AuthUserGot());
@@ -281,8 +280,10 @@ class _LoginPageState extends State<LoginPage> {
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: primaryColor,
                                     foregroundColor: Colors.white,
-                                    minimumSize:
-                                        const Size(double.infinity, 52),
+                                    minimumSize: const Size(
+                                      double.infinity,
+                                      52,
+                                    ),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(14),
                                     ),
@@ -318,9 +319,7 @@ class _LoginPageState extends State<LoginPage> {
                           height: 6,
                           margin: const EdgeInsets.symmetric(horizontal: 3),
                           decoration: BoxDecoration(
-                            color: i == 2
-                                ? primaryColor
-                                : Colors.grey.shade300,
+                            color: i == 2 ? primaryColor : Colors.grey.shade300,
                             shape: BoxShape.circle,
                           ),
                         ),
@@ -392,8 +391,7 @@ class _LoginPageState extends State<LoginPage> {
         borderRadius: BorderRadius.circular(12),
         borderSide: const BorderSide(color: Colors.red, width: 1),
       ),
-      contentPadding:
-          const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
     );
   }
 }
@@ -484,8 +482,8 @@ class _ConnectionIndicator extends StatelessWidget {
           isChecking
               ? 'Vérification...'
               : (isConnected ?? false)
-                  ? 'Connecté'
-                  : 'Déconnecté',
+              ? 'Connecté'
+              : 'Déconnecté',
           style: const TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.w500,

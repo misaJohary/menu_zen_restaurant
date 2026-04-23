@@ -39,7 +39,8 @@ class ProfilePage extends StatelessWidget {
             final initials = user != null && user.username.isNotEmpty
                 ? user.username[0].toUpperCase()
                 : '?';
-            final displayName = user?.fullName ??
+            final displayName =
+                user?.fullName ??
                 [user?.firstname, user?.lastname]
                     .where((s) => s != null && s.isNotEmpty)
                     .join(' ')
@@ -183,11 +184,7 @@ class _InfoCard extends StatelessWidget {
           for (var i = 0; i < items.length; i++) ...[
             items[i],
             if (i < items.length - 1)
-              Divider(
-                height: 1,
-                indent: 56,
-                color: Colors.grey.shade100,
-              ),
+              Divider(height: 1, indent: 56, color: Colors.grey.shade100),
           ],
         ],
       ),

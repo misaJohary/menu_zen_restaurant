@@ -14,8 +14,8 @@ part 'notification_state.dart';
 /// Keeps the most recent [_maxNotifications] entries.
 class NotificationCubit extends Cubit<NotificationState> {
   NotificationCubit({required SharedPreferencesAsync prefs})
-      : _prefs = prefs,
-        super(NotificationInitial());
+    : _prefs = prefs,
+      super(NotificationInitial());
 
   static const _storageKey = 'app_notifications';
   static const _maxNotifications = 50;
@@ -34,10 +34,7 @@ class NotificationCubit extends Cubit<NotificationState> {
     emit(NotificationLoaded(list));
   }
 
-  Future<void> addNotification(
-    String message, {
-    int? orderId,
-  }) async {
+  Future<void> addNotification(String message, {int? orderId}) async {
     final current = state is NotificationLoaded
         ? (state as NotificationLoaded).notifications
         : <AppNotification>[];
@@ -49,8 +46,7 @@ class NotificationCubit extends Cubit<NotificationState> {
       orderId: orderId,
     );
 
-    final updated =
-        [notification, ...current].take(_maxNotifications).toList();
+    final updated = [notification, ...current].take(_maxNotifications).toList();
     await _save(updated);
     emit(NotificationLoaded(updated));
   }
@@ -59,8 +55,7 @@ class NotificationCubit extends Cubit<NotificationState> {
     if (state is! NotificationLoaded) return;
     final current = (state as NotificationLoaded).notifications;
     final updated = current
-        .map((n) =>
-            n.id == id ? n.copyWith(isRead: true, isSeen: true) : n)
+        .map((n) => n.id == id ? n.copyWith(isRead: true, isSeen: true) : n)
         .toList();
     await _save(updated);
     emit(NotificationLoaded(updated));

@@ -29,10 +29,7 @@ Future<void> configureDependencies() async {
   // Empty string so RestClient falls back to dio.options.baseUrl dynamically.
   // Updating dio.options.baseUrl (e.g. after the server-URL dialog) then takes
   // effect immediately without requiring an app restart.
-  gh.factory<String>(
-    () => '',
-    instanceName: 'BaseUrl',
-  );
+  gh.factory<String>(() => '', instanceName: 'BaseUrl');
 
   // Dio without interceptor — used as the "refresh" Dio inside RequestInterceptor
   gh.lazySingleton<Dio>(
@@ -41,19 +38,18 @@ Future<void> configureDependencies() async {
   );
 
   // Dio with auth + logging interceptors — used by RestClient
-  gh.lazySingleton<Dio>(
-    () {
-      final dio = Dio(BaseOptions(baseUrl: BaseUrlConfig.current));
-      dio.interceptors
-        ..add(LoggingInterceptors())
-        ..add(RequestInterceptor(
+  gh.lazySingleton<Dio>(() {
+    final dio = Dio(BaseOptions(baseUrl: BaseUrlConfig.current));
+    dio.interceptors
+      ..add(LoggingInterceptors())
+      ..add(
+        RequestInterceptor(
           dio: getIt<Dio>(instanceName: 'noInterceptor'),
           db: getIt<DbService>(),
-        ));
-      return dio;
-    },
-    instanceName: 'withInterceptor',
-  );
+        ),
+      );
+    return dio;
+  }, instanceName: 'withInterceptor');
 
   // Data package: registers DbService, RestClient, all repositories
   await DataPackageModule().init(gh);
@@ -70,9 +66,7 @@ Future<void> configureDependencies() async {
 
   // App-level BLoC factories (new instance per BlocProvider)
   gh.factory<AuthBloc>(() => AuthBloc(getIt<AuthRepository>()));
-  gh.factory<OrdersBloc>(
-    () => OrdersBloc(repo: getIt<OrdersRepository>()),
-  );
+  gh.factory<OrdersBloc>(() => OrdersBloc(repo: getIt<OrdersRepository>()));
   gh.factory<OrderMenuItemBloc>(
     () => OrderMenuItemBloc(
       repo: getIt<OrdersRepository>(),

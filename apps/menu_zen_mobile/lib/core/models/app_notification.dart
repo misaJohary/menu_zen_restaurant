@@ -36,20 +36,20 @@ class AppNotification {
   final int? orderId;
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'message': message,
-        'timestamp': timestamp.toIso8601String(),
-        'isRead': isRead,
-        'isSeen': isSeen,
-        if (orderId != null) 'orderId': orderId,
-      };
+    'id': id,
+    'message': message,
+    'timestamp': timestamp.toIso8601String(),
+    'isRead': isRead,
+    'isSeen': isSeen,
+    if (orderId != null) 'orderId': orderId,
+  };
 
   AppNotification copyWith({bool? isRead, bool? isSeen}) => AppNotification(
-        id: id,
-        message: message,
-        timestamp: timestamp,
-        isRead: isRead ?? this.isRead,
-        isSeen: isSeen ?? this.isSeen,
-        orderId: orderId,
-      );
+    id: id,
+    message: message,
+    timestamp: timestamp,
+    isRead: isRead ?? this.isRead,
+    isSeen: isSeen ?? this.isSeen,
+    orderId: orderId,
+  );
 }

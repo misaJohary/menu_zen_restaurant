@@ -44,9 +44,9 @@ class _OrderCardPageState extends State<OrderCardPage> {
       return;
     }
     if (ordered.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Le panier est vide')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Le panier est vide')));
       return;
     }
 
@@ -58,27 +58,27 @@ class _OrderCardPageState extends State<OrderCardPage> {
     if (widget.order != null) {
       // Update existing order
       context.read<OrdersBloc>().add(
-            OrderUpdated(
-              widget.order!.copyWith(
-                orderMenuItems: ordered,
-                restaurantTableId: _selectedTableId!,
-                totalAmount: total.toInt(),
-              ),
-            ),
-          );
+        OrderUpdated(
+          widget.order!.copyWith(
+            orderMenuItems: ordered,
+            restaurantTableId: _selectedTableId!,
+            totalAmount: total.toInt(),
+          ),
+        ),
+      );
     } else {
       // Create new order
       context.read<OrdersBloc>().add(
-            OrderCreated(
-              OrderEntity(
-                orderStatus: OrderStatus.created,
-                paymentStatus: PaymentStatus.unpaid,
-                orderMenuItems: ordered,
-                restaurantTableId: _selectedTableId!,
-                totalAmount: total.toInt(),
-              ),
-            ),
-          );
+        OrderCreated(
+          OrderEntity(
+            orderStatus: OrderStatus.created,
+            paymentStatus: PaymentStatus.unpaid,
+            orderMenuItems: ordered,
+            restaurantTableId: _selectedTableId!,
+            totalAmount: total.toInt(),
+          ),
+        ),
+      );
     }
   }
 
@@ -89,38 +89,32 @@ class _OrderCardPageState extends State<OrderCardPage> {
     return MultiBlocListener(
       listeners: [
         BlocListener<OrdersBloc, OrdersState>(
-          listenWhen: (prev, curr) =>
-              prev.createStatus != curr.createStatus,
+          listenWhen: (prev, curr) => prev.createStatus != curr.createStatus,
           listener: (context, state) {
             if (state.createStatus == BlocStatus.loaded) {
               context.read<OrderMenuItemBloc>().add(
-                    const OrderMenuItemCleared(),
-                  );
+                const OrderMenuItemCleared(),
+              );
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Commande envoyée !')),
               );
               context.go('/main/commandes');
             } else if (state.createStatus == BlocStatus.failed) {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Erreur lors de l\'envoi'),
-                ),
+                const SnackBar(content: Text('Erreur lors de l\'envoi')),
               );
             }
           },
         ),
         BlocListener<OrdersBloc, OrdersState>(
-          listenWhen: (prev, curr) =>
-              prev.updateStatus != curr.updateStatus,
+          listenWhen: (prev, curr) => prev.updateStatus != curr.updateStatus,
           listener: (context, state) {
             if (state.updateStatus == BlocStatus.loaded && isEditMode) {
               context.read<OrderMenuItemBloc>().add(
-                    const OrderMenuItemCleared(),
-                  );
+                const OrderMenuItemCleared(),
+              );
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Commande mise à jour !'),
-                ),
+                const SnackBar(content: Text('Commande mise à jour !')),
               );
               context.pop();
             }
@@ -206,15 +200,11 @@ class _OrderCardPageState extends State<OrderCardPage> {
                             orderedIndex: index,
                             onRemove: () {
                               context.read<OrderMenuItemBloc>().add(
-                                    OrderMenuItemRemoved(item),
-                                  );
+                                OrderMenuItemRemoved(item),
+                              );
                             },
                             onLongPress: () {
-                              showMenuItemOptionsSheet(
-                                context,
-                                item,
-                                index,
-                              );
+                              showMenuItemOptionsSheet(context, item, index);
                             },
                           );
                         }),
@@ -242,14 +232,15 @@ class _OrderCardPageState extends State<OrderCardPage> {
                 // ── Action buttons ────────────────────────────────────
                 _ActionButtons(
                   isEditMode: isEditMode,
-                  isLoading: context.watch<OrdersBloc>().state.createStatus ==
+                  isLoading:
+                      context.watch<OrdersBloc>().state.createStatus ==
                           BlocStatus.loading ||
                       context.watch<OrdersBloc>().state.updateStatus ==
                           BlocStatus.loading,
                   onVider: () {
-                    context
-                        .read<OrderMenuItemBloc>()
-                        .add(const OrderMenuItemCleared());
+                    context.read<OrderMenuItemBloc>().add(
+                      const OrderMenuItemCleared(),
+                    );
                   },
                   onConfirm: () => _confirm(ordered),
                 ),
@@ -279,10 +270,9 @@ class _OrderItemCard extends StatelessWidget {
 
   bool get isOffered => item.unitPrice == 0;
 
-  String get name =>
-      item.menuItem.translations.isNotEmpty
-          ? item.menuItem.translations.first.name
-          : 'Article';
+  String get name => item.menuItem.translations.isNotEmpty
+      ? item.menuItem.translations.first.name
+      : 'Article';
 
   @override
   Widget build(BuildContext context) {
@@ -344,10 +334,7 @@ class _OrderItemCard extends StatelessWidget {
             if (item.notes != null && item.notes!.isNotEmpty) ...[
               const SizedBox(height: 6),
               Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 8,
-                  vertical: 3,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
                   color: Colors.grey.shade200,
                   borderRadius: BorderRadius.circular(20),
@@ -386,8 +373,7 @@ class _OrderItemCard extends StatelessWidget {
                 _QtyButton(
                   icon: Icons.remove,
                   onTap: () {
-                    final state =
-                        context.read<OrderMenuItemBloc>().state;
+                    final state = context.read<OrderMenuItemBloc>().state;
                     final idx = state.orderMenuItems.indexWhere(
                       (i) =>
                           i.menuItem.id == item.menuItem.id &&
@@ -395,12 +381,12 @@ class _OrderItemCard extends StatelessWidget {
                     );
                     if (idx >= 0) {
                       context.read<OrderMenuItemBloc>().add(
-                            OrderMenuItemDecremented(idx),
-                          );
+                        OrderMenuItemDecremented(idx),
+                      );
                     } else {
                       context.read<OrderMenuItemBloc>().add(
-                            OrderMenuItemOrderedDecremented(orderedIndex),
-                          );
+                        OrderMenuItemOrderedDecremented(orderedIndex),
+                      );
                     }
                   },
                 ),
@@ -420,8 +406,7 @@ class _OrderItemCard extends StatelessWidget {
                   icon: Icons.add,
                   filled: true,
                   onTap: () {
-                    final state =
-                        context.read<OrderMenuItemBloc>().state;
+                    final state = context.read<OrderMenuItemBloc>().state;
                     final idx = state.orderMenuItems.indexWhere(
                       (i) =>
                           i.menuItem.id == item.menuItem.id &&
@@ -429,12 +414,12 @@ class _OrderItemCard extends StatelessWidget {
                     );
                     if (idx >= 0) {
                       context.read<OrderMenuItemBloc>().add(
-                            OrderMenuItemIncremented(idx),
-                          );
+                        OrderMenuItemIncremented(idx),
+                      );
                     } else {
                       context.read<OrderMenuItemBloc>().add(
-                            OrderMenuItemOrderedIncremented(orderedIndex),
-                          );
+                        OrderMenuItemOrderedIncremented(orderedIndex),
+                      );
                     }
                   },
                 ),
@@ -520,9 +505,7 @@ class _SummarySection extends StatelessWidget {
           decoration: BoxDecoration(
             color: primaryColor.withValues(alpha: 0.08),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: primaryColor.withValues(alpha: 0.2),
-            ),
+            border: Border.all(color: primaryColor.withValues(alpha: 0.2)),
           ),
           child: Row(
             children: [
@@ -558,10 +541,7 @@ class _TableSelector extends StatelessWidget {
   final int? selectedTableId;
   final ValueChanged<int> onSelect;
 
-  const _TableSelector({
-    required this.selectedTableId,
-    required this.onSelect,
-  });
+  const _TableSelector({required this.selectedTableId, required this.onSelect});
 
   @override
   Widget build(BuildContext context) {
@@ -619,9 +599,7 @@ class _TableSelector extends StatelessWidget {
                         table.name,
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          color: isSelected
-                              ? Colors.white
-                              : Colors.black87,
+                          color: isSelected ? Colors.white : Colors.black87,
                           fontSize: 13,
                         ),
                       ),

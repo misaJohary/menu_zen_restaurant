@@ -113,7 +113,6 @@ class _OrdersPageState extends State<OrdersPage> {
       ),
     );
   }
-
 }
 
 // ─── Search Bar ──────────────────────────────────────────────────────────────
@@ -132,11 +131,7 @@ class _SearchBar extends StatelessWidget {
         decoration: InputDecoration(
           hintText: 'Rechercher une table...',
           hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 14),
-          prefixIcon: Icon(
-            Icons.search,
-            color: Colors.grey.shade400,
-            size: 20,
-          ),
+          prefixIcon: Icon(Icons.search, color: Colors.grey.shade400, size: 20),
           filled: true,
           fillColor: Colors.grey.shade100,
           border: OutlineInputBorder(
@@ -166,10 +161,12 @@ class _TabToggle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final inProgressCount =
-        orders.where((o) => o.orderStatus != OrderStatus.served).length;
-    final doneCount =
-        orders.where((o) => o.orderStatus == OrderStatus.served).length;
+    final inProgressCount = orders
+        .where((o) => o.orderStatus != OrderStatus.served)
+        .length;
+    final doneCount = orders
+        .where((o) => o.orderStatus == OrderStatus.served)
+        .length;
 
     return Container(
       color: Colors.white,
@@ -283,10 +280,7 @@ class _OrderCardState extends State<_OrderCard> {
   @override
   void initState() {
     super.initState();
-    _timer = Timer.periodic(
-      const Duration(minutes: 1),
-      (_) => setState(() {}),
-    );
+    _timer = Timer.periodic(const Duration(minutes: 1), (_) => setState(() {}));
   }
 
   @override
@@ -313,146 +307,147 @@ class _OrderCardState extends State<_OrderCard> {
     return GestureDetector(
       onTap: () => context.push('/order-detail/${order.id}'),
       child: Container(
-      margin: const EdgeInsets.symmetric(vertical: 5),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(14),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Top row: time + ready badge
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  time,
-                  style: TextStyle(
-                    color: Colors.grey.shade500,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
+        margin: const EdgeInsets.symmetric(vertical: 5),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(14),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Top row: time + ready badge
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    time,
+                    style: TextStyle(
+                      color: Colors.grey.shade500,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
-                ),
-                if (totalItems > 0)
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 3,
-                    ),
-                    decoration: BoxDecoration(
-                      color: allReady
-                          ? primaryColor.withValues(alpha: 0.12)
-                          : Colors.orange.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text(
-                      '$readyItems/$totalItems prêts',
-                      style: TextStyle(
-                        color: allReady ? primaryColor : Colors.orange.shade700,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 11,
+                  if (totalItems > 0)
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 3,
+                      ),
+                      decoration: BoxDecoration(
+                        color: allReady
+                            ? primaryColor.withValues(alpha: 0.12)
+                            : Colors.orange.withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        '$readyItems/$totalItems prêts',
+                        style: TextStyle(
+                          color: allReady
+                              ? primaryColor
+                              : Colors.orange.shade700,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 11,
+                        ),
                       ),
                     ),
-                  ),
-              ],
-            ),
-            const SizedBox(height: 8),
-
-            // Table name
-            Text(
-              tableName,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
+                ],
               ),
-            ),
-            const SizedBox(height: 12),
+              const SizedBox(height: 8),
 
-            // Action buttons
-            Row(
-              children: [
-                // Eye icon
-                _IconBtn(
-                  icon: Icons.visibility_outlined,
-                  onTap: () =>
-                      context.push('/order-detail/${order.id}'),
+              // Table name
+              Text(
+                tableName,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
                 ),
-                const SizedBox(width: 8),
+              ),
+              const SizedBox(height: 12),
 
-                // Pencil icon (only for in-progress)
-                if (!widget.showDone) ...[
+              // Action buttons
+              Row(
+                children: [
+                  // Eye icon
                   _IconBtn(
-                    icon: Icons.edit_outlined,
-                    onTap: () =>
-                        context.push('/make-order-edit', extra: order),
+                    icon: Icons.visibility_outlined,
+                    onTap: () => context.push('/order-detail/${order.id}'),
                   ),
                   const SizedBox(width: 8),
-                ],
 
-                // TERMINER button (only for in-progress)
-                if (!widget.showDone)
-                  Expanded(
-                    child: BlocBuilder<OrdersBloc, OrdersState>(
-                      builder: (context, state) {
-                        final isLoading =
-                            state.updateStatus == BlocStatus.loading;
-                        return SizedBox(
-                          height: 38,
-                          child: ElevatedButton(
-                            onPressed: isLoading
-                                ? null
-                                : () => context.read<OrdersBloc>().add(
+                  // Pencil icon (only for in-progress)
+                  if (!widget.showDone) ...[
+                    _IconBtn(
+                      icon: Icons.edit_outlined,
+                      onTap: () =>
+                          context.push('/make-order-edit', extra: order),
+                    ),
+                    const SizedBox(width: 8),
+                  ],
+
+                  // TERMINER button (only for in-progress)
+                  if (!widget.showDone)
+                    Expanded(
+                      child: BlocBuilder<OrdersBloc, OrdersState>(
+                        builder: (context, state) {
+                          final isLoading =
+                              state.updateStatus == BlocStatus.loading;
+                          return SizedBox(
+                            height: 38,
+                            child: ElevatedButton(
+                              onPressed: isLoading
+                                  ? null
+                                  : () => context.read<OrdersBloc>().add(
                                       OrderStatusUpdated(
                                         order.id!,
                                         OrderStatus.served,
                                       ),
                                     ),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: primaryColor,
-                              foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: primaryColor,
+                                foregroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                elevation: 0,
+                                padding: EdgeInsets.zero,
                               ),
-                              elevation: 0,
-                              padding: EdgeInsets.zero,
+                              child: isLoading
+                                  ? const SizedBox(
+                                      width: 16,
+                                      height: 16,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        color: Colors.white,
+                                      ),
+                                    )
+                                  : const Text(
+                                      'TERMINER',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 13,
+                                        letterSpacing: 0.5,
+                                      ),
+                                    ),
                             ),
-                            child: isLoading
-                                ? const SizedBox(
-                                    width: 16,
-                                    height: 16,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      color: Colors.white,
-                                    ),
-                                  )
-                                : const Text(
-                                    'TERMINER',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 13,
-                                      letterSpacing: 0.5,
-                                    ),
-                                  ),
-                          ),
-                        );
-                      },
+                          );
+                        },
+                      ),
                     ),
-                  ),
-              ],
-            ),
-          ],
+                ],
+              ),
+            ],
+          ),
         ),
-      ),
       ),
     );
   }

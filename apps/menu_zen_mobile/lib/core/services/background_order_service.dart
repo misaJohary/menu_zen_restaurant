@@ -35,16 +35,19 @@ Future<void> initBackgroundService() async {
   final notifPlugin = FlutterLocalNotificationsPlugin();
   await notifPlugin.initialize(
     const InitializationSettings(
-      android: AndroidInitializationSettings('@mipmap/ic_notification_restaurant'),
+      android: AndroidInitializationSettings(
+        '@mipmap/ic_notification_restaurant',
+      ),
       iOS: DarwinInitializationSettings(),
     ),
     onDidReceiveNotificationResponse: _onNotificationTap,
     onDidReceiveBackgroundNotificationResponse: _onNotificationTapBackground,
   );
 
-  final androidPlugin =
-      notifPlugin.resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin>();
+  final androidPlugin = notifPlugin
+      .resolvePlatformSpecificImplementation<
+        AndroidFlutterLocalNotificationsPlugin
+      >();
 
   await androidPlugin?.createNotificationChannel(
     const AndroidNotificationChannel(
@@ -71,8 +74,7 @@ Future<void> initBackgroundService() async {
   await androidPlugin?.requestNotificationsPermission();
 
   // Handle notification that launched the app from a terminated state.
-  final launchDetails =
-      await notifPlugin.getNotificationAppLaunchDetails();
+  final launchDetails = await notifPlugin.getNotificationAppLaunchDetails();
   if (launchDetails?.didNotificationLaunchApp == true) {
     final payload = launchDetails!.notificationResponse?.payload;
     _navigateToPayload(payload);
@@ -117,7 +119,9 @@ void _onServiceStart(ServiceInstance service) async {
   final notifPlugin = FlutterLocalNotificationsPlugin();
   await notifPlugin.initialize(
     const InitializationSettings(
-      android: AndroidInitializationSettings('@mipmap/ic_notification_restaurant'),
+      android: AndroidInitializationSettings(
+        '@mipmap/ic_notification_restaurant',
+      ),
       iOS: DarwinInitializationSettings(),
     ),
   );
@@ -147,8 +151,7 @@ void _onServiceStart(ServiceInstance service) async {
         return;
       }
 
-      final userRest =
-          json.decode(userRestJson) as Map<String, dynamic>;
+      final userRest = json.decode(userRestJson) as Map<String, dynamic>;
       final restaurantId =
           (userRest['restaurant'] as Map<String, dynamic>)['id'];
       if (restaurantId == null) {
@@ -169,8 +172,7 @@ void _onServiceStart(ServiceInstance service) async {
 
       wsSub = channel!.stream.listen(
         (raw) async {
-          final data =
-              json.decode(raw as String) as Map<String, dynamic>;
+          final data = json.decode(raw as String) as Map<String, dynamic>;
           await _handleEvent(service, notifPlugin, data);
         },
         onError: (_) async {

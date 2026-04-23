@@ -7,10 +7,7 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 /// across the app. Call [connect] once (from OrdersPage.initState) and
 /// [dispose] when the widget is torn down.
 class RestaurantWebSocketService {
-  RestaurantWebSocketService({
-    required this.dbService,
-    required this.baseUrl,
-  });
+  RestaurantWebSocketService({required this.dbService, required this.baseUrl});
 
   final DbService dbService;
   final String baseUrl;

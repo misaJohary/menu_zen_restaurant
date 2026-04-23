@@ -11,6 +11,7 @@ import '../../presentation/pages/orders_page.dart';
 import '../../presentation/pages/order_detail_page.dart';
 import '../../presentation/pages/notifications_page.dart';
 import '../../presentation/pages/profile_page.dart';
+import '../../presentation/pages/tables_page.dart';
 import '../injection/dependencies_injection.dart';
 
 /// Global router instance — used by the local-notification tap handler
@@ -34,10 +35,7 @@ GoRouter buildRouter({required GlobalKey<NavigatorState> navigatorKey}) {
       return null;
     },
     routes: [
-      GoRoute(
-        path: '/login',
-        builder: (context, state) => const LoginPage(),
-      ),
+      GoRoute(path: '/login', builder: (context, state) => const LoginPage()),
       StatefulShellRoute.indexedStack(
         builder: (context, state, shell) => MainPage(shell: shell),
         branches: [
@@ -62,6 +60,14 @@ GoRouter buildRouter({required GlobalKey<NavigatorState> navigatorKey}) {
               GoRoute(
                 path: '/main/commandes',
                 builder: (context, state) => const OrdersPage(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/main/tables',
+                builder: (context, state) => const TablesPage(),
               ),
             ],
           ),

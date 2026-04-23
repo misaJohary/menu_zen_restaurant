@@ -127,7 +127,7 @@ class _TablesScreenState extends State<TablesScreen> {
                                       Transform.scale(
                                         scale: .6,
                                         child: Switch(
-                                          value: table.isActive,
+                                          value: table.isActive ?? true,
                                           onChanged: (bool value) {
                                             controller.addUpdateEvent(
                                               table.copyWith(isActive: value),
@@ -138,7 +138,7 @@ class _TablesScreenState extends State<TablesScreen> {
                                       Text(
                                         'Actif',
                                         style: TextStyle(
-                                          color: table.isActive
+                                          color: (table.isActive ?? true)
                                               ? Theme.of(context).primaryColor
                                               : Colors.black54,
                                         ),

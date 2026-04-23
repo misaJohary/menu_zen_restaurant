@@ -13,13 +13,12 @@ import '../../../../core/enums/bloc_status.dart';
 part 'order_menu_item_event.dart';
 part 'order_menu_item_state.dart';
 
-class OrderMenuItemBloc
-    extends Bloc<OrderMenuItemEvent, OrderMenuItemState> {
+class OrderMenuItemBloc extends Bloc<OrderMenuItemEvent, OrderMenuItemState> {
   final OrdersRepository repo;
   final MenuItemRepository menuItemRepo;
 
   OrderMenuItemBloc({required this.repo, required this.menuItemRepo})
-      : super(const OrderMenuItemState()) {
+    : super(const OrderMenuItemState()) {
     on<OrderMenuItemFetched>(_onFetched);
     on<OrderMenuItemIncremented>(_onIncremented);
     on<OrderMenuItemDecremented>(_onDecremented);
@@ -82,10 +81,7 @@ class OrderMenuItemBloc
             ? item.copyWith(quantity: state.orderedItems[idx].quantity)
             : item;
       }).toList();
-      emit(state.copyWith(
-        orderMenuItems: items,
-        status: BlocStatus.loaded,
-      ));
+      emit(state.copyWith(orderMenuItems: items, status: BlocStatus.loaded));
     } else {
       emit(state.copyWith(status: BlocStatus.failed));
     }
@@ -101,10 +97,12 @@ class OrderMenuItemBloc
       quantity: items[event.index].quantity + 1,
     );
     items[event.index] = updated;
-    emit(state.copyWith(
-      orderMenuItems: items,
-      orderedItems: _syncOrdered(state.orderedItems, updated),
-    ));
+    emit(
+      state.copyWith(
+        orderMenuItems: items,
+        orderedItems: _syncOrdered(state.orderedItems, updated),
+      ),
+    );
   }
 
   void _onDecremented(
@@ -117,10 +115,12 @@ class OrderMenuItemBloc
     if (current.quantity <= 0) return;
     final updated = current.copyWith(quantity: current.quantity - 1);
     items[event.index] = updated;
-    emit(state.copyWith(
-      orderMenuItems: items,
-      orderedItems: _syncOrdered(state.orderedItems, updated),
-    ));
+    emit(
+      state.copyWith(
+        orderMenuItems: items,
+        orderedItems: _syncOrdered(state.orderedItems, updated),
+      ),
+    );
   }
 
   void _onRemoved(
@@ -137,10 +137,12 @@ class OrderMenuItemBloc
       items[index] = items[index].copyWith(quantity: 0);
     }
     final zeroed = event.orderMenuItem.copyWith(quantity: 0);
-    emit(state.copyWith(
-      orderMenuItems: items,
-      orderedItems: _syncOrdered(state.orderedItems, zeroed),
-    ));
+    emit(
+      state.copyWith(
+        orderMenuItems: items,
+        orderedItems: _syncOrdered(state.orderedItems, zeroed),
+      ),
+    );
   }
 
   void _onCleared(
@@ -168,10 +170,12 @@ class OrderMenuItemBloc
       );
       if (idx != -1) {
         catalog[idx] = catalog[idx].copyWith(quantity: orderItem.quantity);
-        orderedItems.add(catalog[idx].copyWith(
-          unitPrice: orderItem.unitPrice,
-          notes: orderItem.notes,
-        ));
+        orderedItems.add(
+          catalog[idx].copyWith(
+            unitPrice: orderItem.unitPrice,
+            notes: orderItem.notes,
+          ),
+        );
       } else {
         orderedItems.add(orderItem);
       }
@@ -213,9 +217,7 @@ class OrderMenuItemBloc
       unitPrice: 0.0,
       status: 'init',
     );
-    emit(state.copyWith(
-      orderedItems: [...state.orderedItems, offeredItem],
-    ));
+    emit(state.copyWith(orderedItems: [...state.orderedItems, offeredItem]));
   }
 
   void _onOrderedIncremented(
@@ -248,13 +250,8 @@ class OrderMenuItemBloc
     OrderMenuItemDuplicatedWithPrice event,
     Emitter<OrderMenuItemState> emit,
   ) {
-    final copy = event.item.copyWith(
-      quantity: 1,
-      unitPrice: event.newPrice,
-    );
-    emit(state.copyWith(
-      orderedItems: [...state.orderedItems, copy],
-    ));
+    final copy = event.item.copyWith(quantity: 1, unitPrice: event.newPrice);
+    emit(state.copyWith(orderedItems: [...state.orderedItems, copy]));
   }
 
   Future<void> _onCustomAdded(
@@ -265,9 +262,7 @@ class OrderMenuItemBloc
 
     final entity = MenuItemEntity(
       id: null,
-      translations: [
-        _SimpleTranslation(name: event.name, languageCode: 'fr'),
-      ],
+      translations: [_SimpleTranslation(name: event.name, languageCode: 'fr')],
       price: event.price,
       category: event.category,
       menus: const [],
@@ -287,19 +282,18 @@ class OrderMenuItemBloc
       unitPrice: event.price,
       status: 'init',
     );
-    emit(state.copyWith(
-      customAddStatus: BlocStatus.loaded,
-      orderMenuItems: [...state.orderMenuItems, customItem],
-      orderedItems: [...state.orderedItems, customItem],
-    ));
+    emit(
+      state.copyWith(
+        customAddStatus: BlocStatus.loaded,
+        orderMenuItems: [...state.orderMenuItems, customItem],
+        orderedItems: [...state.orderedItems, customItem],
+      ),
+    );
   }
 }
 
 class _SimpleTranslation extends MenuItemTranslation {
-  const _SimpleTranslation({
-    required super.name,
-    required super.languageCode,
-  });
+  const _SimpleTranslation({required super.name, required super.languageCode});
 
   @override
   List<Object?> get props => [name, languageCode];

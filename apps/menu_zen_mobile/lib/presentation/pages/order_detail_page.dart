@@ -21,8 +21,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
     // Fetch orders if the bloc is empty — happens on cold-start deep-link
     // when OrdersPage has never been visited.
     final bloc = context.read<OrdersBloc>();
-    if (bloc.state.orders.isEmpty &&
-        bloc.state.status != BlocStatus.loading) {
+    if (bloc.state.orders.isEmpty && bloc.state.status != BlocStatus.loading) {
       bloc.add(const OrderFetched());
     }
   }
@@ -39,9 +38,9 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
         }
 
         final order = state.orders.cast<OrderEntity?>().firstWhere(
-              (o) => o?.id == widget.orderId,
-              orElse: () => null,
-            );
+          (o) => o?.id == widget.orderId,
+          orElse: () => null,
+        );
 
         if (order == null) {
           return Scaffold(
@@ -62,11 +61,10 @@ class _OrderDetailView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tableName =
-        order.rTable?.name ?? 'Table ${order.restaurantTableId}';
+    final tableName = order.rTable?.name ?? 'Table ${order.restaurantTableId}';
     final time = order.createdAt != null
         ? '${order.createdAt!.hour.toString().padLeft(2, '0')}:'
-            '${order.createdAt!.minute.toString().padLeft(2, '0')}'
+              '${order.createdAt!.minute.toString().padLeft(2, '0')}'
         : '--:--';
 
     return Scaffold(
@@ -88,10 +86,7 @@ class _OrderDetailView extends StatelessWidget {
             ),
             Text(
               time,
-              style: TextStyle(
-                color: Colors.grey.shade500,
-                fontSize: 12,
-              ),
+              style: TextStyle(color: Colors.grey.shade500, fontSize: 12),
             ),
           ],
         ),
@@ -132,12 +127,12 @@ class _OrderDetailView extends StatelessWidget {
                       onTap: () {
                         if (item.id != null && order.id != null) {
                           context.read<OrdersBloc>().add(
-                                OrderMenuItemStatusUpdated(
-                                  order.id!,
-                                  item.id!,
-                                  isReady ? 'init' : 'ready',
-                                ),
-                              );
+                            OrderMenuItemStatusUpdated(
+                              order.id!,
+                              item.id!,
+                              isReady ? 'init' : 'ready',
+                            ),
+                          );
                         }
                       },
                       child: Container(
@@ -166,12 +161,8 @@ class _OrderDetailView extends StatelessWidget {
                       '$name × ${item.quantity}',
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
-                        color: isReady
-                            ? Colors.grey.shade400
-                            : Colors.black87,
-                        decoration: isReady
-                            ? TextDecoration.lineThrough
-                            : null,
+                        color: isReady ? Colors.grey.shade400 : Colors.black87,
+                        decoration: isReady ? TextDecoration.lineThrough : null,
                       ),
                     ),
                     subtitle: item.notes != null && item.notes!.isNotEmpty
@@ -186,9 +177,7 @@ class _OrderDetailView extends StatelessWidget {
                     trailing: Text(
                       isOffered
                           ? 'offert'
-                          : formatPriceFull(
-                              item.unitPrice * item.quantity,
-                            ),
+                          : formatPriceFull(item.unitPrice * item.quantity),
                       style: TextStyle(
                         color: isOffered
                             ? Colors.green.shade600
@@ -257,11 +246,8 @@ class _DetailSummary extends StatelessWidget {
                     onPressed: isLoading
                         ? null
                         : () => context.read<OrdersBloc>().add(
-                              OrderStatusUpdated(
-                                order.id!,
-                                OrderStatus.served,
-                              ),
-                            ),
+                            OrderStatusUpdated(order.id!, OrderStatus.served),
+                          ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: primaryColor,
                       foregroundColor: Colors.white,

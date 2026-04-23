@@ -34,8 +34,8 @@ class _MakeOrderPageState extends State<MakeOrderPage> {
     context.read<AuthBloc>().add(const AuthUserGot());
     if (widget.order != null) {
       context.read<OrderMenuItemBloc>().add(
-            OrderMenuUpdateInitiated(widget.order!),
-          );
+        OrderMenuUpdateInitiated(widget.order!),
+      );
     }
     _searchController.addListener(() {
       setState(() => _searchQuery = _searchController.text.trim());
@@ -67,9 +67,11 @@ class _MakeOrderPageState extends State<MakeOrderPage> {
     if (_searchQuery.isNotEmpty) {
       final q = _searchQuery.toLowerCase();
       return all
-          .where((item) =>
-              item.menuItem.translations.isNotEmpty &&
-              item.menuItem.translations.first.name.toLowerCase().contains(q))
+          .where(
+            (item) =>
+                item.menuItem.translations.isNotEmpty &&
+                item.menuItem.translations.first.name.toLowerCase().contains(q),
+          )
           .toList();
     }
     if (_selectedCategory == null) return all;
@@ -90,12 +92,8 @@ class _MakeOrderPageState extends State<MakeOrderPage> {
     final price = double.tryParse(_customPriceController.text.trim());
     if (name.isEmpty || price == null) return;
     context.read<OrderMenuItemBloc>().add(
-          OrderMenuItemCustomAdded(
-            name,
-            price,
-            category: _selectedCategory,
-          ),
-        );
+      OrderMenuItemCustomAdded(name, price, category: _selectedCategory),
+    );
     _customNameController.clear();
     _customPriceController.clear();
     FocusScope.of(context).unfocus();
@@ -136,124 +134,124 @@ class _MakeOrderPageState extends State<MakeOrderPage> {
             }
           },
           child: Column(
-          children: [
-            // ── Search bar ───────────────────────────────────────────────
-            Padding(
-              padding: const EdgeInsets.fromLTRB(12, 10, 12, 0),
-              child: TextField(
-                controller: _searchController,
-                decoration: InputDecoration(
-                  hintText: 'Rechercher...',
-                  hintStyle: TextStyle(
-                    color: Colors.grey.shade400,
-                    fontSize: 14,
+            children: [
+              // ── Search bar ───────────────────────────────────────────────
+              Padding(
+                padding: const EdgeInsets.fromLTRB(12, 10, 12, 0),
+                child: TextField(
+                  controller: _searchController,
+                  decoration: InputDecoration(
+                    hintText: 'Rechercher...',
+                    hintStyle: TextStyle(
+                      color: Colors.grey.shade400,
+                      fontSize: 14,
+                    ),
+                    prefixIcon: Icon(
+                      Icons.search,
+                      color: Colors.grey.shade400,
+                      size: 20,
+                    ),
+                    filled: true,
+                    fillColor: Colors.grey.shade200,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none,
+                    ),
+                    isDense: true,
+                    contentPadding: const EdgeInsets.symmetric(vertical: 12),
                   ),
-                  prefixIcon: Icon(
-                    Icons.search,
-                    color: Colors.grey.shade400,
-                    size: 20,
-                  ),
-                  filled: true,
-                  fillColor: Colors.grey.shade200,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none,
-                  ),
-                  isDense: true,
-                  contentPadding: const EdgeInsets.symmetric(vertical: 12),
                 ),
               ),
-            ),
-            const SizedBox(height: 8),
-            const Divider(height: 1, thickness: 1),
+              const SizedBox(height: 8),
+              const Divider(height: 1, thickness: 1),
 
-            // ── Body: category rail + item grid ──────────────────────────
-            Expanded(
-              child: BlocBuilder<OrderMenuItemBloc, OrderMenuItemState>(
-                builder: (context, state) {
-                  if (state.status == BlocStatus.loading &&
-                      state.orderMenuItems.isEmpty) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
+              // ── Body: category rail + item grid ──────────────────────────
+              Expanded(
+                child: BlocBuilder<OrderMenuItemBloc, OrderMenuItemState>(
+                  builder: (context, state) {
+                    if (state.status == BlocStatus.loading &&
+                        state.orderMenuItems.isEmpty) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
 
-                  final categories = _categories(state.orderMenuItems);
-                  final displayItems = _filteredItems(state.orderMenuItems);
+                    final categories = _categories(state.orderMenuItems);
+                    final displayItems = _filteredItems(state.orderMenuItems);
 
-                  return Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // ── Category rail ──────────────────────────────────
-                      if (_searchQuery.isEmpty) ...[
-                        _CategoryRail(
-                          categories: categories,
-                          selected: _selectedCategory,
-                          onSelect: (cat) =>
-                              setState(() => _selectedCategory = cat),
-                        ),
-                        const VerticalDivider(
-                          width: 1,
-                          thickness: 1,
-                          color: Color(0xFFE0E0E0),
+                    return Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // ── Category rail ──────────────────────────────────
+                        if (_searchQuery.isEmpty) ...[
+                          _CategoryRail(
+                            categories: categories,
+                            selected: _selectedCategory,
+                            onSelect: (cat) =>
+                                setState(() => _selectedCategory = cat),
+                          ),
+                          const VerticalDivider(
+                            width: 1,
+                            thickness: 1,
+                            color: Color(0xFFE0E0E0),
+                          ),
+                        ],
+
+                        // ── Item grid ──────────────────────────────────────
+                        Expanded(
+                          child: _ItemGrid(
+                            items: displayItems,
+                            orderedItems: state.orderedItems,
+                            badgeCount: (menuItemId) =>
+                                _badgeCount(state.orderedItems, menuItemId),
+                            onTap: (globalIndex) {
+                              // globalIndex relative to displayItems;
+                              // map back to state.orderMenuItems index
+                              final item = displayItems[globalIndex];
+                              final realIndex = state.orderMenuItems.indexOf(
+                                item,
+                              );
+                              if (realIndex >= 0) {
+                                context.read<OrderMenuItemBloc>().add(
+                                  OrderMenuItemIncremented(realIndex),
+                                );
+                              }
+                            },
+                            onLongPress: (displayIndex) {
+                              final item = displayItems[displayIndex];
+                              final orderedIndex = state.orderedItems
+                                  .indexWhere(
+                                    (o) =>
+                                        o.menuItem.id == item.menuItem.id &&
+                                        o.unitPrice == item.unitPrice,
+                                  );
+                              showMenuItemOptionsSheet(
+                                context,
+                                item,
+                                orderedIndex,
+                              );
+                            },
+                          ),
                         ),
                       ],
-
-                      // ── Item grid ──────────────────────────────────────
-                      Expanded(
-                        child: _ItemGrid(
-                          items: displayItems,
-                          orderedItems: state.orderedItems,
-                          badgeCount: (menuItemId) =>
-                              _badgeCount(state.orderedItems, menuItemId),
-                          onTap: (globalIndex) {
-                            // globalIndex relative to displayItems;
-                            // map back to state.orderMenuItems index
-                            final item = displayItems[globalIndex];
-                            final realIndex =
-                                state.orderMenuItems.indexOf(item);
-                            if (realIndex >= 0) {
-                              context.read<OrderMenuItemBloc>().add(
-                                    OrderMenuItemIncremented(realIndex),
-                                  );
-                            }
-                          },
-                          onLongPress: (displayIndex) {
-                            final item = displayItems[displayIndex];
-                            final orderedIndex =
-                                state.orderedItems.indexWhere(
-                              (o) =>
-                                  o.menuItem.id == item.menuItem.id &&
-                                  o.unitPrice == item.unitPrice,
-                            );
-                            showMenuItemOptionsSheet(
-                              context,
-                              item,
-                              orderedIndex,
-                            );
-                          },
-                        ),
-                      ),
-                    ],
-                  );
-                },
+                    );
+                  },
+                ),
               ),
-            ),
 
-            // ── Custom item quick-add ────────────────────────────────────
-            const Divider(height: 1, thickness: 1),
-            BlocBuilder<OrderMenuItemBloc, OrderMenuItemState>(
-              buildWhen: (prev, curr) =>
-                  prev.customAddStatus != curr.customAddStatus,
-              builder: (context, state) => _CustomItemBar(
-                nameController: _customNameController,
-                priceController: _customPriceController,
-                isLoading:
-                    state.customAddStatus == BlocStatus.loading,
-                onAdd: _addCustomItem,
+              // ── Custom item quick-add ────────────────────────────────────
+              const Divider(height: 1, thickness: 1),
+              BlocBuilder<OrderMenuItemBloc, OrderMenuItemState>(
+                buildWhen: (prev, curr) =>
+                    prev.customAddStatus != curr.customAddStatus,
+                builder: (context, state) => _CustomItemBar(
+                  nameController: _customNameController,
+                  priceController: _customPriceController,
+                  isLoading: state.customAddStatus == BlocStatus.loading,
+                  onAdd: _addCustomItem,
+                ),
               ),
-            ),
-            const Divider(height: 1, thickness: 1),
-          ],
-        ),
+              const Divider(height: 1, thickness: 1),
+            ],
+          ),
         ),
       ),
     );
@@ -261,6 +259,14 @@ class _MakeOrderPageState extends State<MakeOrderPage> {
 }
 
 // ─── Category rail ────────────────────────────────────────────────────────────
+
+final _leadingEmojiRegex = RegExp(
+  r'^[\u{1F000}-\u{1FFFF}\u{2600}-\u{27BF}\u{2300}-\u{23FF}\u{2B00}-\u{2BFF}\u{FE0F}\u{200D}\s]+',
+  unicode: true,
+);
+
+String _stripLeadingEmoji(String input) =>
+    input.replaceFirst(_leadingEmojiRegex, '').trim();
 
 class _CategoryRail extends StatelessWidget {
   final List<CategoryEntity> categories;
@@ -289,7 +295,9 @@ class _CategoryRail extends StatelessWidget {
           ...categories.map(
             (cat) => _CategoryItem(
               label: cat.translations.isNotEmpty
-                  ? cat.translations.first.name.toUpperCase()
+                  ? _stripLeadingEmoji(
+                      cat.translations.first.name,
+                    ).toUpperCase()
                   : 'CAT',
               isSelected: selected?.id == cat.id,
               onTap: () => onSelect(cat),
@@ -321,9 +329,7 @@ class _CategoryItem extends StatelessWidget {
         decoration: BoxDecoration(
           color: isSelected ? Colors.white : Colors.transparent,
           border: isSelected
-              ? const Border(
-                  left: BorderSide(color: primaryColor, width: 4),
-                )
+              ? const Border(left: BorderSide(color: primaryColor, width: 4))
               : const Border(
                   left: BorderSide(color: Colors.transparent, width: 4),
                 ),
@@ -373,10 +379,7 @@ class _ItemGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     if (items.isEmpty) {
       return const Center(
-        child: Text(
-          'Aucun article',
-          style: TextStyle(color: Colors.grey),
-        ),
+        child: Text('Aucun article', style: TextStyle(color: Colors.grey)),
       );
     }
     final rowCount = (items.length / 2).ceil();
@@ -479,10 +482,8 @@ class _MenuItemCardState extends State<_MenuItemCard>
 
     return AnimatedBuilder(
       animation: _scaleAnim,
-      builder: (context, child) => Transform.scale(
-        scale: _scaleAnim.value,
-        child: child,
-      ),
+      builder: (context, child) =>
+          Transform.scale(scale: _scaleAnim.value, child: child),
       child: GestureDetector(
         onTap: _handleTap,
         onLongPress: widget.onLongPress,
@@ -595,10 +596,7 @@ class _CustomItemBar extends StatelessWidget {
               controller: nameController,
               decoration: InputDecoration(
                 hintText: 'Nom de l\'article',
-                hintStyle: TextStyle(
-                  color: Colors.grey.shade400,
-                  fontSize: 13,
-                ),
+                hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 13),
                 filled: true,
                 fillColor: Colors.grey.shade100,
                 border: OutlineInputBorder(
@@ -621,10 +619,7 @@ class _CustomItemBar extends StatelessWidget {
               keyboardType: TextInputType.number,
               decoration: InputDecoration(
                 hintText: 'Prix',
-                hintStyle: TextStyle(
-                  color: Colors.grey.shade400,
-                  fontSize: 13,
-                ),
+                hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 13),
                 filled: true,
                 fillColor: Colors.grey.shade100,
                 border: OutlineInputBorder(

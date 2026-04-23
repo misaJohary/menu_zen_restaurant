@@ -54,9 +54,7 @@ class _OptionsSheetState extends State<_OptionsSheet> {
     _priceController = TextEditingController(
       text: widget.item.unitPrice.toInt().toString(),
     );
-    _noteController = TextEditingController(
-      text: widget.item.notes ?? '',
-    );
+    _noteController = TextEditingController(text: widget.item.notes ?? '');
   }
 
   @override
@@ -66,41 +64,39 @@ class _OptionsSheetState extends State<_OptionsSheet> {
     super.dispose();
   }
 
-  String get _itemName =>
-      widget.item.menuItem.translations.isNotEmpty
-          ? widget.item.menuItem.translations.first.name
-          : 'Article';
+  String get _itemName => widget.item.menuItem.translations.isNotEmpty
+      ? widget.item.menuItem.translations.first.name
+      : 'Article';
 
-  String get _itemPrice =>
-      widget.item.unitPrice == 0
-          ? 'Offert'
-          : formatPriceFull(widget.item.unitPrice);
+  String get _itemPrice => widget.item.unitPrice == 0
+      ? 'Offert'
+      : formatPriceFull(widget.item.unitPrice);
 
   void _applyPrice() {
     final newPrice =
         double.tryParse(_priceController.text) ?? widget.item.unitPrice;
     context.read<OrderMenuItemBloc>().add(
-          OrderMenuItemDuplicatedWithPrice(widget.item, newPrice),
-        );
+      OrderMenuItemDuplicatedWithPrice(widget.item, newPrice),
+    );
     Navigator.pop(context);
   }
 
   void _applyNote() {
     if (widget.orderedIndex >= 0) {
       context.read<OrderMenuItemBloc>().add(
-            OrderMenuItemNoteUpdated(
-              widget.orderedIndex,
-              _noteController.text.trim(),
-            ),
-          );
+        OrderMenuItemNoteUpdated(
+          widget.orderedIndex,
+          _noteController.text.trim(),
+        ),
+      );
     }
     Navigator.pop(context);
   }
 
   void _applyOffer() {
     context.read<OrderMenuItemBloc>().add(
-          OrderMenuItemOffered(widget.item, _offeredQty),
-        );
+      OrderMenuItemOffered(widget.item, _offeredQty),
+    );
     Navigator.pop(context);
   }
 
@@ -128,18 +124,12 @@ class _OptionsSheetState extends State<_OptionsSheet> {
           // Item name + price
           Text(
             _itemName,
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 4),
           Text(
             _itemPrice,
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey.shade600,
-            ),
+            style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
           ),
           const SizedBox(height: 20),
 
@@ -299,10 +289,7 @@ class _PriceField extends StatelessWidget {
             decoration: InputDecoration(
               filled: true,
               fillColor: Colors.white,
-              suffix: const Text(
-                'Ar',
-                style: TextStyle(color: Colors.grey),
-              ),
+              suffix: const Text('Ar', style: TextStyle(color: Colors.grey)),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
                 borderSide: BorderSide.none,

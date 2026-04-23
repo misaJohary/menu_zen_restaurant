@@ -33,10 +33,12 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
     OrderRemoteDeleted event,
     Emitter<OrdersState> emit,
   ) {
-    emit(state.copyWith(
-      orders: List.of(state.orders)
-        ..removeWhere((e) => e.id == event.orderId),
-    ));
+    emit(
+      state.copyWith(
+        orders: List.of(state.orders)
+          ..removeWhere((e) => e.id == event.orderId),
+      ),
+    );
   }
 
   void _onOrderRemoteUpdated(
@@ -45,11 +47,13 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
   ) {
     final index = state.orders.indexWhere((e) => e.id == event.orderEntity.id);
     if (index != -1) {
-      emit(state.copyWith(
-        orders: List.of(state.orders)
-          ..removeAt(index)
-          ..insert(index, OrderModel.fromEntity(event.orderEntity)),
-      ));
+      emit(
+        state.copyWith(
+          orders: List.of(state.orders)
+            ..removeAt(index)
+            ..insert(index, OrderModel.fromEntity(event.orderEntity)),
+        ),
+      );
     } else {
       add(const OrderFetched());
     }
@@ -64,21 +68,25 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
       final updated = state.orders[index].copyWith(
         orderStatus: event.orderStatus,
       );
-      emit(state.copyWith(
-        orders: List.of(state.orders)
-          ..removeAt(index)
-          ..insert(index, updated),
-      ));
+      emit(
+        state.copyWith(
+          orders: List.of(state.orders)
+            ..removeAt(index)
+            ..insert(index, updated),
+        ),
+      );
     } else {
       add(const OrderFetched());
     }
   }
 
   void _onOrderAdded(OrderAdded event, Emitter<OrdersState> emit) {
-    emit(state.copyWith(
-      orders: List.of(state.orders)
-        ..insert(0, OrderModel.fromEntity(event.orderEntity)),
-    ));
+    emit(
+      state.copyWith(
+        orders: List.of(state.orders)
+          ..insert(0, OrderModel.fromEntity(event.orderEntity)),
+      ),
+    );
   }
 
   Future<void> _onOrderUpdated(
@@ -91,14 +99,18 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
       OrderModel.fromEntity(event.orderEntity),
     );
     if (res.isSuccess) {
-      final index = state.orders.indexWhere((e) => e.id == event.orderEntity.id);
-      emit(state.copyWith(
-        updateStatus: BlocStatus.loaded,
-        selectedOrder: res.getSuccess,
-        orders: List.of(state.orders)
-          ..removeAt(index)
-          ..insert(index, res.getSuccess!),
-      ));
+      final index = state.orders.indexWhere(
+        (e) => e.id == event.orderEntity.id,
+      );
+      emit(
+        state.copyWith(
+          updateStatus: BlocStatus.loaded,
+          selectedOrder: res.getSuccess,
+          orders: List.of(state.orders)
+            ..removeAt(index)
+            ..insert(index, res.getSuccess!),
+        ),
+      );
     } else {
       emit(state.copyWith(updateStatus: BlocStatus.failed));
     }
@@ -112,12 +124,14 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
     final res = await repo.updateStatusOrder(event.orderId, event.orderStatus);
     if (res.isSuccess) {
       final index = state.orders.indexWhere((e) => e.id == event.orderId);
-      emit(state.copyWith(
-        updateStatus: BlocStatus.loaded,
-        orders: List.of(state.orders)
-          ..removeAt(index)
-          ..insert(index, res.getSuccess!),
-      ));
+      emit(
+        state.copyWith(
+          updateStatus: BlocStatus.loaded,
+          orders: List.of(state.orders)
+            ..removeAt(index)
+            ..insert(index, res.getSuccess!),
+        ),
+      );
     } else {
       emit(state.copyWith(updateStatus: BlocStatus.failed));
     }
@@ -157,12 +171,14 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
         }
       }
       final updatedOrder = order.copyWith(orderMenuItems: items);
-      emit(state.copyWith(
-        updateStatus: BlocStatus.loaded,
-        orders: List.of(state.orders)
-          ..removeAt(orderIndex)
-          ..insert(orderIndex, updatedOrder),
-      ));
+      emit(
+        state.copyWith(
+          updateStatus: BlocStatus.loaded,
+          orders: List.of(state.orders)
+            ..removeAt(orderIndex)
+            ..insert(orderIndex, updatedOrder),
+        ),
+      );
     } else {
       emit(state.copyWith(updateStatus: BlocStatus.failed));
     }
@@ -186,11 +202,13 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
     }
     items[itemIndex] = items[itemIndex].copyWith(status: event.status);
     final updatedOrder = order.copyWith(orderMenuItems: items);
-    emit(state.copyWith(
-      orders: List.of(state.orders)
-        ..removeAt(orderIndex)
-        ..insert(orderIndex, updatedOrder),
-    ));
+    emit(
+      state.copyWith(
+        orders: List.of(state.orders)
+          ..removeAt(orderIndex)
+          ..insert(orderIndex, updatedOrder),
+      ),
+    );
   }
 
   Future<void> _onOrderCreated(
@@ -198,12 +216,16 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
     Emitter<OrdersState> emit,
   ) async {
     emit(state.copyWith(createStatus: BlocStatus.loading));
-    final res = await repo.createOrder(OrderModel.fromEntity(event.orderEntity));
+    final res = await repo.createOrder(
+      OrderModel.fromEntity(event.orderEntity),
+    );
     if (res.isSuccess) {
-      emit(state.copyWith(
-        createStatus: BlocStatus.loaded,
-        selectedOrder: res.getSuccess,
-      ));
+      emit(
+        state.copyWith(
+          createStatus: BlocStatus.loaded,
+          selectedOrder: res.getSuccess,
+        ),
+      );
     } else {
       emit(state.copyWith(createStatus: BlocStatus.failed));
     }
@@ -218,10 +240,9 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
       OrderParams(todayOnly: true, search: event.search),
     );
     if (result.isSuccess) {
-      emit(state.copyWith(
-        orders: result.getSuccess,
-        status: BlocStatus.loaded,
-      ));
+      emit(
+        state.copyWith(orders: result.getSuccess, status: BlocStatus.loaded),
+      );
     } else {
       emit(state.copyWith(status: BlocStatus.failed));
     }
@@ -234,11 +255,13 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
     emit(state.copyWith(deleteStatus: BlocStatus.loading));
     final res = await repo.deleteOrder(event.orderId);
     if (res.isSuccess) {
-      emit(state.copyWith(
-        deleteStatus: BlocStatus.loaded,
-        orders: List.of(state.orders)
-          ..removeWhere((e) => e.id == event.orderId),
-      ));
+      emit(
+        state.copyWith(
+          deleteStatus: BlocStatus.loaded,
+          orders: List.of(state.orders)
+            ..removeWhere((e) => e.id == event.orderId),
+        ),
+      );
     } else {
       emit(state.copyWith(deleteStatus: BlocStatus.failed));
     }

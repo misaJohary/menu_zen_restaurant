@@ -29,9 +29,9 @@ class OrderMenuItemState extends Equatable {
 
   @override
   List<Object?> get props => [
-        orderMenuItems,
-        orderedItems,
-        status,
-        customAddStatus,
-      ];
+    orderMenuItems,
+    orderedItems,
+    status,
+    customAddStatus,
+  ];
 }

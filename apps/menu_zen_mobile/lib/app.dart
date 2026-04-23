@@ -76,7 +76,8 @@ class _AppRootState extends State<_AppRoot> {
   void _requestNotificationPermission() {
     FlutterLocalNotificationsPlugin()
         .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
+          AndroidFlutterLocalNotificationsPlugin
+        >()
         ?.requestNotificationsPermission();
   }
 
@@ -85,9 +86,9 @@ class _AppRootState extends State<_AppRoot> {
         .on('ws_event')
         .cast<Map<String, dynamic>?>()
         .listen((data) {
-      if (data == null || !mounted) return;
-      _handleWsMessage(data);
-    });
+          if (data == null || !mounted) return;
+          _handleWsMessage(data);
+        });
   }
 
   /// Pushes the deep-link captured at cold-start on top of the initial route
@@ -111,8 +112,8 @@ class _AppRootState extends State<_AppRoot> {
         context.read<OrdersBloc>().add(const OrderFetched());
       case 'order_deleted':
         context.read<OrdersBloc>().add(
-              OrderRemoteDeleted(data['order_id'] as int),
-            );
+          OrderRemoteDeleted(data['order_id'] as int),
+        );
       case 'order_updated':
         final model = OrderModel.fromJson(
           data['order'] as Map<String, dynamic>,
@@ -127,8 +128,8 @@ class _AppRootState extends State<_AppRoot> {
     final newStatus = data['new_status'] as String;
 
     context.read<OrdersBloc>().add(
-          OrderMenuItemStatusRemoteUpdated(orderId, itemId, newStatus),
-        );
+      OrderMenuItemStatusRemoteUpdated(orderId, itemId, newStatus),
+    );
 
     if (newStatus == 'ready') {
       _playAndVibrate();
@@ -138,37 +139,36 @@ class _AppRootState extends State<_AppRoot> {
 
   void _onOrderStatusUpdate(Map<String, dynamic> data) {
     context.read<OrdersBloc>().add(
-          OrderStatusRemoteUpdated(
-            data['order_id'] as int,
-            OrderStatus.fromString(data['new_status'] as String),
-          ),
-        );
+      OrderStatusRemoteUpdated(
+        data['order_id'] as int,
+        OrderStatus.fromString(data['new_status'] as String),
+      ),
+    );
     _playAndVibrate();
   }
 
   void _addItemReadyNotification(int orderId, int itemId) {
     final orders = context.read<OrdersBloc>().state.orders;
     final order = orders.cast<OrderEntity?>().firstWhere(
-          (o) => o?.id == orderId,
-          orElse: () => null,
-        );
+      (o) => o?.id == orderId,
+      orElse: () => null,
+    );
     if (order == null) return;
 
     final item = order.orderMenuItems.cast<dynamic>().firstWhere(
-          (i) => i.id == itemId,
-          orElse: () => null,
-        );
-    final itemName = (item != null &&
-            item.menuItem.translations.isNotEmpty == true)
+      (i) => i.id == itemId,
+      orElse: () => null,
+    );
+    final itemName =
+        (item != null && item.menuItem.translations.isNotEmpty == true)
         ? (item.menuItem.translations.first.name as String)
         : 'Un article';
-    final tableName =
-        order.rTable?.name ?? 'Table ${order.restaurantTableId}';
+    final tableName = order.rTable?.name ?? 'Table ${order.restaurantTableId}';
 
     context.read<NotificationCubit>().addNotification(
-          '$itemName est prêt à servir pour $tableName',
-          orderId: orderId,
-        );
+      '$itemName est prêt à servir pour $tableName',
+      orderId: orderId,
+    );
   }
 
   void _playAndVibrate() {

@@ -41,13 +41,11 @@ class _NotificationsPageState extends State<NotificationsPage> {
         actions: [
           BlocBuilder<NotificationCubit, NotificationState>(
             builder: (context, state) {
-              if (state is! NotificationLoaded ||
-                  state.notifications.isEmpty) {
+              if (state is! NotificationLoaded || state.notifications.isEmpty) {
                 return const SizedBox.shrink();
               }
               return TextButton(
-                onPressed: () =>
-                    context.read<NotificationCubit>().clearAll(),
+                onPressed: () => context.read<NotificationCubit>().clearAll(),
                 child: Text(
                   'Effacer',
                   style: TextStyle(color: Colors.grey.shade600),
@@ -62,8 +60,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
           if (state is NotificationInitial) {
             return const Center(child: CircularProgressIndicator());
           }
-          final notifications =
-              (state as NotificationLoaded).notifications;
+          final notifications = (state as NotificationLoaded).notifications;
           if (notifications.isEmpty) {
             return Center(
               child: Column(
@@ -77,10 +74,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
                   const SizedBox(height: 12),
                   Text(
                     'Aucune notification',
-                    style: TextStyle(
-                      color: Colors.grey.shade500,
-                      fontSize: 15,
-                    ),
+                    style: TextStyle(color: Colors.grey.shade500, fontSize: 15),
                   ),
                 ],
               ),
@@ -94,9 +88,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
               notification: notifications[i],
               onTap: () {
                 final notif = notifications[i];
-                context
-                    .read<NotificationCubit>()
-                    .markRead(notif.id);
+                context.read<NotificationCubit>().markRead(notif.id);
                 if (notif.orderId != null) {
                   context.push('/order-detail/${notif.orderId}');
                 }
@@ -113,10 +105,7 @@ class _NotificationTile extends StatelessWidget {
   final AppNotification notification;
   final VoidCallback onTap;
 
-  const _NotificationTile({
-    required this.notification,
-    required this.onTap,
-  });
+  const _NotificationTile({required this.notification, required this.onTap});
 
   @override
   Widget build(BuildContext context) {

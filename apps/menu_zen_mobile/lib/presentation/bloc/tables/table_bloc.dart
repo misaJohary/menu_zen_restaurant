@@ -20,10 +20,7 @@ class TableBloc extends Bloc<TableEvent, TableState> {
     on<TableDeleted>(_onDeleted);
   }
 
-  Future<void> _onFetched(
-    TableFetched event,
-    Emitter<TableState> emit,
-  ) async {
+  Future<void> _onFetched(TableFetched event, Emitter<TableState> emit) async {
     emit(state.copyWith(status: BlocStatus.loading));
     final res = await tablesRepository.getAll();
     if (res.isSuccess) {
@@ -33,29 +30,26 @@ class TableBloc extends Bloc<TableEvent, TableState> {
     }
   }
 
-  Future<void> _onCreated(
-    TableCreated event,
-    Emitter<TableState> emit,
-  ) async {
+  Future<void> _onCreated(TableCreated event, Emitter<TableState> emit) async {
     emit(state.copyWith(editStatus: BlocStatus.loading));
     final res = await tablesRepository.add(TableModel.fromEntity(event.table));
     if (res.isSuccess) {
-      emit(state.copyWith(
-        editStatus: BlocStatus.loaded,
-        tables: [...state.tables, res.getSuccess!],
-      ));
+      emit(
+        state.copyWith(
+          editStatus: BlocStatus.loaded,
+          tables: [...state.tables, res.getSuccess!],
+        ),
+      );
     } else {
       emit(state.copyWith(editStatus: BlocStatus.failed));
     }
   }
 
-  Future<void> _onUpdated(
-    TableUpdated event,
-    Emitter<TableState> emit,
-  ) async {
+  Future<void> _onUpdated(TableUpdated event, Emitter<TableState> emit) async {
     emit(state.copyWith(editStatus: BlocStatus.loading));
-    final res =
-        await tablesRepository.update(TableModel.fromEntity(event.table));
+    final res = await tablesRepository.update(
+      TableModel.fromEntity(event.table),
+    );
     if (res.isSuccess) {
       final updated = state.tables
           .map((t) => t.id == res.getSuccess!.id ? res.getSuccess! : t)
@@ -66,17 +60,16 @@ class TableBloc extends Bloc<TableEvent, TableState> {
     }
   }
 
-  Future<void> _onDeleted(
-    TableDeleted event,
-    Emitter<TableState> emit,
-  ) async {
+  Future<void> _onDeleted(TableDeleted event, Emitter<TableState> emit) async {
     emit(state.copyWith(editStatus: BlocStatus.loading));
     final res = await tablesRepository.delete(event.tableId);
     if (res.isSuccess) {
-      emit(state.copyWith(
-        editStatus: BlocStatus.loaded,
-        tables: state.tables.where((t) => t.id != event.tableId).toList(),
-      ));
+      emit(
+        state.copyWith(
+          editStatus: BlocStatus.loaded,
+          tables: state.tables.where((t) => t.id != event.tableId).toList(),
+        ),
+      );
     } else {
       emit(state.copyWith(editStatus: BlocStatus.failed));
     }
