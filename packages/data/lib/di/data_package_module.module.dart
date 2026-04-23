@@ -35,41 +35,56 @@ import 'package:injectable/injectable.dart' as _i526;
 import 'package:shared_preferences/shared_preferences.dart' as _i460;
 
 class DataPackageModule extends _i526.MicroPackageModule {
-// initializes the registration of main-scope dependencies inside of GetIt
+  // initializes the registration of main-scope dependencies inside of GetIt
   @override
   _i687.FutureOr<void> init(_i526.GetItHelper gh) {
     gh.lazySingleton<_i1071.DbService>(
-        () => _i1071.DbServiceImp(prefs: gh<_i460.SharedPreferencesAsync>()));
-    gh.factory<_i533.RestClient>(() => _i533.RestClient(
-          gh<_i361.Dio>(instanceName: 'withInterceptor'),
-          baseUrl: gh<String>(instanceName: 'BaseUrl'),
-        ));
+      () => _i1071.DbServiceImp(prefs: gh<_i460.SharedPreferencesAsync>()),
+    );
+    gh.factory<_i533.RestClient>(
+      () => _i533.RestClient(
+        gh<_i361.Dio>(instanceName: 'withInterceptor'),
+        baseUrl: gh<String>(instanceName: 'BaseUrl'),
+      ),
+    );
     gh.lazySingleton<_i347.TablesRepository>(
-        () => _i519.TablesRepositoryImpl(rest: gh<_i533.RestClient>()));
+      () => _i519.TablesRepositoryImpl(rest: gh<_i533.RestClient>()),
+    );
     gh.lazySingleton<_i485.CategoriesRepository>(
-        () => _i453.CategoriesRepositoryImpl(rest: gh<_i533.RestClient>()));
+      () => _i453.CategoriesRepositoryImpl(rest: gh<_i533.RestClient>()),
+    );
     gh.lazySingleton<_i44.MenusRepository>(
-        () => _i237.MenusRepositoryImpl(rest: gh<_i533.RestClient>()));
+      () => _i237.MenusRepositoryImpl(rest: gh<_i533.RestClient>()),
+    );
     gh.lazySingleton<_i218.OrdersRepository>(
-        () => _i43.OrdersRepositoryImpl(rest: gh<_i533.RestClient>()));
+      () => _i43.OrdersRepositoryImpl(rest: gh<_i533.RestClient>()),
+    );
     gh.lazySingleton<_i500.ImageRepository>(
-        () => _i489.ImageRepositoryImpl(rest: gh<_i533.RestClient>()));
+      () => _i489.ImageRepositoryImpl(rest: gh<_i533.RestClient>()),
+    );
     gh.lazySingleton<_i40.LanguagesRepository>(
-        () => _i486.LanguagesRepositoryImpl(rest: gh<_i533.RestClient>()));
-    gh.lazySingleton<_i427.AuthRepository>(() => _i819.AuthRepositoryImpl(
-          db: gh<_i1071.DbService>(),
-          rest: gh<_i533.RestClient>(),
-        ));
+      () => _i486.LanguagesRepositoryImpl(rest: gh<_i533.RestClient>()),
+    );
+    gh.lazySingleton<_i427.AuthRepository>(
+      () => _i819.AuthRepositoryImpl(
+        db: gh<_i1071.DbService>(),
+        rest: gh<_i533.RestClient>(),
+      ),
+    );
     gh.lazySingleton<_i424.StatsRepository>(
-        () => _i189.StatsRepositoryImpl(gh<_i533.RestClient>()));
+      () => _i189.StatsRepositoryImpl(gh<_i533.RestClient>()),
+    );
     gh.lazySingleton<_i981.MenuItemRepository>(
-        () => _i261.MenuItemRepositoryImpl(rest: gh<_i533.RestClient>()));
+      () => _i261.MenuItemRepositoryImpl(rest: gh<_i533.RestClient>()),
+    );
     gh.lazySingleton<_i639.RestaurantRepository>(
-        () => _i7.RestaurantRepositoryImpl(
-              rest: gh<_i533.RestClient>(),
-              db: gh<_i1071.DbService>(),
-            ));
+      () => _i7.RestaurantRepositoryImpl(
+        rest: gh<_i533.RestClient>(),
+        db: gh<_i1071.DbService>(),
+      ),
+    );
     gh.lazySingleton<_i242.KitchenRepository>(
-        () => _i111.KitchenRepositoryImpl(rest: gh<_i533.RestClient>()));
+      () => _i111.KitchenRepositoryImpl(rest: gh<_i533.RestClient>()),
+    );
   }
 }
