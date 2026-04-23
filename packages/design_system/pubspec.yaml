@@ -1,0 +1,11 @@
+name: design_system
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.10.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  google_fonts: ^8.0.2

@@ -1,0 +1,75 @@
+name: menu_zen_mobile
+description: "Menu Zen mobile app for restaurant servers."
+publish_to: 'none'
+resolution: workspace
+
+version: 1.1.10+17
+
+environment:
+  sdk: ^3.10.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Shared packages
+  domain:
+    path: ../../packages/domain
+  data:
+    path: ../../packages/data
+  design_system:
+    path: ../../packages/design_system
+
+  # State management & DI
+  flutter_bloc: ^9.1.1
+  get_it: ^8.2.0
+  injectable: ^2.5.1
+  equatable: ^2.0.7
+
+  # Navigation
+  go_router: ^14.0.0
+
+  # Networking
+  dio: ^5.0.0
+  web_socket_channel: ^3.0.3
+
+  # Audio & haptics
+  audioplayers: ^6.6.0
+
+  # Background WebSocket & local notifications
+  flutter_background_service: ^5.0.5
+  flutter_local_notifications: ^18.0.0
+
+  # Config & storage
+  flutter_dotenv: ^5.2.1
+  shared_preferences: ^2.5.3
+
+  # Serialization
+  json_annotation: ^4.9.0
+  jwt_decoder: ^2.0.1
+
+  # UI & forms
+  flutter_form_builder: ^10.1.0
+  form_builder_validators: ^11.2.0
+  google_fonts: ^8.0.2
+  cached_network_image: ^3.4.1
+  skeletonizer: ^2.1.0+1
+
+  # Utilities
+  intl: ^0.20.2
+  logger: ^2.6.1
+  cupertino_icons: ^1.0.8
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/
+    - assets/sounds/
+    - .env.local
+    - .env.staging

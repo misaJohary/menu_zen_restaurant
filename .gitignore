@@ -44,8 +44,14 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
-
 *.lock
-*.env
+#*.env.*
+#*.env
 
-.fvm
+
+# FVM Version Cache
+.fvm/
+
+
+*.g.dart
+*.gr.dart

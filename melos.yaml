@@ -1,0 +1,28 @@
+name: menu_zen_monorepo
+
+sdkPath: auto
+
+packages:
+  - apps/**
+  - packages/**
+
+scripts:
+  analyze:
+    run: melos exec -- flutter analyze
+    description: Analyze all packages
+
+  format:
+    run: melos exec -- dart format .
+    description: Format all packages
+
+  build_runner:
+    run: melos exec --depends-on="build_runner" -- dart run build_runner build --delete-conflicting-outputs
+    description: Run code generation in packages that use build_runner
+
+  clean:
+    run: melos exec -- flutter clean
+    description: Clean all packages
+
+  get:
+    run: melos exec -- flutter pub get
+    description: Get dependencies for all packages

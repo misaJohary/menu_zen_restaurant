@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Drawable alias used by flutter_local_notifications, which only looks
+     up notification icons inside res/drawable/. The actual PNGs live
+     under res/mipmap-*/ to keep all density variants in one place. -->
+<bitmap xmlns:android="http://schemas.android.com/apk/res/android"
+    android:src="@mipmap/ic_notification_restaurant" />
