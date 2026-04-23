@@ -640,8 +640,7 @@ class _LoginScreenState extends State<LoginScreen>
                                           prev.errorMessage !=
                                               curr.errorMessage,
                                       builder: (context, state) {
-                                        if (state.status !=
-                                                BlocStatus.failed ||
+                                        if (state.status != BlocStatus.failed ||
                                             state.errorMessage == null) {
                                           return SizedBox.shrink();
                                         }

@@ -30,12 +30,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     if (res.isSuccess) {
       emit(state.copyWith(authStatus: AuthStatus.authenticated));
     } else {
-      emit(state.copyWith(
-        status: BlocStatus.failed,
-        authStatus: AuthStatus.unauthenticated,
-        errorMessage:
-            res.getError?.message ?? 'Identifiants incorrects',
-      ));
+      emit(
+        state.copyWith(
+          status: BlocStatus.failed,
+          authStatus: AuthStatus.unauthenticated,
+          errorMessage: res.getError?.message ?? 'Identifiants incorrects',
+        ),
+      );
     }
   }
 
@@ -46,10 +47,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(state.copyWith(status: BlocStatus.loading));
     final res = await repo.logout();
     if (res.isSuccess) {
-      emit(state.copyWith(
-        authStatus: AuthStatus.unauthenticated,
-        status: BlocStatus.loaded,
-      ));
+      emit(
+        state.copyWith(
+          authStatus: AuthStatus.unauthenticated,
+          status: BlocStatus.loaded,
+        ),
+      );
     } else {
       emit(state.copyWith(status: BlocStatus.failed));
     }
@@ -62,11 +65,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(state.copyWith(status: BlocStatus.loading));
     final res = await repo.getUser();
     if (res.isSuccess) {
-      emit(state.copyWith(
-        userRestaurant: res.getSuccess,
-        authStatus: AuthStatus.authenticated,
-        status: BlocStatus.loaded,
-      ));
+      emit(
+        state.copyWith(
+          userRestaurant: res.getSuccess,
+          authStatus: AuthStatus.authenticated,
+          status: BlocStatus.loaded,
+        ),
+      );
     } else {
       emit(state.copyWith(status: BlocStatus.failed));
     }
@@ -79,10 +84,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(state.copyWith(status: BlocStatus.loading));
     final res = await repo.updateUser(event.user);
     if (res.isSuccess) {
-      emit(state.copyWith(
-        userRestaurant: res.getSuccess,
-        status: BlocStatus.loaded,
-      ));
+      emit(
+        state.copyWith(
+          userRestaurant: res.getSuccess,
+          status: BlocStatus.loaded,
+        ),
+      );
     } else {
       emit(state.copyWith(status: BlocStatus.failed));
     }

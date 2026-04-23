@@ -24,14 +24,12 @@ class AuthState extends Equatable {
       status: status ?? this.status,
       userRestaurant: userRestaurant ?? this.userRestaurant,
       authStatus: authStatus ?? this.authStatus,
-      errorMessage:
-          clearError ? null : (errorMessage ?? this.errorMessage),
+      errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
     );
   }
 
   @override
-  List<Object?> get props =>
-      [status, userRestaurant, authStatus, errorMessage];
+  List<Object?> get props => [status, userRestaurant, authStatus, errorMessage];
 }
 
 enum AuthStatus { initial, authenticated, unauthenticated, error }

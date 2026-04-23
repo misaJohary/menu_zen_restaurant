@@ -29,12 +29,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     if (res.isSuccess) {
       emit(state.copyWith(authStatus: AuthStatus.authenticated));
     } else {
-      emit(state.copyWith(
-        status: BlocStatus.failed,
-        authStatus: AuthStatus.unauthenticated,
-        errorMessage:
-            res.getError?.message ?? 'Identifiants incorrects',
-      ));
+      emit(
+        state.copyWith(
+          status: BlocStatus.failed,
+          authStatus: AuthStatus.unauthenticated,
+          errorMessage: res.getError?.message ?? 'Identifiants incorrects',
+        ),
+      );
     }
   }
 
