@@ -10,8 +10,6 @@ import '../managers/users/users_bloc.dart';
 import '../widgets/loading_widget.dart';
 import '../widgets/screen_header_widget.dart';
 
-
-
 @RoutePage()
 class KitchensScreen extends StatefulWidget {
   const KitchensScreen({super.key});
@@ -207,9 +205,7 @@ class _KitchenTile extends StatelessWidget {
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
             onPressed: () {
-              context
-                  .read<KitchensBloc>()
-                  .add(KitchenDeleted(kitchen.id!));
+              context.read<KitchensBloc>().add(KitchenDeleted(kitchen.id!));
               Navigator.pop(context);
             },
             child: const Text('Supprimer'),
@@ -272,8 +268,7 @@ class _KitchenFormDialogState extends State<_KitchenFormDialog> {
             TextFormField(
               controller: _nameCtrl,
               decoration: const InputDecoration(labelText: 'Nom de la cuisine'),
-              validator: (v) =>
-                  v == null || v.trim().isEmpty ? 'Requis' : null,
+              validator: (v) => v == null || v.trim().isEmpty ? 'Requis' : null,
             ),
             const SizedBox(height: kspacing),
             SwitchListTile(

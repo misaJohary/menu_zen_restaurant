@@ -45,10 +45,7 @@ class _AddKitchenPageState extends State<AddKitchenPage> {
                 validator: FormBuilderValidators.required(),
               ),
               const SizedBox(height: kspacing * 2),
-              FormBuilderSwitch(
-                name: 'active',
-                title: const Text('Active'),
-              ),
+              FormBuilderSwitch(name: 'active', title: const Text('Active')),
               const SizedBox(height: kspacing * 4),
               BlocBuilder<KitchensBloc, KitchensState>(
                 builder: (context, state) {

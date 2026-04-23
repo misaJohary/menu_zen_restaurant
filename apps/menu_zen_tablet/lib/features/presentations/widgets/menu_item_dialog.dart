@@ -507,10 +507,8 @@ class _MenuItemDialogState extends State<MenuItemDialog> {
                           child: Text('Aucune'),
                         ),
                         ...kitchensState.kitchens.map(
-                          (k) => DropdownMenuItem(
-                            value: k,
-                            child: Text(k.name),
-                          ),
+                          (k) =>
+                              DropdownMenuItem(value: k, child: Text(k.name)),
                         ),
                       ],
                     );

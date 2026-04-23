@@ -114,22 +114,20 @@ class _MenuItemScreenState extends State<MenuItemScreen> {
                                 final query = controller.searchController.text
                                     .toLowerCase()
                                     .trim();
-                                final selected =
-                                    controller.selectedCategory;
-                                final filtered = state.menuItems.where(
-                                  (menu) {
-                                    final matchesCategory =
-                                        selected == null ||
-                                        menu.category?.id == selected.id;
-                                    final matchesSearch = query.isEmpty ||
-                                        menu.translations.any(
-                                          (t) => t.name
-                                              .toLowerCase()
-                                              .contains(query),
-                                        );
-                                    return matchesCategory && matchesSearch;
-                                  },
-                                ).toList();
+                                final selected = controller.selectedCategory;
+                                final filtered = state.menuItems.where((menu) {
+                                  final matchesCategory =
+                                      selected == null ||
+                                      menu.category?.id == selected.id;
+                                  final matchesSearch =
+                                      query.isEmpty ||
+                                      menu.translations.any(
+                                        (t) => t.name.toLowerCase().contains(
+                                          query,
+                                        ),
+                                      );
+                                  return matchesCategory && matchesSearch;
+                                }).toList();
 
                                 if (filtered.isEmpty) {
                                   return const Center(
@@ -144,8 +142,7 @@ class _MenuItemScreenState extends State<MenuItemScreen> {
                                     return GridView.builder(
                                       gridDelegate:
                                           SliverGridDelegateWithFixedCrossAxisCount(
-                                            crossAxisCount:
-                                                isPortrait ? 2 : 3,
+                                            crossAxisCount: isPortrait ? 2 : 3,
                                             crossAxisSpacing: 24,
                                             mainAxisSpacing: 24,
                                             childAspectRatio: 1.15,
@@ -174,10 +171,9 @@ class _MenuItemScreenState extends State<MenuItemScreen> {
                                               menuItem: menu,
                                               selectedLanguage: selectedLang,
                                               kitchenName: kitchenName,
-                                              onEdit: () =>
-                                                  _showMenuItemDialog(
-                                                    menuItem: menu,
-                                                  ),
+                                              onEdit: () => _showMenuItemDialog(
+                                                menuItem: menu,
+                                              ),
                                               onStatusChanged: (bool value) {
                                                 if (menu.active != value) {
                                                   context
@@ -219,7 +215,6 @@ class _MenuItemScreenState extends State<MenuItemScreen> {
       ),
     );
   }
-
 }
 
 class _CategoryFilterBar extends StatelessWidget {

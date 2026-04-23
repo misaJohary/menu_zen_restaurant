@@ -87,13 +87,17 @@ class _AddMenuItemPageState extends State<AddMenuItemPage> {
         .categories
         .isNotEmpty;
     final menusLoaded = context.read<MenusBloc>().state.menus.isNotEmpty;
-    final kitchensLoaded =
-        context.read<KitchensBloc>().state.kitchens.isNotEmpty;
+    final kitchensLoaded = context
+        .read<KitchensBloc>()
+        .state
+        .kitchens
+        .isNotEmpty;
     if (!categoriesLoaded) {
       context.read<CategoriesBloc>().add(CategoriesFetched());
     }
     if (!menusLoaded) context.read<MenusBloc>().add(MenusFetched());
-    if (!kitchensLoaded) context.read<KitchensBloc>().add(const KitchensFetched());
+    if (!kitchensLoaded)
+      context.read<KitchensBloc>().add(const KitchensFetched());
 
     patchWithReferences();
     WidgetsBinding.instance.addPostFrameCallback((_) => patchWithReferences());
@@ -123,9 +127,7 @@ class _AddMenuItemPageState extends State<AddMenuItemPage> {
     final frenchName = translations?['fr']?['name'];
     if (frenchName == null || frenchName.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Le nom en français est requis'),
-        ),
+        const SnackBar(content: Text('Le nom en français est requis')),
       );
       return;
     }
@@ -209,19 +211,15 @@ class _AddMenuItemPageState extends State<AddMenuItemPage> {
                     return FormBuilderDropdown(
                       name: 'kitchen',
                       hint: const Text('Aucune cuisine assignée'),
-                      decoration: const InputDecoration(
-                        label: Text('Cuisine'),
-                      ),
+                      decoration: const InputDecoration(label: Text('Cuisine')),
                       items: [
                         const DropdownMenuItem(
                           value: null,
                           child: Text('Aucune'),
                         ),
                         ...state.kitchens.map(
-                          (k) => DropdownMenuItem(
-                            value: k,
-                            child: Text(k.name),
-                          ),
+                          (k) =>
+                              DropdownMenuItem(value: k, child: Text(k.name)),
                         ),
                       ],
                     );

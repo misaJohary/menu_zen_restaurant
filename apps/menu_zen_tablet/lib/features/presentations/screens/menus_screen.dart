@@ -135,7 +135,6 @@ class _MenuScreenState extends State<MenuScreen> {
   }
 }
 
-
 class _MenuCard extends StatelessWidget {
   final MenuEntity menu;
   final VoidCallback onEdit;

@@ -30,9 +30,7 @@ class KitchenModel extends KitchenEntity {
       restaurantId: entity.restaurantId,
       name: entity.name,
       active: entity.active,
-      cooks: entity.cooks
-          .map((u) => UserModel.fromEntity(u))
-          .toList(),
+      cooks: entity.cooks.map((u) => UserModel.fromEntity(u)).toList(),
     );
   }
 

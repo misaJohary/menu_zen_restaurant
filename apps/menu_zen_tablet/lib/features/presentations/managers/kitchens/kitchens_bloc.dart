@@ -29,9 +29,7 @@ class KitchensBloc extends Bloc<KitchensEvent, KitchensState> {
     emit(state.copyWith(status: BlocStatus.loading));
     final res = await repo.getKitchens();
     if (res.isSuccess) {
-      emit(
-        state.copyWith(status: BlocStatus.loaded, kitchens: res.getSuccess),
-      );
+      emit(state.copyWith(status: BlocStatus.loaded, kitchens: res.getSuccess));
     } else {
       emit(state.copyWith(status: BlocStatus.failed, failure: res.getError));
     }

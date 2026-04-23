@@ -29,8 +29,9 @@ class MainNavigationPannelWidget extends StatelessWidget {
         final fullName =
             user?.fullName ??
             '${user?.firstname ?? ''} ${user?.lastname ?? ''}'.trim();
-        final displayName =
-            fullName.isNotEmpty ? fullName : (user?.username ?? '');
+        final displayName = fullName.isNotEmpty
+            ? fullName
+            : (user?.username ?? '');
         final initials = displayName.isNotEmpty
             ? displayName
                   .split(' ')
