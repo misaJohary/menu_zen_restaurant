@@ -113,7 +113,7 @@ class _MakeOrderPageState extends State<MakeOrderPage> {
           backgroundColor: Colors.white,
           elevation: 0,
           title: const Text(
-            'Click Menu Zen',
+            'Restaurant le Bœuf',
             style: TextStyle(
               color: primaryColor,
               fontWeight: FontWeight.bold,
