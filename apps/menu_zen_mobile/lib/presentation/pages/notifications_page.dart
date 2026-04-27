@@ -151,12 +151,14 @@ class _NotificationTile extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              notification.message,
-                              style: TextStyle(
-                                fontWeight: isNew
-                                    ? FontWeight.w600
-                                    : FontWeight.normal,
+                            Text.rich(
+                              TextSpan(
+                                children: _buildMessageSpans(
+                                  notification.message,
+                                  isNew: isNew,
+                                ),
+                              ),
+                              style: const TextStyle(
                                 color: Colors.black87,
                                 fontSize: 14,
                               ),
@@ -196,4 +198,31 @@ class _NotificationTile extends StatelessWidget {
     if (diff.inHours < 24) return 'Il y a ${diff.inHours} h';
     return 'Il y a ${diff.inDays} j';
   }
+}
+
+/// Parses a notification message with `**bold**` markers into [TextSpan]s.
+/// Text wrapped in `**...**` is rendered bold (the dynamic data); the rest
+/// uses a regular weight that still emphasises unread items.
+List<TextSpan> _buildMessageSpans(String message, {required bool isNew}) {
+  final regular = TextStyle(
+    fontWeight: isNew ? FontWeight.w500 : FontWeight.normal,
+  );
+  const bold = TextStyle(fontWeight: FontWeight.bold);
+
+  final spans = <TextSpan>[];
+  final pattern = RegExp(r'\*\*(.+?)\*\*');
+  var cursor = 0;
+  for (final match in pattern.allMatches(message)) {
+    if (match.start > cursor) {
+      spans.add(
+        TextSpan(text: message.substring(cursor, match.start), style: regular),
+      );
+    }
+    spans.add(TextSpan(text: match.group(1), style: bold));
+    cursor = match.end;
+  }
+  if (cursor < message.length) {
+    spans.add(TextSpan(text: message.substring(cursor), style: regular));
+  }
+  return spans;
 }

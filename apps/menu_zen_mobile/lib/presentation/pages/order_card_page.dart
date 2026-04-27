@@ -22,8 +22,6 @@ class OrderCardPage extends StatefulWidget {
 }
 
 class _OrderCardPageState extends State<OrderCardPage> {
-  int? _selectedTableId;
-
   @override
   void initState() {
     super.initState();
@@ -32,12 +30,18 @@ class _OrderCardPageState extends State<OrderCardPage> {
     }
     // Pre-select table if editing an existing order
     if (widget.order != null) {
-      _selectedTableId = widget.order!.restaurantTableId;
+      context.read<OrderMenuItemBloc>().add(
+        OrderMenuItemTableSelected(widget.order!.restaurantTableId),
+      );
     }
   }
 
   void _confirm(List<OrderMenuItem> ordered) {
-    if (_selectedTableId == null) {
+    final selectedTableId = context
+        .read<OrderMenuItemBloc>()
+        .state
+        .selectedTableId;
+    if (selectedTableId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Veuillez sélectionner une table')),
       );
@@ -61,7 +65,7 @@ class _OrderCardPageState extends State<OrderCardPage> {
         OrderUpdated(
           widget.order!.copyWith(
             orderMenuItems: ordered,
-            restaurantTableId: _selectedTableId!,
+            restaurantTableId: selectedTableId,
             totalAmount: total.toInt(),
           ),
         ),
@@ -74,7 +78,7 @@ class _OrderCardPageState extends State<OrderCardPage> {
             orderStatus: OrderStatus.created,
             paymentStatus: PaymentStatus.unpaid,
             orderMenuItems: ordered,
-            restaurantTableId: _selectedTableId!,
+            restaurantTableId: selectedTableId,
             totalAmount: total.toInt(),
           ),
         ),
@@ -217,11 +221,7 @@ class _OrderCardPageState extends State<OrderCardPage> {
                         const SizedBox(height: 20),
 
                         // ── Table selector ────────────────────────────
-                        _TableSelector(
-                          selectedTableId: _selectedTableId,
-                          onSelect: (id) =>
-                              setState(() => _selectedTableId = id),
-                        ),
+                        const _TableSelector(),
 
                         const SizedBox(height: 24),
                       ],
@@ -538,77 +538,88 @@ class _SummarySection extends StatelessWidget {
 // ─── Table selector ───────────────────────────────────────────────────────────
 
 class _TableSelector extends StatelessWidget {
-  final int? selectedTableId;
-  final ValueChanged<int> onSelect;
-
-  const _TableSelector({required this.selectedTableId, required this.onSelect});
+  const _TableSelector();
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<TableBloc, TableState>(
-      builder: (context, state) {
-        final tables = state.tables;
+      builder: (context, tableState) {
+        final tables = tableState.tables;
 
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
+        return BlocBuilder<OrderMenuItemBloc, OrderMenuItemState>(
+          buildWhen: (prev, curr) =>
+              prev.selectedTableId != curr.selectedTableId,
+          builder: (context, menuState) {
+            final selectedTableId = menuState.selectedTableId;
+
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'SÉLECTEUR DE TABLE',
-                  style: TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 1,
-                    color: Colors.black54,
-                  ),
-                ),
-                const Spacer(),
-                if (selectedTableId != null)
-                  Text(
-                    'Table ${tables.where((t) => t.id == selectedTableId).firstOrNull?.name ?? ''} active',
-                    style: const TextStyle(
-                      color: primaryColor,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 12,
-                    ),
-                  ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: tables.map((table) {
-                  final isSelected = table.id == selectedTableId;
-                  return GestureDetector(
-                    onTap: () => onSelect(table.id!),
-                    child: Container(
-                      margin: const EdgeInsets.only(right: 8),
-                      width: 52,
-                      height: 52,
-                      decoration: BoxDecoration(
-                        color: isSelected ? primaryColor : Colors.grey.shade200,
-                        borderRadius: BorderRadius.circular(12),
-                        border: isSelected
-                            ? null
-                            : Border.all(color: Colors.grey.shade300),
+                Row(
+                  children: [
+                    const Text(
+                      'SÉLECTEUR DE TABLE',
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 1,
+                        color: Colors.black54,
                       ),
-                      alignment: Alignment.center,
-                      child: Text(
-                        table.name,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: isSelected ? Colors.white : Colors.black87,
-                          fontSize: 13,
+                    ),
+                    const Spacer(),
+                    if (selectedTableId != null)
+                      Text(
+                        'Table ${tables.where((t) => t.id == selectedTableId).firstOrNull?.name ?? ''} active',
+                        style: const TextStyle(
+                          color: primaryColor,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 12,
                         ),
                       ),
-                    ),
-                  );
-                }).toList(),
-              ),
-            ),
-          ],
+                  ],
+                ),
+                const SizedBox(height: 10),
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: tables.map((table) {
+                      final isSelected = table.id == selectedTableId;
+                      return GestureDetector(
+                        onTap: () => context.read<OrderMenuItemBloc>().add(
+                          OrderMenuItemTableSelected(table.id!),
+                        ),
+                        child: Container(
+                          margin: const EdgeInsets.only(right: 8),
+                          width: 52,
+                          height: 52,
+                          decoration: BoxDecoration(
+                            color: isSelected
+                                ? primaryColor
+                                : Colors.grey.shade200,
+                            borderRadius: BorderRadius.circular(12),
+                            border: isSelected
+                                ? null
+                                : Border.all(color: Colors.grey.shade300),
+                          ),
+                          alignment: Alignment.center,
+                          child: Text(
+                            table.name,
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: isSelected
+                                  ? Colors.white
+                                  : Colors.black87,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ],
+            );
+          },
         );
       },
     );

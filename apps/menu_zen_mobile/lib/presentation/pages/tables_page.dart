@@ -4,9 +4,11 @@ import 'package:domain/entities/table_entity.dart';
 import 'package:domain/entities/table_status.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../core/constants/constants.dart';
 import '../../core/enums/bloc_status.dart';
+import '../bloc/orders/order_menu_item/order_menu_item_bloc.dart';
 import '../bloc/tables/table_bloc.dart';
 
 class TablesPage extends StatefulWidget {
@@ -294,7 +296,14 @@ class _TableCardState extends State<_TableCard> {
         borderRadius: BorderRadius.circular(14),
         splashColor: accent.withValues(alpha: 0.25),
         highlightColor: accent.withValues(alpha: 0.10),
-        onTap: () {},
+        onTap: () {
+          final id = table.id;
+          if (id == null) return;
+          context.read<OrderMenuItemBloc>().add(
+            OrderMenuItemTableSelected(id),
+          );
+          context.go('/main/commande');
+        },
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(14),

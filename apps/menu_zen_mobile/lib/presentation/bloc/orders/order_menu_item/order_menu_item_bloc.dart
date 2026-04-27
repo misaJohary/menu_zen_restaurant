@@ -32,6 +32,7 @@ class OrderMenuItemBloc extends Bloc<OrderMenuItemEvent, OrderMenuItemState> {
     on<OrderMenuItemDuplicatedWithPrice>(_onDuplicatedWithPrice);
     on<OrderMenuItemOrderedIncremented>(_onOrderedIncremented);
     on<OrderMenuItemOrderedDecremented>(_onOrderedDecremented);
+    on<OrderMenuItemTableSelected>(_onTableSelected);
   }
 
   // ─── helpers ───────────────────────────────────────────────────────────────
@@ -152,7 +153,13 @@ class OrderMenuItemBloc extends Bloc<OrderMenuItemEvent, OrderMenuItemState> {
     final reset = state.orderMenuItems
         .map((i) => i.copyWith(quantity: 0))
         .toList();
-    emit(state.copyWith(orderMenuItems: reset, orderedItems: const []));
+    emit(
+      state.copyWith(
+        orderMenuItems: reset,
+        orderedItems: const [],
+        clearSelectedTableId: true,
+      ),
+    );
   }
 
   Future<void> _onUpdateInitiated(
@@ -180,7 +187,13 @@ class OrderMenuItemBloc extends Bloc<OrderMenuItemEvent, OrderMenuItemState> {
         orderedItems.add(orderItem);
       }
     }
-    emit(state.copyWith(orderMenuItems: catalog, orderedItems: orderedItems));
+    emit(
+      state.copyWith(
+        orderMenuItems: catalog,
+        orderedItems: orderedItems,
+        selectedTableId: event.order.restaurantTableId,
+      ),
+    );
   }
 
   void _onNoteUpdated(
@@ -252,6 +265,18 @@ class OrderMenuItemBloc extends Bloc<OrderMenuItemEvent, OrderMenuItemState> {
   ) {
     final copy = event.item.copyWith(quantity: 1, unitPrice: event.newPrice);
     emit(state.copyWith(orderedItems: [...state.orderedItems, copy]));
+  }
+
+  void _onTableSelected(
+    OrderMenuItemTableSelected event,
+    Emitter<OrderMenuItemState> emit,
+  ) {
+    emit(
+      state.copyWith(
+        selectedTableId: event.tableId,
+        clearSelectedTableId: event.tableId == null,
+      ),
+    );
   }
 
   Future<void> _onCustomAdded(

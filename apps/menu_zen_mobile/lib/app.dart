@@ -166,7 +166,7 @@ class _AppRootState extends State<_AppRoot> {
     final tableName = order.rTable?.name ?? 'Table ${order.restaurantTableId}';
 
     context.read<NotificationCubit>().addNotification(
-      '$itemName est prêt à servir pour $tableName',
+      '**$itemName** est prêt à servir pour **$tableName**',
       orderId: orderId,
     );
   }
