@@ -563,7 +563,9 @@ class KdsOrderCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          order.clientName ?? "Client",
+                          order.server?.fullName ??
+                              order.server?.username ??
+                              "Serveur",
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
