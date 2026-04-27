@@ -106,3 +106,11 @@ class OrderMenuItemDuplicatedWithPrice extends OrderMenuItemEvent {
   @override
   List<Object?> get props => [item, newPrice];
 }
+
+/// Select the table the in-progress order will be attached to.
+class OrderMenuItemTableSelected extends OrderMenuItemEvent {
+  const OrderMenuItemTableSelected(this.tableId);
+  final int? tableId;
+  @override
+  List<Object?> get props => [tableId];
+}
