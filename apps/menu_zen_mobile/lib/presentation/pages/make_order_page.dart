@@ -479,84 +479,96 @@ class _MenuItemCardState extends State<_MenuItemCard>
         : '';
     final price = formatPriceCompact(widget.item.unitPrice);
     final isSelected = widget.badge > 0;
+    final isAvailable = widget.item.menuItem.active ?? true;
 
     return AnimatedBuilder(
       animation: _scaleAnim,
       builder: (context, child) =>
           Transform.scale(scale: _scaleAnim.value, child: child),
       child: GestureDetector(
-        onTap: _handleTap,
-        onLongPress: widget.onLongPress,
-        child: Stack(
-          clipBehavior: Clip.none,
-          children: [
-            Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(
-                  color: isSelected ? primaryColor : Colors.grey.shade300,
-                  width: isSelected ? 2 : 1,
+        onTap: isAvailable ? _handleTap : null,
+        onLongPress: isAvailable ? widget.onLongPress : null,
+        child: Opacity(
+          opacity: isAvailable ? 1.0 : 0.55,
+          child: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: isAvailable ? Colors.white : Colors.grey.shade100,
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(
+                    color: isSelected ? primaryColor : Colors.grey.shade300,
+                    width: isSelected ? 2 : 1,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.04),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.04),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    name,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14,
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      name,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                        decoration: isAvailable
+                            ? TextDecoration.none
+                            : TextDecoration.lineThrough,
+                        color: isAvailable
+                            ? Colors.black
+                            : Colors.grey.shade600,
+                      ),
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    maxLines: 3,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  Text(
-                    price,
-                    style: const TextStyle(
-                      color: primaryColor,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 15,
+                    Text(
+                      isAvailable ? price : 'Indisponible',
+                      style: TextStyle(
+                        color: isAvailable
+                            ? primaryColor
+                            : Colors.red.shade400,
+                        fontWeight: FontWeight.bold,
+                        fontSize: isAvailable ? 15 : 13,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
 
-            // Badge
-            if (widget.badge > 0)
-              Positioned(
-                top: -8,
-                right: -8,
-                child: Container(
-                  width: 24,
-                  height: 24,
-                  decoration: const BoxDecoration(
-                    color: primaryColor,
-                    shape: BoxShape.circle,
-                  ),
-                  alignment: Alignment.center,
-                  child: Text(
-                    '${widget.badge}',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 11,
-                      fontWeight: FontWeight.bold,
+              // Badge
+              if (widget.badge > 0)
+                Positioned(
+                  top: -8,
+                  right: -8,
+                  child: Container(
+                    width: 24,
+                    height: 24,
+                    decoration: const BoxDecoration(
+                      color: primaryColor,
+                      shape: BoxShape.circle,
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      '${widget.badge}',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),
-              ),
-          ],
+            ],
+          ),
         ),
       ),
     );
