@@ -87,6 +87,14 @@ class _MakeOrderPageState extends State<MakeOrderPage> {
         .fold(0, (sum, o) => sum + o.quantity);
   }
 
+  Future<void> _refreshMenu() async {
+    final bloc = context.read<OrderMenuItemBloc>();
+    bloc.add(const OrderMenuItemFetched());
+    await bloc.stream.firstWhere(
+      (state) => state.status != BlocStatus.loading,
+    );
+  }
+
   void _addCustomItem() {
     final name = _customNameController.text.trim();
     final price = double.tryParse(_customPriceController.text.trim());
@@ -200,6 +208,7 @@ class _MakeOrderPageState extends State<MakeOrderPage> {
                           child: _ItemGrid(
                             items: displayItems,
                             orderedItems: state.orderedItems,
+                            onRefresh: _refreshMenu,
                             badgeCount: (menuItemId) =>
                                 _badgeCount(state.orderedItems, menuItemId),
                             onTap: (globalIndex) {
@@ -366,6 +375,7 @@ class _ItemGrid extends StatelessWidget {
   final int Function(int? menuItemId) badgeCount;
   final ValueChanged<int> onTap;
   final ValueChanged<int> onLongPress;
+  final Future<void> Function() onRefresh;
 
   const _ItemGrid({
     required this.items,
@@ -373,52 +383,69 @@ class _ItemGrid extends StatelessWidget {
     required this.badgeCount,
     required this.onTap,
     required this.onLongPress,
+    required this.onRefresh,
   });
 
   @override
   Widget build(BuildContext context) {
     if (items.isEmpty) {
-      return const Center(
-        child: Text('Aucun article', style: TextStyle(color: Colors.grey)),
+      return RefreshIndicator(
+        onRefresh: onRefresh,
+        child: ListView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          children: const [
+            SizedBox(height: 200),
+            Center(
+              child: Text(
+                'Aucun article',
+                style: TextStyle(color: Colors.grey),
+              ),
+            ),
+          ],
+        ),
       );
     }
     final rowCount = (items.length / 2).ceil();
-    return ListView.builder(
-      padding: const EdgeInsets.all(14),
-      itemCount: rowCount,
-      itemBuilder: (context, rowIndex) {
-        final firstIndex = rowIndex * 2;
-        final secondIndex = firstIndex + 1;
-        final hasSecond = secondIndex < items.length;
+    return RefreshIndicator(
+      onRefresh: onRefresh,
+      child: ListView.builder(
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.all(14),
+        itemCount: rowCount,
+        itemBuilder: (context, rowIndex) {
+          final firstIndex = rowIndex * 2;
+          final secondIndex = firstIndex + 1;
+          final hasSecond = secondIndex < items.length;
 
-        Widget buildCard(int index) {
-          final item = items[index];
-          final count = badgeCount(item.menuItem.id);
-          return _MenuItemCard(
-            item: item,
-            badge: count,
-            onTap: () => onTap(index),
-            onLongPress: () => onLongPress(index),
-          );
-        }
+          Widget buildCard(int index) {
+            final item = items[index];
+            final count = badgeCount(item.menuItem.id);
+            return _MenuItemCard(
+              item: item,
+              badge: count,
+              onTap: () => onTap(index),
+              onLongPress: () => onLongPress(index),
+            );
+          }
 
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 14),
-          child: SizedBox(
-            height: 120,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Expanded(child: buildCard(firstIndex)),
-                if (hasSecond) ...[
-                  const SizedBox(width: 10),
-                  Expanded(child: buildCard(secondIndex)),
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 14),
+            child: SizedBox(
+              height: 120,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Expanded(child: buildCard(firstIndex)),
+                  if (hasSecond) ...[
+                    const SizedBox(width: 10),
+                    Expanded(child: buildCard(secondIndex)),
+                  ],
                 ],
-              ],
+              ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 }
