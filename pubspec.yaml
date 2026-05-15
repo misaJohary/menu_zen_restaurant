@@ -10,6 +10,7 @@ dev_dependencies:
 workspace:
   - apps/menu_zen_tablet
   - apps/menu_zen_mobile
+  - apps/menu_zen
   - packages/domain
   - packages/data
   - packages/design_system
