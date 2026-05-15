@@ -1,0 +1,66 @@
+name: menu_zen
+description: "Menu Zen — the diner's pocket concierge."
+publish_to: 'none'
+resolution: workspace
+
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.10.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Shared packages
+  domain:
+    path: ../../packages/domain
+  data:
+    path: ../../packages/data
+  design_system:
+    path: ../../packages/design_system
+
+  # State management & DI
+  flutter_bloc: ^9.1.1
+  get_it: ^8.2.0
+  injectable: ^2.5.1
+  equatable: ^2.0.7
+
+  # Navigation
+  go_router: ^14.0.0
+
+  # Networking
+  dio: ^5.0.0
+
+  # Config & storage
+  flutter_dotenv: ^5.2.1
+  shared_preferences: ^2.5.3
+
+  # UI
+  google_fonts: ^8.0.2
+  cached_network_image: ^3.4.1
+  skeletonizer: ^2.1.0+1
+  flutter_animate: ^4.5.0
+  phosphor_flutter: ^2.1.0
+
+  # Geolocation & maps
+  geolocator: ^13.0.0
+  flutter_map: ^7.0.0
+  latlong2: ^0.9.1
+
+  # Utilities
+  intl: ^0.20.2
+  logger: ^2.6.1
+  cupertino_icons: ^1.0.8
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - .env.local
+    - .env.staging
