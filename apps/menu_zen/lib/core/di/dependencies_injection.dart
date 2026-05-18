@@ -8,6 +8,7 @@ import 'package:domain/repositories/public_restaurants_repository.dart';
 import 'package:get_it/get_it.dart';
 
 import '../../presentation/bloc/discover/discover_cubit.dart';
+import '../../presentation/bloc/restaurant_detail/restaurant_detail_cubit.dart';
 import '../../presentation/bloc/search/search_bloc.dart';
 
 final getIt = GetIt.instance;
@@ -54,5 +55,9 @@ Future<void> configureDependencies() async {
       restaurants: getIt<PublicRestaurantsRepository>(),
       geo: getIt<GeolocationRepository>(),
     ),
+  );
+
+  getIt.registerFactory<RestaurantDetailCubit>(
+    () => RestaurantDetailCubit(getIt<PublicRestaurantsRepository>()),
   );
 }

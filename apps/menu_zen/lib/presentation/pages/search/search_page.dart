@@ -3,10 +3,12 @@ import 'package:domain/entities/discovery_filters.dart';
 import 'package:domain/entities/restaurant_public_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../core/di/dependencies_injection.dart';
+import '../../../core/navigation/route_paths.dart';
 import '../../bloc/search/search_bloc.dart';
 import 'widgets/filter_sheet.dart';
 import 'widgets/search_map_view.dart';
@@ -170,7 +172,12 @@ class _SearchViewState extends State<_SearchView> {
             child: Center(child: CircularProgressIndicator()),
           );
         }
-        return SearchResultCard(restaurant: filtered[index]);
+        return SearchResultCard(
+          restaurant: filtered[index],
+          onTap: () => context.push(
+            RoutePaths.restaurantDetail(filtered[index].id),
+          ),
+        );
       },
     );
   }

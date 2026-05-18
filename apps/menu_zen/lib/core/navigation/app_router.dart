@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import '../../presentation/pages/bookings/bookings_placeholder_page.dart';
 import '../../presentation/pages/discover/discover_page.dart';
 import '../../presentation/pages/profile/profile_placeholder_page.dart';
+import '../../presentation/pages/restaurant/restaurant_detail_page.dart';
 import '../../presentation/pages/search/search_page.dart';
 import '../../presentation/widgets/main_shell.dart';
 import 'route_paths.dart';
@@ -35,6 +36,13 @@ final GoRouter appRouter = GoRouter(
               const NoTransitionPage(child: ProfilePlaceholderPage()),
         ),
       ],
+    ),
+    GoRoute(
+      path: '${RoutePaths.restaurant}/:id',
+      builder: (_, state) {
+        final id = int.parse(state.pathParameters['id']!);
+        return RestaurantDetailPage(restaurantId: id);
+      },
     ),
   ],
 );

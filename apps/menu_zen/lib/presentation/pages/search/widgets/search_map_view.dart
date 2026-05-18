@@ -2,9 +2,11 @@ import 'package:design_system/design_system.dart';
 import 'package:domain/entities/restaurant_public_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:go_router/go_router.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
+import '../../../../core/navigation/route_paths.dart';
 import 'search_result_card.dart';
 
 /// Map view with a draggable bottom sheet showing the same results as the
@@ -97,6 +99,9 @@ class _SearchMapViewState extends State<SearchMapView> {
                   child: SearchResultCard(
                     restaurant: located[index],
                     variant: RestaurantCardVariant.horizontal,
+                    onTap: () => context.push(
+                      RoutePaths.restaurantDetail(located[index].id),
+                    ),
                   ),
                 );
               },

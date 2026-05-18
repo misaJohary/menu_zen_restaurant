@@ -1,7 +1,9 @@
 import 'package:design_system/design_system.dart';
 import 'package:domain/entities/restaurant_public_entity.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../../core/navigation/route_paths.dart';
 import '../../../../core/utils/formatters.dart';
 
 class DiscoverRail extends StatelessWidget {
@@ -47,7 +49,7 @@ class DiscoverRail extends StatelessWidget {
                 openStatus: openStatus?.status,
                 openStatusLabel: openStatus?.label,
                 variant: RestaurantCardVariant.compact,
-                onTap: () {},
+                onTap: () => context.push(RoutePaths.restaurantDetail(r.id)),
               );
             },
           ),

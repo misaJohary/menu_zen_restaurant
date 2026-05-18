@@ -5,4 +5,7 @@ class RoutePaths {
   static const String search = '/search';
   static const String bookings = '/bookings';
   static const String profile = '/profile';
+  static const String restaurant = '/restaurant';
+
+  static String restaurantDetail(int id) => '$restaurant/$id';
 }

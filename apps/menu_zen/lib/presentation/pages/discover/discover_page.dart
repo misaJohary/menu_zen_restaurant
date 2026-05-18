@@ -76,7 +76,9 @@ class _LoadedView extends StatelessWidget {
               child: EditorialPick(
                 title: state.pickIsNew ? 'New on Menu Zen' : 'Picked for you',
                 restaurant: state.pick!,
-                onTap: () {},
+                onTap: () => context.push(
+                  RoutePaths.restaurantDetail(state.pick!.id),
+                ),
               ),
             ),
           if (state.near.isNotEmpty) ...[
