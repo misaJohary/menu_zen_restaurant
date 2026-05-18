@@ -1,5 +1,3 @@
-import 'dart:ui' as ui;
-
 import 'package:design_system/design_system.dart';
 import 'package:domain/entities/category_entity.dart';
 import 'package:domain/entities/menu_item_entity.dart';
@@ -7,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../../core/utils/translations.dart';
+import '../../../../l10n/generated/app_localizations.dart';
 import '../widgets/menu_category_rail.dart';
 import '../widgets/menu_item_sheet.dart';
 import '../widgets/menu_item_tile.dart';
@@ -37,8 +36,16 @@ class _MenuTabState extends State<MenuTab> {
   void initState() {
     super.initState();
     _syncKeys();
-    _selectedLanguage = _pickInitialLanguage(widget.availableLanguages);
     _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _selectedLanguage ??= _pickInitialLanguage(
+      widget.availableLanguages,
+      localeLanguageOf(context),
+    );
   }
 
   @override
@@ -49,15 +56,17 @@ class _MenuTabState extends State<MenuTab> {
       _activeIndex = 0;
     }
     if (oldWidget.availableLanguages != widget.availableLanguages) {
-      _selectedLanguage = _pickInitialLanguage(widget.availableLanguages);
+      _selectedLanguage = _pickInitialLanguage(
+        widget.availableLanguages,
+        localeLanguageOf(context),
+      );
     }
   }
 
-  String? _pickInitialLanguage(List<String> languages) {
+  String? _pickInitialLanguage(List<String> languages, String preferred) {
     if (languages.isEmpty) return null;
-    final deviceCode = ui.PlatformDispatcher.instance.locale.languageCode;
     for (final code in languages) {
-      if (code.toLowerCase() == deviceCode.toLowerCase()) return code;
+      if (code.toLowerCase() == preferred.toLowerCase()) return code;
     }
     return languages.first;
   }
@@ -115,21 +124,26 @@ class _MenuTabState extends State<MenuTab> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     if (widget.menuByCategory.isEmpty) {
-      return const EmptyState(
+      return EmptyState(
         icon: PhosphorIconsDuotone.forkKnife,
-        title: 'Menu coming soon',
-        body: "We haven't published anything to taste yet.",
+        title: l10n.menuEmptyTitle,
+        body: l10n.menuEmptyBody,
       );
     }
 
-    final locale = _selectedLanguage ??
-        ui.PlatformDispatcher.instance.locale.languageCode;
+    final locale = _selectedLanguage ?? localeLanguageOf(context);
     final entries = widget.menuByCategory.entries.toList();
     final railEntries = [
       for (var i = 0; i < entries.length; i++)
         MenuCategoryEntry(
-          label: _categoryTitle(entries[i].key, locale, fallbackIndex: i),
+          label: _categoryTitle(
+            context,
+            entries[i].key,
+            locale,
+            fallbackIndex: i,
+          ),
           count: entries[i].value.length,
         ),
     ];
@@ -178,15 +192,17 @@ class _MenuTabState extends State<MenuTab> {
   }
 
   String _categoryTitle(
+    BuildContext context,
     CategoryEntity category,
     String? locale, {
     required int fallbackIndex,
   }) {
-    if (category.id == -1) return 'Other';
+    final l10n = AppLocalizations.of(context);
+    if (category.id == -1) return l10n.menuOtherCategory;
     final t = pickTranslation(category.translations, locale);
     final name = t?.name.trim() ?? '';
     if (name.isNotEmpty) return name;
-    return 'Section ${fallbackIndex + 1}';
+    return l10n.menuSectionFallback(fallbackIndex + 1);
   }
 
   void _openSheet(BuildContext context, MenuItemEntity item, String? locale) {

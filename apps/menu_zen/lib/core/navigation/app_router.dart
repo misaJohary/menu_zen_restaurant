@@ -1,8 +1,11 @@
 import 'package:go_router/go_router.dart';
 
+import '../../presentation/pages/auth/login_page.dart';
+import '../../presentation/pages/auth/register_page.dart';
 import '../../presentation/pages/bookings/bookings_placeholder_page.dart';
 import '../../presentation/pages/discover/discover_page.dart';
-import '../../presentation/pages/profile/profile_placeholder_page.dart';
+import '../../presentation/pages/favorites/favorites_page.dart';
+import '../../presentation/pages/profile/profile_page.dart';
 import '../../presentation/pages/restaurant/restaurant_detail_page.dart';
 import '../../presentation/pages/search/search_page.dart';
 import '../../presentation/widgets/main_shell.dart';
@@ -33,9 +36,17 @@ final GoRouter appRouter = GoRouter(
         GoRoute(
           path: RoutePaths.profile,
           pageBuilder: (_, __) =>
-              const NoTransitionPage(child: ProfilePlaceholderPage()),
+              const NoTransitionPage(child: ProfilePage()),
         ),
       ],
+    ),
+    GoRoute(
+      path: RoutePaths.authLogin,
+      builder: (_, __) => const LoginPage(),
+    ),
+    GoRoute(
+      path: RoutePaths.authRegister,
+      builder: (_, __) => const RegisterPage(),
     ),
     GoRoute(
       path: '${RoutePaths.restaurant}/:id',
@@ -43,6 +54,10 @@ final GoRouter appRouter = GoRouter(
         final id = int.parse(state.pathParameters['id']!);
         return RestaurantDetailPage(restaurantId: id);
       },
+    ),
+    GoRoute(
+      path: RoutePaths.favorites,
+      builder: (_, __) => const FavoritesPageGate(),
     ),
   ],
 );

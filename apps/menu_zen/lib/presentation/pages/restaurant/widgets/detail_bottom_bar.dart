@@ -2,6 +2,8 @@ import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
+import '../../../../l10n/generated/app_localizations.dart';
+
 class DetailBottomBar extends StatelessWidget {
   final VoidCallback onReserve;
   final VoidCallback onOrder;
@@ -14,6 +16,7 @@ class DetailBottomBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return SafeArea(
       child: Container(
         padding: const EdgeInsets.symmetric(
@@ -32,7 +35,7 @@ class DetailBottomBar extends StatelessWidget {
               child: OutlinedButton.icon(
                 onPressed: onReserve,
                 icon: const Icon(PhosphorIconsRegular.calendarPlus),
-                label: const Text('Reserve'),
+                label: Text(l10n.detailReserve),
               ),
             ),
             const SizedBox(width: AppSpacing.s),
@@ -40,7 +43,7 @@ class DetailBottomBar extends StatelessWidget {
               child: FilledButton.icon(
                 onPressed: onOrder,
                 icon: const Icon(PhosphorIconsRegular.shoppingBag),
-                label: const Text('Order delivery'),
+                label: Text(l10n.detailOrderDelivery),
               ),
             ),
           ],

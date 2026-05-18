@@ -4,7 +4,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../core/di/dependencies_injection.dart';
+import '../../../l10n/generated/app_localizations.dart';
 import '../../bloc/restaurant_detail/restaurant_detail_cubit.dart';
+import '../../widgets/favorite_heart_button.dart';
 import 'tabs/about_tab.dart';
 import 'tabs/menu_tab.dart';
 import 'tabs/photos_tab.dart';
@@ -94,6 +96,7 @@ class _LoadedViewState extends State<_LoadedView>
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final detail = widget.state.detail;
     return Scaffold(
       body: NestedScrollView(
@@ -107,15 +110,14 @@ class _LoadedViewState extends State<_LoadedView>
             iconTheme: const IconThemeData(color: Colors.white),
             actionsIconTheme: const IconThemeData(color: Colors.white),
             actions: [
-              IconButton(
-                icon: const Icon(PhosphorIconsRegular.heart),
-                onPressed: () {},
-                tooltip: 'Save',
+              FavoriteHeartButton(
+                restaurant: detail,
+                iconColor: Colors.white,
               ),
               IconButton(
                 icon: const Icon(PhosphorIconsRegular.shareNetwork),
                 onPressed: () {},
-                tooltip: 'Share',
+                tooltip: l10n.commonShare,
               ),
               const SizedBox(width: AppSpacing.xs),
             ],
@@ -141,12 +143,12 @@ class _LoadedViewState extends State<_LoadedView>
                 isScrollable: true,
                 tabAlignment: TabAlignment.start,
                 labelStyle: Theme.of(context).textTheme.titleSmall,
-                tabs: const [
-                  Tab(text: 'Photos'),
-                  Tab(text: 'Menu'),
-                  Tab(text: 'Reserve'),
-                  Tab(text: 'Reviews'),
-                  Tab(text: 'About'),
+                tabs: [
+                  Tab(text: l10n.tabPhotos),
+                  Tab(text: l10n.tabMenu),
+                  Tab(text: l10n.tabReserve),
+                  Tab(text: l10n.tabReviews),
+                  Tab(text: l10n.tabAbout),
                 ],
               ),
               backgroundColor:
@@ -164,6 +166,8 @@ class _LoadedViewState extends State<_LoadedView>
             ),
             ReserveTab(detail: detail),
             ReviewsTab(
+              restaurantId: detail.id,
+              restaurantName: detail.name,
               reviews: widget.state.reviewsPreview,
               summary: widget.state.summary,
             ),
@@ -235,13 +239,14 @@ class _ErrorScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(),
       body: EmptyState(
         icon: PhosphorIconsDuotone.wifiSlash,
-        title: "We couldn't reach the kitchen.",
+        title: l10n.commonReachKitchenError,
         body: message,
-        actionLabel: 'Try again',
+        actionLabel: l10n.commonTryAgain,
         onAction: onRetry,
       ),
     );

@@ -9,6 +9,7 @@ import 'package:skeletonizer/skeletonizer.dart';
 import '../../../core/di/dependencies_injection.dart';
 import '../../../core/navigation/route_paths.dart';
 import '../../../core/utils/formatters.dart';
+import '../../../l10n/generated/app_localizations.dart';
 import '../../bloc/discover/discover_cubit.dart';
 import '../../data/moods.dart';
 import 'widgets/discover_header.dart';
@@ -57,13 +58,14 @@ class _LoadedView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return RefreshIndicator(
       onRefresh: () => context.read<DiscoverCubit>().load(),
       child: ListView(
         padding: const EdgeInsets.only(bottom: AppSpacing.xl),
         children: [
           DiscoverHeader(
-            city: state.city ?? 'Near you',
+            city: state.city ?? l10n.discoverNearYou,
             locationDenied: state.locationDenied,
             onSearchTap: () => context.go(RoutePaths.search),
           ),
@@ -74,7 +76,9 @@ class _LoadedView extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: AppSpacing.m),
               child: EditorialPick(
-                title: state.pickIsNew ? 'New on Menu Zen' : 'Picked for you',
+                title: state.pickIsNew
+                    ? l10n.discoverNewOnMenuZen
+                    : l10n.discoverPickedForYou,
                 restaurant: state.pick!,
                 onTap: () => context.push(
                   RoutePaths.restaurantDetail(state.pick!.id),
@@ -84,7 +88,7 @@ class _LoadedView extends StatelessWidget {
           if (state.near.isNotEmpty) ...[
             const SizedBox(height: AppSpacing.l),
             DiscoverRail(
-              title: 'Near you',
+              title: l10n.discoverNearYou,
               items: state.near,
               showDistance: !state.locationDenied,
             ),
@@ -92,7 +96,7 @@ class _LoadedView extends StatelessWidget {
           if (state.trending.isNotEmpty) ...[
             const SizedBox(height: AppSpacing.l),
             DiscoverRail(
-              title: 'Trending this week',
+              title: l10n.discoverTrendingThisWeek,
               items: state.trending,
               showDistance: !state.locationDenied,
             ),
@@ -108,13 +112,14 @@ class _MoodsStrip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final moods = moodsFor(context);
     return SizedBox(
       height: 44,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: AppSpacing.m),
         itemBuilder: (_, index) {
-          final mood = kMoods[index];
+          final mood = moods[index];
           return MoodChip(
             label: mood.label,
             icon: mood.icon,
@@ -122,7 +127,7 @@ class _MoodsStrip extends StatelessWidget {
           );
         },
         separatorBuilder: (_, __) => const SizedBox(width: AppSpacing.s),
-        itemCount: kMoods.length,
+        itemCount: moods.length,
       ),
     );
   }
@@ -133,6 +138,7 @@ class _LoadingView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final placeholder = _placeholderRestaurant();
     final placeholders = List.generate(3, (_) => placeholder);
     return Skeletonizer(
@@ -143,7 +149,10 @@ class _LoadingView extends StatelessWidget {
           padding: const EdgeInsets.only(bottom: AppSpacing.xl),
           child: Column(
             children: [
-              const DiscoverHeader(city: 'Near you', locationDenied: false),
+              DiscoverHeader(
+                city: l10n.discoverNearYou,
+                locationDenied: false,
+              ),
               const SizedBox(height: AppSpacing.m),
               Skeleton.replace(
                 width: double.infinity,
@@ -154,7 +163,7 @@ class _LoadingView extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: AppSpacing.m),
                 child: EditorialPick(
-                  title: 'Picked for you',
+                  title: l10n.discoverPickedForYou,
                   restaurant: placeholder,
                   onTap: () {},
                 ),
@@ -164,7 +173,7 @@ class _LoadingView extends StatelessWidget {
                 width: double.infinity,
                 height: 280,
                 child: DiscoverRail(
-                  title: 'Near you',
+                  title: l10n.discoverNearYou,
                   items: placeholders,
                   showDistance: false,
                 ),
@@ -174,7 +183,7 @@ class _LoadingView extends StatelessWidget {
                 width: double.infinity,
                 height: 280,
                 child: DiscoverRail(
-                  title: 'Trending this week',
+                  title: l10n.discoverTrendingThisWeek,
                   items: placeholders,
                   showDistance: false,
                 ),
@@ -205,11 +214,12 @@ class _ErrorView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return EmptyState(
       icon: PhosphorIconsDuotone.wifiSlash,
-      title: "We couldn't reach the kitchen.",
+      title: l10n.commonReachKitchenError,
       body: message,
-      actionLabel: 'Try again',
+      actionLabel: l10n.commonTryAgain,
       onAction: onRetry,
     );
   }
@@ -228,9 +238,9 @@ RestaurantPublicEntity _placeholderRestaurant() {
 }
 
 // expose for use elsewhere
-String formatRestaurantSubtitle(RestaurantPublicEntity r) {
+String formatRestaurantSubtitle(BuildContext context, RestaurantPublicEntity r) {
   final parts = <String>[];
-  final type = restaurantTypeLabel(r.type?.name);
+  final type = restaurantTypeLabel(context, r.type?.name);
   if (type.isNotEmpty) parts.add(type);
   if (r.city.isNotEmpty) parts.add(r.city);
   return parts.join(' · ');

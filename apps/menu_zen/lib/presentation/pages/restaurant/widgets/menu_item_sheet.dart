@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../../core/utils/translations.dart';
+import '../../../../l10n/generated/app_localizations.dart';
 
 class MenuItemSheet extends StatefulWidget {
   final MenuItemEntity item;
@@ -26,12 +27,13 @@ class _MenuItemSheetState extends State<MenuItemSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final textTheme = Theme.of(context).textTheme;
     final scheme = Theme.of(context).colorScheme;
     final translation =
         pickTranslation(widget.item.translations, widget.locale);
     final rawName = translation?.name.trim() ?? '';
-    final name = rawName.isEmpty ? 'Untitled item' : rawName;
+    final name = rawName.isEmpty ? l10n.menuItemUntitled : rawName;
     final description = translation?.description?.trim();
     final total = (widget.item.price * _quantity).round();
 
@@ -85,7 +87,9 @@ class _MenuItemSheetState extends State<MenuItemSheet> {
                           Text(name, style: textTheme.headlineSmall),
                           const SizedBox(height: AppSpacing.s),
                           Text(
-                            'Ar ${_priceFormat.format(widget.item.price.round())}',
+                            l10n.menuItemPrice(
+                              _priceFormat.format(widget.item.price.round()),
+                            ),
                             style: textTheme.titleMedium?.copyWith(
                               color: scheme.primary,
                               fontWeight: FontWeight.w600,
@@ -129,7 +133,7 @@ class _MenuItemSheetState extends State<MenuItemSheet> {
                         child: FilledButton(
                           onPressed: () => Navigator.of(context).pop(),
                           child: Text(
-                            'Add to cart · Ar ${_priceFormat.format(total)}',
+                            l10n.menuItemAddToCart(_priceFormat.format(total)),
                           ),
                         ),
                       ),

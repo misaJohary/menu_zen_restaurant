@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
+import '../../../../l10n/generated/app_localizations.dart';
+
 class ReserveTab extends StatefulWidget {
   final RestaurantDetailPublicEntity detail;
   const ReserveTab({super.key, required this.detail});
@@ -17,9 +19,6 @@ class _ReserveTabState extends State<ReserveTab> {
   late DateTime _selectedDate;
   int _partySize = 2;
   String? _selectedSlot;
-
-  static final _dayLabel = DateFormat('EEE');
-  static final _dateLabel = DateFormat('d');
 
   @override
   void initState() {
@@ -56,9 +55,15 @@ class _ReserveTabState extends State<ReserveTab> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final scheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
     final slots = _slots;
+
+    final localeTag = Localizations.localeOf(context).toLanguageTag();
+    final dayLabel = DateFormat('EEE', localeTag);
+    final dateLabel = DateFormat('d', localeTag);
+    final ctaDateLabel = DateFormat('MMM d', localeTag);
 
     return ListView(
       padding: const EdgeInsets.fromLTRB(
@@ -68,7 +73,7 @@ class _ReserveTabState extends State<ReserveTab> {
         AppSpacing.xxxl,
       ),
       children: [
-        Text('Choose a date', style: textTheme.titleMedium),
+        Text(l10n.reserveChooseDate, style: textTheme.titleMedium),
         const SizedBox(height: AppSpacing.s),
         SizedBox(
           height: 72,
@@ -83,8 +88,8 @@ class _ReserveTabState extends State<ReserveTab> {
                       day.month == _selectedDate.month &&
                       day.year == _selectedDate.year;
               return _DateChip(
-                weekday: _dayLabel.format(day).toUpperCase(),
-                day: _dateLabel.format(day),
+                weekday: dayLabel.format(day).toUpperCase(),
+                day: dateLabel.format(day),
                 selected: isSelected,
                 onTap: () => setState(() {
                   _selectedDate = day;
@@ -95,14 +100,14 @@ class _ReserveTabState extends State<ReserveTab> {
           ),
         ),
         const SizedBox(height: AppSpacing.l),
-        Text('Party size', style: textTheme.titleMedium),
+        Text(l10n.reservePartySize, style: textTheme.titleMedium),
         const SizedBox(height: AppSpacing.s),
         _PartySizeStepper(
           value: _partySize,
           onChanged: (v) => setState(() => _partySize = v),
         ),
         const SizedBox(height: AppSpacing.l),
-        Text('Pick a time', style: textTheme.titleMedium),
+        Text(l10n.reservePickTime, style: textTheme.titleMedium),
         const SizedBox(height: AppSpacing.s),
         if (slots.isEmpty)
           Container(
@@ -112,7 +117,7 @@ class _ReserveTabState extends State<ReserveTab> {
               borderRadius: BorderRadius.circular(AppRadii.md),
             ),
             child: Text(
-              'No times available on this day.',
+              l10n.reserveNoTimes,
               style: textTheme.bodyMedium?.copyWith(
                 color: scheme.onSurface.withValues(alpha: 0.7),
               ),
@@ -137,8 +142,12 @@ class _ReserveTabState extends State<ReserveTab> {
           icon: const Icon(PhosphorIconsRegular.calendarCheck),
           label: Text(
             _selectedSlot == null
-                ? 'Pick a time'
-                : 'Reserve for $_partySize · ${DateFormat('MMM d').format(_selectedDate)} at $_selectedSlot',
+                ? l10n.reservePickTime
+                : l10n.reserveCta(
+                    _partySize,
+                    ctaDateLabel.format(_selectedDate),
+                    _selectedSlot!,
+                  ),
           ),
         ),
       ],
@@ -239,9 +248,9 @@ class _PartySizeStepper extends StatelessWidget {
             icon: const Icon(PhosphorIconsRegular.minus),
           ),
           SizedBox(
-            width: 80,
+            width: 96,
             child: Text(
-              '$value ${value == 1 ? 'guest' : 'guests'}',
+              AppLocalizations.of(context).reserveGuests(value),
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.titleMedium,
             ),

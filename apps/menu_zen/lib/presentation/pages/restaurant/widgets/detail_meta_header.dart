@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../../core/utils/formatters.dart';
+import '../../../../l10n/generated/app_localizations.dart';
 
 class DetailMetaHeader extends StatelessWidget {
   final RestaurantDetailPublicEntity detail;
@@ -16,13 +17,13 @@ class DetailMetaHeader extends StatelessWidget {
     final muted = scheme.onSurface.withValues(alpha: 0.7);
 
     final metaParts = <String>[];
-    final type = restaurantTypeLabel(detail.type?.name);
+    final type = restaurantTypeLabel(context, detail.type?.name);
     if (type.isNotEmpty) metaParts.add(type);
     if (detail.city.isNotEmpty) metaParts.add(detail.city);
-    final distance = formatDistanceKm(detail.distanceKm);
+    final distance = formatDistanceKm(context, detail.distanceKm);
     if (distance != null) metaParts.add(distance);
 
-    final statusInfo = _statusFor(detail);
+    final statusInfo = _statusFor(context, detail);
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(
@@ -73,20 +74,24 @@ class DetailMetaHeader extends StatelessWidget {
     );
   }
 
-  OpenStatusInfo? _statusFor(RestaurantDetailPublicEntity detail) {
+  OpenStatusInfo? _statusFor(
+    BuildContext context,
+    RestaurantDetailPublicEntity detail,
+  ) {
+    final l10n = AppLocalizations.of(context);
     if (detail.isOpenNow) {
-      final fromHours = resolveOpenStatus(detail.openingHours);
+      final fromHours = resolveOpenStatus(context, detail.openingHours);
       if (fromHours != null) return fromHours;
-      return const OpenStatusInfo(OpenStatus.open, 'Open');
+      return OpenStatusInfo(OpenStatus.open, l10n.detailStatusOpen);
     }
     final next = detail.nextOpening;
     if (next != null) {
       return OpenStatusInfo(
         OpenStatus.closed,
-        'Closed · opens ${next.day} ${next.time}',
+        l10n.detailStatusClosedOpensAt(next.day, next.time),
       );
     }
-    return const OpenStatusInfo(OpenStatus.closed, 'Closed');
+    return OpenStatusInfo(OpenStatus.closed, l10n.detailStatusClosed);
   }
 }
 

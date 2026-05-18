@@ -3,17 +3,20 @@ import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
+import '../../../../l10n/generated/app_localizations.dart';
+
 class PhotosTab extends StatelessWidget {
   final List<String> pictures;
   const PhotosTab({super.key, required this.pictures});
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     if (pictures.isEmpty) {
-      return const EmptyState(
+      return EmptyState(
         icon: PhosphorIconsDuotone.image,
-        title: 'No photos yet',
-        body: 'This restaurant has not shared any photos.',
+        title: l10n.photosEmptyTitle,
+        body: l10n.photosEmptyBody,
       );
     }
 
@@ -120,7 +123,10 @@ class _PhotosViewerState extends State<_PhotosViewer> {
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.white),
         title: Text(
-          '${_currentIndex + 1} / ${widget.pictures.length}',
+          AppLocalizations.of(context).photosCounter(
+            _currentIndex + 1,
+            widget.pictures.length,
+          ),
           style: const TextStyle(color: Colors.white),
         ),
       ),

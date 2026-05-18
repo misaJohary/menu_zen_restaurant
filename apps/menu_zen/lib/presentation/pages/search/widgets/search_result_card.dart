@@ -19,10 +19,10 @@ class SearchResultCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final r = restaurant;
     final subtitleParts = <String>[];
-    final type = restaurantTypeLabel(r.type?.name);
+    final type = restaurantTypeLabel(context, r.type?.name);
     if (type.isNotEmpty) subtitleParts.add(type);
     if (r.city.isNotEmpty) subtitleParts.add(r.city);
-    final distance = formatDistanceKm(r.distanceKm);
+    final distance = formatDistanceKm(context, r.distanceKm);
 
     return RestaurantCard(
       name: r.name,

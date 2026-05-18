@@ -1,21 +1,26 @@
 import 'package:design_system/design_system.dart';
 import 'package:domain/entities/opening_hours_entity.dart';
+import 'package:flutter/widgets.dart';
 
-String? formatDistanceKm(double? km) {
+import '../../l10n/generated/app_localizations.dart';
+
+String? formatDistanceKm(BuildContext context, double? km) {
   if (km == null || km <= 0) return null;
-  if (km < 1) return '${(km * 1000).round()} m';
-  if (km < 10) return '${km.toStringAsFixed(1)} km';
-  return '${km.round()} km';
+  final l10n = AppLocalizations.of(context);
+  if (km < 1) return l10n.distanceMeters((km * 1000).round());
+  if (km < 10) return l10n.distanceKilometersShort(km.toStringAsFixed(1));
+  return l10n.distanceKilometersRound(km.round());
 }
 
-String restaurantTypeLabel(String? raw) {
+String restaurantTypeLabel(BuildContext context, String? raw) {
+  final l10n = AppLocalizations.of(context);
   switch (raw) {
     case 'fastfood':
-      return 'Fast food';
+      return l10n.cuisineFastFood;
     case 'casual':
-      return 'Casual dining';
+      return l10n.cuisineCasualDining;
     case 'fine_dining':
-      return 'Fine dining';
+      return l10n.cuisineFineDining;
     default:
       return '';
   }
@@ -29,8 +34,13 @@ class OpenStatusInfo {
 
 /// Resolves an [OpenStatusInfo] from the periods of [hours] using local time.
 /// API convention: `day` is `0 = Monday … 6 = Sunday`, slots are `HH:mm`.
-OpenStatusInfo? resolveOpenStatus(OpeningHoursEntity? hours, {DateTime? now}) {
+OpenStatusInfo? resolveOpenStatus(
+  BuildContext context,
+  OpeningHoursEntity? hours, {
+  DateTime? now,
+}) {
   if (hours == null || hours.periods.isEmpty) return null;
+  final l10n = AppLocalizations.of(context);
   final n = now ?? DateTime.now();
   final dayKey = n.weekday - 1;
   final currentMinutes = n.hour * 60 + n.minute;
@@ -41,12 +51,18 @@ OpenStatusInfo? resolveOpenStatus(OpeningHoursEntity? hours, {DateTime? now}) {
     if (open == null || close == null) continue;
     if (currentMinutes >= open && currentMinutes < close) {
       if (close - currentMinutes <= 30) {
-        return OpenStatusInfo(OpenStatus.closingSoon, 'Closes ${slot.close}');
+        return OpenStatusInfo(
+          OpenStatus.closingSoon,
+          l10n.detailStatusClosesAt(slot.close),
+        );
       }
-      return OpenStatusInfo(OpenStatus.open, 'Open · until ${slot.close}');
+      return OpenStatusInfo(
+        OpenStatus.open,
+        l10n.detailStatusOpenUntil(slot.close),
+      );
     }
   }
-  return const OpenStatusInfo(OpenStatus.closed, 'Closed');
+  return OpenStatusInfo(OpenStatus.closed, l10n.detailStatusClosed);
 }
 
 int? _parseHHmm(String value) {

@@ -26,7 +26,7 @@ class EditorialPick extends StatelessWidget {
         const SizedBox(height: AppSpacing.s),
         RestaurantCard(
           name: restaurant.name,
-          subtitle: _subtitle(restaurant),
+          subtitle: _subtitle(context, restaurant),
           coverUrl: restaurant.cover ?? restaurant.logo,
           variant: RestaurantCardVariant.editorial,
           onTap: onTap,
@@ -35,8 +35,8 @@ class EditorialPick extends StatelessWidget {
     );
   }
 
-  String _subtitle(RestaurantPublicEntity r) {
-    final type = restaurantTypeLabel(r.type?.name);
+  String _subtitle(BuildContext context, RestaurantPublicEntity r) {
+    final type = restaurantTypeLabel(context, r.type?.name);
     if (type.isNotEmpty) return type;
     return r.city;
   }

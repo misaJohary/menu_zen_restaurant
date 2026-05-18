@@ -1,0 +1,262 @@
+{
+  "@@locale": "fr",
+
+  "appTitle": "Menu Zen",
+
+  "navDiscover": "Découvrir",
+  "navSearch": "Rechercher",
+  "navBookings": "Réservations",
+  "navProfile": "Profil",
+
+  "commonTryAgain": "Réessayer",
+  "commonCancel": "Annuler",
+  "commonReset": "Réinitialiser",
+  "commonApply": "Appliquer",
+  "commonShare": "Partager",
+  "commonEdit": "Modifier",
+  "commonDelete": "Supprimer",
+  "commonKeep": "Conserver",
+  "commonAnonymous": "Anonyme",
+  "commonYou": "Vous",
+  "commonComingSoon": "Bientôt disponible",
+  "commonReachKitchenError": "Impossible de joindre la cuisine.",
+
+  "authWelcomeBack": "Bon retour",
+  "authSignInSubtitle": "Connectez-vous avec votre e-mail ou téléphone pour continuer.",
+  "authEmailOrPhone": "E-mail ou téléphone",
+  "authValidationEmailOrPhone": "Veuillez saisir votre e-mail ou téléphone",
+  "authPassword": "Mot de passe",
+  "authValidationPassword": "Veuillez saisir votre mot de passe",
+  "authSignIn": "Se connecter",
+  "authNoAccount": "Pas encore de compte ?",
+  "authCreateOne": "Créer un compte",
+  "authCreateAccount": "Créer un compte",
+  "authCreateAccountSubtitle": "Parlez-nous un peu de vous pour commencer.",
+  "authFullName": "Nom complet",
+  "authEmail": "E-mail",
+  "authValidationEmail": "Veuillez saisir votre e-mail",
+  "authValidationEmailInvalid": "Veuillez saisir un e-mail valide",
+  "authPhoneOptional": "Téléphone (facultatif)",
+  "authPasswordHelper": "Au moins 8 caractères",
+  "authValidationPasswordRequired": "Veuillez saisir un mot de passe",
+  "authValidationPasswordLength": "Le mot de passe doit comporter au moins 8 caractères",
+
+  "discoverGreeting": "Bonsoir.",
+  "discoverBrowsingCity": "Vous parcourez {city}",
+  "@discoverBrowsingCity": {
+    "placeholders": { "city": { "type": "String" } }
+  },
+  "discoverNearYou": "Près de vous",
+  "discoverSearchHint": "Rechercher restaurants, plats…",
+  "discoverNewOnMenuZen": "Nouveau sur Menu Zen",
+  "discoverPickedForYou": "Sélectionné pour vous",
+  "discoverTrendingThisWeek": "Tendance cette semaine",
+
+  "moodCozy": "Cosy",
+  "moodQuickBite": "Sur le pouce",
+  "moodDateNight": "Soirée en duo",
+  "moodFamily": "En famille",
+  "moodOutdoor": "En terrasse",
+  "moodVegetarian": "Végétarien",
+
+  "searchHint": "Rechercher des restaurants",
+  "searchModeList": "Liste",
+  "searchModeMap": "Carte",
+  "searchNoMatches": "Aucun résultat",
+  "searchNoMatchesBody": "Essayez d'élargir le rayon ou de retirer des filtres.",
+  "filtersTitle": "Filtres",
+  "filtersCuisine": "Cuisine",
+  "filtersDistance": "Distance",
+  "filtersDistanceAny": "Toutes",
+  "filtersDistanceKm": "{km} km",
+  "@filtersDistanceKm": {
+    "placeholders": { "km": { "type": "String" } }
+  },
+  "filtersCapabilities": "Services",
+  "filtersDietary": "Régime",
+  "capabilityReservations": "Réservations",
+  "capabilityDelivers": "Livraison",
+  "capabilityTakeaway": "À emporter",
+  "dietaryVeg": "Végé",
+  "dietaryVegan": "Vegan",
+  "dietaryHalal": "Halal",
+  "dietaryGlutenFree": "Sans gluten",
+  "cuisineFastFood": "Restauration rapide",
+  "cuisineCasual": "Décontracté",
+  "cuisineFineDining": "Gastronomique",
+  "cuisineCasualDining": "Restauration décontractée",
+
+  "favoritesTitle": "Mes favoris",
+  "favoritesEmptyTitle": "Vos favoris vivent ici.",
+  "favoritesEmptyBody": "Appuyez sur ♡ pour ajouter un coup de cœur.",
+  "favoritesEmptyAction": "Explorer les restaurants",
+  "favoritesErrorTitle": "Impossible de charger vos favoris.",
+  "favoritesSignedOutTitle": "Connectez-vous pour voir vos favoris",
+  "favoritesSignedOutBody": "Enregistrez les adresses que vous aimez et retrouvez-les en un clic.",
+  "favoritesSignedOutAction": "Se connecter",
+  "favoriteSaveTooltip": "Enregistrer",
+  "favoriteRemoveTooltip": "Retirer des favoris",
+
+  "profileSignInTitle": "Connectez-vous à Menu Zen",
+  "profileSignInBody": "Accédez à vos favoris, réservations et commandes.",
+  "profileSignInAction": "Se connecter",
+  "profileFavorites": "Favoris",
+  "profileFavoritesSubtitle": "Les restaurants enregistrés",
+  "profileReservationsOrders": "Réservations et commandes",
+  "profileLanguage": "Langue",
+  "profileSignOut": "Se déconnecter",
+  "profileSignOutDialogTitle": "Se déconnecter ?",
+  "profileSignOutDialogBody": "Vous devrez vous reconnecter pour ajouter des favoris, réserver une table ou commander.",
+
+  "languageEnglish": "English",
+  "languageFrench": "Français",
+  "languageMalagasy": "Malagasy",
+  "languageSpanish": "Español",
+  "languageGerman": "Deutsch",
+  "languageItalian": "Italiano",
+  "languagePortuguese": "Português",
+  "languageChinese": "中文",
+  "languageJapanese": "日本語",
+  "languageArabic": "العربية",
+  "languageSheetTitle": "Choisir la langue",
+
+  "tabPhotos": "Photos",
+  "tabMenu": "Menu",
+  "tabReserve": "Réserver",
+  "tabReviews": "Avis",
+  "tabAbout": "À propos",
+
+  "photosEmptyTitle": "Aucune photo",
+  "photosEmptyBody": "Ce restaurant n'a pas encore partagé de photos.",
+  "photosCounter": "{current} / {total}",
+  "@photosCounter": {
+    "placeholders": {
+      "current": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+
+  "menuEmptyTitle": "Menu bientôt disponible",
+  "menuEmptyBody": "Rien n'est encore publié à déguster.",
+  "menuLanguage": "Langue du menu",
+  "menuOtherCategory": "Autre",
+  "menuSectionFallback": "Section {index}",
+  "@menuSectionFallback": {
+    "placeholders": { "index": { "type": "int" } }
+  },
+  "menuItemUntitled": "Plat sans titre",
+  "menuItemUnavailable": "Indisponible",
+  "menuItemPrice": "Ar {price}",
+  "@menuItemPrice": {
+    "placeholders": { "price": { "type": "String" } }
+  },
+  "menuItemAddToCart": "Ajouter au panier · Ar {total}",
+  "@menuItemAddToCart": {
+    "placeholders": { "total": { "type": "String" } }
+  },
+
+  "reserveChooseDate": "Choisir une date",
+  "reservePartySize": "Nombre de convives",
+  "reservePickTime": "Choisir un horaire",
+  "reserveNoTimes": "Aucun horaire disponible ce jour-là.",
+  "reserveCta": "Réserver pour {count} · {date} à {time}",
+  "@reserveCta": {
+    "placeholders": {
+      "count": { "type": "int" },
+      "date": { "type": "String" },
+      "time": { "type": "String" }
+    }
+  },
+  "reserveGuests": "{count, plural, one{{count} convive} other{{count} convives}}",
+  "@reserveGuests": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+
+  "reviewsEmptyTitle": "Aucun avis pour l'instant",
+  "reviewsEmptyBody": "Soyez le premier à partager votre expérience.",
+  "reviewsEmptyAction": "Écrire un avis",
+  "reviewWriteEditTitle": "Modifier votre avis",
+  "reviewWriteCreateTitle": "Partagez votre expérience",
+  "reviewWriteEditSubtitle": "Modifiez votre note ou votre commentaire.",
+  "reviewWriteCreateSubtitle": "Aidez d'autres convives à choisir leur prochaine adresse.",
+  "reviewsCount": "{count, plural, one{{count} avis} other{{count} avis}}",
+  "@reviewsCount": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "reviewSignInSnack": "Connectez-vous pour partager un avis.",
+  "reviewPostedSnack": "Avis publié — merci !",
+  "reviewUpdatedSnack": "Avis mis à jour.",
+  "reviewDeletedSnack": "Avis supprimé.",
+  "reviewDeleteDialogTitle": "Supprimer cet avis ?",
+  "reviewDeleteDialogBody": "Votre note et votre commentaire seront retirés de la page du restaurant.",
+  "reviewComposerEditTitle": "Modifier votre avis",
+  "reviewComposerCreateTitle": "Noter ce restaurant",
+  "reviewCommentLabel": "Racontez votre visite",
+  "reviewCommentHint": "Qu'avez-vous aimé ? Que pourrait-on améliorer ?",
+  "reviewSaveChanges": "Enregistrer",
+  "reviewPostReview": "Publier l'avis",
+  "reviewRating1": "Décevant",
+  "reviewRating2": "En dessous des attentes",
+  "reviewRating3": "Bien",
+  "reviewRating4": "Très bien",
+  "reviewRating5": "Excellent",
+  "reviewRatingNone": "Touchez une étoile pour noter",
+  "reviewStarSemantic": "{count, plural, one{{count} étoile} other{{count} étoiles}}",
+  "@reviewStarSemantic": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+
+  "aboutOpeningHours": "Horaires d'ouverture",
+  "aboutLanguagesSpoken": "Langues parlées",
+  "aboutSocialMedia": "Réseaux sociaux",
+  "aboutHoursRange": "{open} – {close}",
+  "@aboutHoursRange": {
+    "placeholders": {
+      "open": { "type": "String" },
+      "close": { "type": "String" }
+    }
+  },
+  "weekdayMonday": "Lundi",
+  "weekdayTuesday": "Mardi",
+  "weekdayWednesday": "Mercredi",
+  "weekdayThursday": "Jeudi",
+  "weekdayFriday": "Vendredi",
+  "weekdaySaturday": "Samedi",
+  "weekdaySunday": "Dimanche",
+
+  "detailReserve": "Réserver",
+  "detailOrderDelivery": "Commander en livraison",
+  "detailStatusOpen": "Ouvert",
+  "detailStatusOpenUntil": "Ouvert · jusqu'à {time}",
+  "@detailStatusOpenUntil": {
+    "placeholders": { "time": { "type": "String" } }
+  },
+  "detailStatusClosed": "Fermé",
+  "detailStatusClosesAt": "Ferme à {time}",
+  "@detailStatusClosesAt": {
+    "placeholders": { "time": { "type": "String" } }
+  },
+  "detailStatusClosedOpensAt": "Fermé · ouvre {day} {time}",
+  "@detailStatusClosedOpensAt": {
+    "placeholders": {
+      "day": { "type": "String" },
+      "time": { "type": "String" }
+    }
+  },
+
+  "distanceMeters": "{meters} m",
+  "@distanceMeters": {
+    "placeholders": { "meters": { "type": "int" } }
+  },
+  "distanceKilometersShort": "{km} km",
+  "@distanceKilometersShort": {
+    "placeholders": { "km": { "type": "String" } }
+  },
+  "distanceKilometersRound": "{km} km",
+  "@distanceKilometersRound": {
+    "placeholders": { "km": { "type": "int" } }
+  },
+
+  "bookingsPlaceholderTitle": "Réservations bientôt disponibles",
+  "bookingsPlaceholderBody": "Vos réservations et commandes apparaîtront ici."
+}

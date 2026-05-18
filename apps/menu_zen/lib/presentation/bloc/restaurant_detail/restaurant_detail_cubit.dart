@@ -65,6 +65,38 @@ class RestaurantDetailCubit extends Cubit<RestaurantDetailState> {
     );
   }
 
+  /// Reloads only the reviews section after the customer posts, edits or
+  /// deletes their own review. Leaves the existing menu/categories alone.
+  Future<void> refreshReviews(int restaurantId) async {
+    final current = state;
+    if (current is! RestaurantDetailLoaded) return;
+
+    final results = await Future.wait<MultiResult<dynamic, dynamic>>([
+      _restaurants.listReviews(
+        restaurantId,
+        sort: ReviewSort.recent,
+        limit: 20,
+      ),
+      _restaurants.getReviewSummary(restaurantId),
+    ]);
+
+    final reviews = results[0].isSuccess
+        ? results[0].getSuccess as List<ReviewEntity>
+        : current.reviewsPreview;
+    final summary = results[1].isSuccess
+        ? results[1].getSuccess as ReviewSummaryEntity?
+        : current.summary;
+
+    emit(
+      RestaurantDetailLoaded(
+        detail: current.detail,
+        menuByCategory: current.menuByCategory,
+        reviewsPreview: reviews,
+        summary: summary,
+      ),
+    );
+  }
+
   /// Groups [items] by their category id. Categories with no items are
   /// omitted. Items missing a category go into an "Other" bucket so they
   /// never disappear from the menu tab.

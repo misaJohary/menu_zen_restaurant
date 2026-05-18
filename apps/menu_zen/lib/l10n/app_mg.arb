@@ -1,0 +1,262 @@
+{
+  "@@locale": "mg",
+
+  "appTitle": "Menu Zen",
+
+  "navDiscover": "Hijery",
+  "navSearch": "Hitady",
+  "navBookings": "Famandrihana",
+  "navProfile": "Mombako",
+
+  "commonTryAgain": "Andramo indray",
+  "commonCancel": "Ajanona",
+  "commonReset": "Avereno",
+  "commonApply": "Ekena",
+  "commonShare": "Zarao",
+  "commonEdit": "Hanova",
+  "commonDelete": "Fafao",
+  "commonKeep": "Tazomy",
+  "commonAnonymous": "Tsy fantatra",
+  "commonYou": "Ianao",
+  "commonComingSoon": "Ho avy tsy ho ela",
+  "commonReachKitchenError": "Tsy tafiditra amin'ny lakozia izahay.",
+
+  "authWelcomeBack": "Tongasoa eto indray",
+  "authSignInSubtitle": "Idiro amin'ny mailaka na finday hanohizana.",
+  "authEmailOrPhone": "Mailaka na finday",
+  "authValidationEmailOrPhone": "Ampidiro ny mailaka na finday",
+  "authPassword": "Teny miafina",
+  "authValidationPassword": "Ampidiro ny teny miafina",
+  "authSignIn": "Hiditra",
+  "authNoAccount": "Tsy manana kaonty ?",
+  "authCreateOne": "Hamorona kaonty",
+  "authCreateAccount": "Hamorona kaonty",
+  "authCreateAccountSubtitle": "Lazao kely momba anao mba hanombohana.",
+  "authFullName": "Anarana feno",
+  "authEmail": "Mailaka",
+  "authValidationEmail": "Ampidiro ny mailakao",
+  "authValidationEmailInvalid": "Ampidiro mailaka mety",
+  "authPhoneOptional": "Finday (tsy voatery)",
+  "authPasswordHelper": "Farafahakeliny 8 marika",
+  "authValidationPasswordRequired": "Ampidiro ny teny miafina",
+  "authValidationPasswordLength": "Tsy maintsy mihoatra na mitovy amin'ny 8 marika ny teny miafina",
+
+  "discoverGreeting": "Manao ahoana.",
+  "discoverBrowsingCity": "Mijery {city}",
+  "@discoverBrowsingCity": {
+    "placeholders": { "city": { "type": "String" } }
+  },
+  "discoverNearYou": "Manakaiky anao",
+  "discoverSearchHint": "Mitady toeram-pisakafoanana, sakafo…",
+  "discoverNewOnMenuZen": "Vaovao ao amin'ny Menu Zen",
+  "discoverPickedForYou": "Voafantina ho anao",
+  "discoverTrendingThisWeek": "Malaza amin'ity herinandro ity",
+
+  "moodCozy": "Mahafinaritra",
+  "moodQuickBite": "Sakafo haingana",
+  "moodDateNight": "Hariva miaraka",
+  "moodFamily": "Fianakaviana",
+  "moodOutdoor": "Ivelany",
+  "moodVegetarian": "Anana fotsiny",
+
+  "searchHint": "Hitady toeram-pisakafoanana",
+  "searchModeList": "Lisitra",
+  "searchModeMap": "Sarintany",
+  "searchNoMatches": "Mbola tsy misy valiny",
+  "searchNoMatchesBody": "Andramo halaina lavidavitra na esory ny sivana sasany.",
+  "filtersTitle": "Sivana",
+  "filtersCuisine": "Karazana sakafo",
+  "filtersDistance": "Halaviran-davitra",
+  "filtersDistanceAny": "Daholo",
+  "filtersDistanceKm": "{km} km",
+  "@filtersDistanceKm": {
+    "placeholders": { "km": { "type": "String" } }
+  },
+  "filtersCapabilities": "Tolotra",
+  "filtersDietary": "Karazana fihinana",
+  "capabilityReservations": "Famandrihana",
+  "capabilityDelivers": "Fanaterana",
+  "capabilityTakeaway": "Atao entina",
+  "dietaryVeg": "Anana",
+  "dietaryVegan": "Vegan",
+  "dietaryHalal": "Halal",
+  "dietaryGlutenFree": "Tsy misy gluten",
+  "cuisineFastFood": "Sakafo haingana",
+  "cuisineCasual": "Tsotra",
+  "cuisineFineDining": "Avo lenta",
+  "cuisineCasualDining": "Sakafo tsotra",
+
+  "favoritesTitle": "Ireo tiako",
+  "favoritesEmptyTitle": "Eto no misy ireo tianao.",
+  "favoritesEmptyBody": "Tsindrio ny ♡ amin'ny toerana tianao.",
+  "favoritesEmptyAction": "Hijery toeram-pisakafoanana",
+  "favoritesErrorTitle": "Tsy afaka naka ireo tianao izahay.",
+  "favoritesSignedOutTitle": "Idiro mba hahitana ireo tianao",
+  "favoritesSignedOutBody": "Tehirizo ireo toerana tianao ary hitanao indray amin'ny indray tsindry.",
+  "favoritesSignedOutAction": "Hiditra",
+  "favoriteSaveTooltip": "Tehirizo",
+  "favoriteRemoveTooltip": "Esory amin'ny tiana",
+
+  "profileSignInTitle": "Idiro ao amin'ny Menu Zen",
+  "profileSignInBody": "Idiro amin'ny tianao, ny famandrihana sy ny baikonao.",
+  "profileSignInAction": "Hiditra",
+  "profileFavorites": "Tiana",
+  "profileFavoritesSubtitle": "Ireo toeram-pisakafoanana voatahirinao",
+  "profileReservationsOrders": "Famandrihana sy baiko",
+  "profileLanguage": "Fiteny",
+  "profileSignOut": "Hivoaka",
+  "profileSignOutDialogTitle": "Hivoaka ?",
+  "profileSignOutDialogBody": "Mila miditra indray ianao raha te hanavaka toerana, hamandrika latabatra, na hanao baiko.",
+
+  "languageEnglish": "English",
+  "languageFrench": "Français",
+  "languageMalagasy": "Malagasy",
+  "languageSpanish": "Español",
+  "languageGerman": "Deutsch",
+  "languageItalian": "Italiano",
+  "languagePortuguese": "Português",
+  "languageChinese": "中文",
+  "languageJapanese": "日本語",
+  "languageArabic": "العربية",
+  "languageSheetTitle": "Misafidiana fiteny",
+
+  "tabPhotos": "Sary",
+  "tabMenu": "Menu",
+  "tabReserve": "Famandrihana",
+  "tabReviews": "Hevitra",
+  "tabAbout": "Mombamomba",
+
+  "photosEmptyTitle": "Mbola tsy misy sary",
+  "photosEmptyBody": "Tsy mbola nizara sary ity toerana ity.",
+  "photosCounter": "{current} / {total}",
+  "@photosCounter": {
+    "placeholders": {
+      "current": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+
+  "menuEmptyTitle": "Ho avy tsy ho ela ny menu",
+  "menuEmptyBody": "Mbola tsy nisy sakafo navoaka.",
+  "menuLanguage": "Fitenin'ny menu",
+  "menuOtherCategory": "Hafa",
+  "menuSectionFallback": "Fizarana {index}",
+  "@menuSectionFallback": {
+    "placeholders": { "index": { "type": "int" } }
+  },
+  "menuItemUntitled": "Sakafo tsy misy anarana",
+  "menuItemUnavailable": "Tsy misy",
+  "menuItemPrice": "Ar {price}",
+  "@menuItemPrice": {
+    "placeholders": { "price": { "type": "String" } }
+  },
+  "menuItemAddToCart": "Ampio amin'ny harona · Ar {total}",
+  "@menuItemAddToCart": {
+    "placeholders": { "total": { "type": "String" } }
+  },
+
+  "reserveChooseDate": "Misafidiana daty",
+  "reservePartySize": "Isan'ny mpiantrano",
+  "reservePickTime": "Misafidiana ora",
+  "reserveNoTimes": "Tsy misy ora azo amin'ity andro ity.",
+  "reserveCta": "Hamandrika ho an'ny {count} · {date} amin'ny {time}",
+  "@reserveCta": {
+    "placeholders": {
+      "count": { "type": "int" },
+      "date": { "type": "String" },
+      "time": { "type": "String" }
+    }
+  },
+  "reserveGuests": "{count, plural, one{olona {count}} other{olona {count}}}",
+  "@reserveGuests": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+
+  "reviewsEmptyTitle": "Mbola tsy misy hevitra",
+  "reviewsEmptyBody": "Aoka ho ianao no voalohany hizara ny traikefanao.",
+  "reviewsEmptyAction": "Hanoratra hevitra",
+  "reviewWriteEditTitle": "Hanova ny hevitrao",
+  "reviewWriteCreateTitle": "Zarao ny traikefanao",
+  "reviewWriteEditSubtitle": "Avaozy ny naotinao na ny fanehoan-kevitrao.",
+  "reviewWriteCreateSubtitle": "Manampia ny hafa hisafidy ny manaraka.",
+  "reviewsCount": "{count, plural, one{hevitra {count}} other{hevitra {count}}}",
+  "@reviewsCount": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "reviewSignInSnack": "Idiro mba hizara hevitra.",
+  "reviewPostedSnack": "Voapetraka ny hevitrao — misaotra !",
+  "reviewUpdatedSnack": "Voavaozy ny hevitra.",
+  "reviewDeletedSnack": "Voafafa ny hevitra.",
+  "reviewDeleteDialogTitle": "Fafao ity hevitra ity ?",
+  "reviewDeleteDialogBody": "Hesorina amin'ny pejy ny naotinao sy ny fanehoan-kevitrao.",
+  "reviewComposerEditTitle": "Hanova ny hevitrao",
+  "reviewComposerCreateTitle": "Manaova naoty an'ity toerana ity",
+  "reviewCommentLabel": "Lazao amin'ny hafa ny tsidikao",
+  "reviewCommentHint": "Inona no nahafinaritra anao ? Inona no azo atsaraina ?",
+  "reviewSaveChanges": "Tehirizo ny fanovana",
+  "reviewPostReview": "Apetraho ny hevitra",
+  "reviewRating1": "Tsy nahafa-po",
+  "reviewRating2": "Latsaka ny tokony ho izy",
+  "reviewRating3": "Tsara",
+  "reviewRating4": "Tsara dia tsara",
+  "reviewRating5": "Tena tsara",
+  "reviewRatingNone": "Tsindrio kintana iray hanome naoty",
+  "reviewStarSemantic": "{count, plural, one{kintana {count}} other{kintana {count}}}",
+  "@reviewStarSemantic": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+
+  "aboutOpeningHours": "Ora misokatra",
+  "aboutLanguagesSpoken": "Fiteny resahina",
+  "aboutSocialMedia": "Tambazotra sosialy",
+  "aboutHoursRange": "{open} – {close}",
+  "@aboutHoursRange": {
+    "placeholders": {
+      "open": { "type": "String" },
+      "close": { "type": "String" }
+    }
+  },
+  "weekdayMonday": "Alatsinainy",
+  "weekdayTuesday": "Talata",
+  "weekdayWednesday": "Alarobia",
+  "weekdayThursday": "Alakamisy",
+  "weekdayFriday": "Zoma",
+  "weekdaySaturday": "Sabotsy",
+  "weekdaySunday": "Alahady",
+
+  "detailReserve": "Hamandrika",
+  "detailOrderDelivery": "Hanafatra fanaterana",
+  "detailStatusOpen": "Misokatra",
+  "detailStatusOpenUntil": "Misokatra · hatramin'ny {time}",
+  "@detailStatusOpenUntil": {
+    "placeholders": { "time": { "type": "String" } }
+  },
+  "detailStatusClosed": "Mikatona",
+  "detailStatusClosesAt": "Mikatona amin'ny {time}",
+  "@detailStatusClosesAt": {
+    "placeholders": { "time": { "type": "String" } }
+  },
+  "detailStatusClosedOpensAt": "Mikatona · misokatra {day} {time}",
+  "@detailStatusClosedOpensAt": {
+    "placeholders": {
+      "day": { "type": "String" },
+      "time": { "type": "String" }
+    }
+  },
+
+  "distanceMeters": "{meters} m",
+  "@distanceMeters": {
+    "placeholders": { "meters": { "type": "int" } }
+  },
+  "distanceKilometersShort": "{km} km",
+  "@distanceKilometersShort": {
+    "placeholders": { "km": { "type": "String" } }
+  },
+  "distanceKilometersRound": "{km} km",
+  "@distanceKilometersRound": {
+    "placeholders": { "km": { "type": "int" } }
+  },
+
+  "bookingsPlaceholderTitle": "Famandrihana ho avy tsy ho ela",
+  "bookingsPlaceholderBody": "Ho eto ny famandrihanao sy ny baikonao."
+}

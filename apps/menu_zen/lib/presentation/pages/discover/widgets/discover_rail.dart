@@ -38,14 +38,14 @@ class DiscoverRail extends StatelessWidget {
             separatorBuilder: (_, __) => const SizedBox(width: AppSpacing.sm),
             itemBuilder: (_, index) {
               final r = items[index];
-              print(r.openingHours?.periods);
-              final openStatus = resolveOpenStatus(r.openingHours);
+              final openStatus = resolveOpenStatus(context, r.openingHours);
               return RestaurantCard(
                 name: r.name,
-                subtitle: _subtitle(r),
+                subtitle: _subtitle(context, r),
                 coverUrl: r.cover ?? r.logo,
-                distanceLabel:
-                    showDistance ? formatDistanceKm(r.distanceKm) : null,
+                distanceLabel: showDistance
+                    ? formatDistanceKm(context, r.distanceKm)
+                    : null,
                 openStatus: openStatus?.status,
                 openStatusLabel: openStatus?.label,
                 variant: RestaurantCardVariant.compact,
@@ -58,9 +58,9 @@ class DiscoverRail extends StatelessWidget {
     );
   }
 
-  String _subtitle(RestaurantPublicEntity r) {
+  String _subtitle(BuildContext context, RestaurantPublicEntity r) {
     final parts = <String>[];
-    final type = restaurantTypeLabel(r.type?.name);
+    final type = restaurantTypeLabel(context, r.type?.name);
     if (type.isNotEmpty) parts.add(type);
     if (r.city.isNotEmpty) parts.add(r.city);
     return parts.join(' · ');

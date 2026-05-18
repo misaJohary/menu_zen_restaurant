@@ -3,37 +3,202 @@ import 'package:design_system/design_system.dart';
 import 'package:domain/entities/review_entity.dart';
 import 'package:domain/entities/review_summary_entity.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
+import '../../../../core/navigation/route_paths.dart';
+import '../../../../l10n/generated/app_localizations.dart';
+import '../../../bloc/auth/auth_bloc.dart';
+import '../../../bloc/restaurant_detail/restaurant_detail_cubit.dart';
+import '../widgets/review_composer_sheet.dart';
+
 class ReviewsTab extends StatelessWidget {
+  final int restaurantId;
+  final String restaurantName;
   final List<ReviewEntity> reviews;
   final ReviewSummaryEntity? summary;
 
-  const ReviewsTab({super.key, required this.reviews, required this.summary});
+  const ReviewsTab({
+    super.key,
+    required this.restaurantId,
+    required this.restaurantName,
+    required this.reviews,
+    required this.summary,
+  });
 
-  @override
-  Widget build(BuildContext context) {
-    if ((summary == null || summary!.count == 0) && reviews.isEmpty) {
-      return const EmptyState(
-        icon: PhosphorIconsDuotone.chatCircleText,
-        title: 'No reviews yet',
-        body: 'Be the first to share your experience.',
+  ReviewEntity? _findMyReview(int? customerId) {
+    if (customerId == null) return null;
+    for (final review in reviews) {
+      if (review.customer.id == customerId) return review;
+    }
+    return null;
+  }
+
+  Future<void> _openComposer(
+    BuildContext context, {
+    ReviewEntity? existing,
+  }) async {
+    final l10n = AppLocalizations.of(context);
+    if (context.read<AuthBloc>().state is! AuthAuthenticated) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.reviewSignInSnack)),
+      );
+      await context.push(RoutePaths.authLogin);
+      if (!context.mounted) return;
+      if (context.read<AuthBloc>().state is! AuthAuthenticated) return;
+    }
+
+    final result = await showModalBottomSheet<ReviewComposerResult>(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => ReviewComposerSheet(
+        restaurantId: restaurantId,
+        restaurantName: restaurantName,
+        existing: existing,
+      ),
+    );
+
+    if (result == null || !context.mounted) return;
+
+    final messenger = ScaffoldMessenger.of(context);
+    if (result.saved != null) {
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text(
+            existing == null
+                ? l10n.reviewPostedSnack
+                : l10n.reviewUpdatedSnack,
+          ),
+        ),
+      );
+    } else if (result.deletedId != null) {
+      messenger.showSnackBar(
+        SnackBar(content: Text(l10n.reviewDeletedSnack)),
       );
     }
 
-    return ListView(
-      padding: const EdgeInsets.fromLTRB(
-        AppSpacing.m,
-        AppSpacing.m,
-        AppSpacing.m,
-        AppSpacing.xxxl,
+    if (!context.mounted) return;
+    await context
+        .read<RestaurantDetailCubit>()
+        .refreshReviews(restaurantId);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return BlocBuilder<AuthBloc, AuthState>(
+      builder: (context, authState) {
+        final customerId = authState is AuthAuthenticated
+            ? authState.customer.id
+            : null;
+        final myReview = _findMyReview(customerId);
+        final hasContent =
+            (summary != null && summary!.count > 0) || reviews.isNotEmpty;
+
+        return Stack(
+          children: [
+            if (!hasContent)
+              EmptyState(
+                icon: PhosphorIconsDuotone.chatCircleText,
+                title: l10n.reviewsEmptyTitle,
+                body: l10n.reviewsEmptyBody,
+                actionLabel: l10n.reviewsEmptyAction,
+                onAction: () => _openComposer(context),
+              )
+            else
+              ListView(
+                padding: const EdgeInsets.fromLTRB(
+                  AppSpacing.m,
+                  AppSpacing.m,
+                  AppSpacing.m,
+                  AppSpacing.xxxl + AppSpacing.xxl,
+                ),
+                children: [
+                  if (summary != null) _SummaryHeader(summary: summary!),
+                  const SizedBox(height: AppSpacing.l),
+                  _WriteReviewCard(
+                    hasReview: myReview != null,
+                    onTap: () => _openComposer(context, existing: myReview),
+                  ),
+                  const SizedBox(height: AppSpacing.s),
+                  ...reviews.map(
+                    (r) => _ReviewCard(
+                      review: r,
+                      isMine: r.customer.id == customerId,
+                      onEdit: r.customer.id == customerId
+                          ? () => _openComposer(context, existing: r)
+                          : null,
+                    ),
+                  ),
+                ],
+              ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _WriteReviewCard extends StatelessWidget {
+  final bool hasReview;
+  final VoidCallback onTap;
+
+  const _WriteReviewCard({required this.hasReview, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final scheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+    return Material(
+      color: scheme.primaryContainer.withValues(alpha: 0.35),
+      borderRadius: BorderRadius.circular(AppRadii.lg),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(AppRadii.lg),
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.m),
+          child: Row(
+            children: [
+              Icon(
+                hasReview
+                    ? PhosphorIconsDuotone.pencilSimpleLine
+                    : PhosphorIconsDuotone.star,
+                size: 28,
+                color: scheme.primary,
+              ),
+              const SizedBox(width: AppSpacing.m),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      hasReview
+                          ? l10n.reviewWriteEditTitle
+                          : l10n.reviewWriteCreateTitle,
+                      style: textTheme.titleSmall,
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      hasReview
+                          ? l10n.reviewWriteEditSubtitle
+                          : l10n.reviewWriteCreateSubtitle,
+                      style: textTheme.bodySmall?.copyWith(
+                        color: scheme.onSurface.withValues(alpha: 0.7),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const Icon(PhosphorIconsRegular.caretRight, size: 18),
+            ],
+          ),
+        ),
       ),
-      children: [
-        if (summary != null) _SummaryHeader(summary: summary!),
-        const SizedBox(height: AppSpacing.l),
-        ...reviews.map((r) => _ReviewCard(review: r)),
-      ],
     );
   }
 }
@@ -73,7 +238,7 @@ class _SummaryHeader extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.xs),
             Text(
-              '$total ${total == 1 ? 'review' : 'reviews'}',
+              AppLocalizations.of(context).reviewsCount(total),
               style: textTheme.bodySmall?.copyWith(
                 color: scheme.onSurface.withValues(alpha: 0.7),
               ),
@@ -144,12 +309,20 @@ class _HistogramBar extends StatelessWidget {
 
 class _ReviewCard extends StatelessWidget {
   final ReviewEntity review;
-  const _ReviewCard({required this.review});
+  final bool isMine;
+  final VoidCallback? onEdit;
 
-  static final _dateFormat = DateFormat('MMM d, yyyy');
+  const _ReviewCard({
+    required this.review,
+    required this.isMine,
+    this.onEdit,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final localeTag = Localizations.localeOf(context).toLanguageTag();
+    final dateFormat = DateFormat('MMM d, yyyy', localeTag);
     final textTheme = Theme.of(context).textTheme;
     final scheme = Theme.of(context).colorScheme;
     final initial = review.customer.displayName.isEmpty
@@ -181,14 +354,43 @@ class _ReviewCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      review.customer.displayName.isEmpty
-                          ? 'Anonymous'
-                          : review.customer.displayName,
-                      style: textTheme.titleSmall,
+                    Row(
+                      children: [
+                        Flexible(
+                          child: Text(
+                            review.customer.displayName.isEmpty
+                                ? l10n.commonAnonymous
+                                : review.customer.displayName,
+                            style: textTheme.titleSmall,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        if (isMine) ...[
+                          const SizedBox(width: AppSpacing.xs),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: AppSpacing.s,
+                              vertical: 2,
+                            ),
+                            decoration: BoxDecoration(
+                              color:
+                                  scheme.primary.withValues(alpha: 0.12),
+                              borderRadius:
+                                  BorderRadius.circular(AppRadii.pill),
+                            ),
+                            child: Text(
+                              l10n.commonYou,
+                              style: textTheme.labelSmall?.copyWith(
+                                color: scheme.primary,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ],
                     ),
                     Text(
-                      _dateFormat.format(review.createdAt),
+                      dateFormat.format(review.createdAt),
                       style: textTheme.bodySmall?.copyWith(
                         color: scheme.onSurface.withValues(alpha: 0.6),
                       ),
@@ -210,6 +412,13 @@ class _ReviewCard extends StatelessWidget {
                   );
                 }),
               ),
+              if (isMine && onEdit != null)
+                IconButton(
+                  tooltip: l10n.commonEdit,
+                  iconSize: 18,
+                  onPressed: onEdit,
+                  icon: const Icon(PhosphorIconsRegular.pencilSimple),
+                ),
             ],
           ),
           if (review.comment != null && review.comment!.isNotEmpty) ...[

@@ -9,6 +9,7 @@ import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../core/di/dependencies_injection.dart';
 import '../../../core/navigation/route_paths.dart';
+import '../../../l10n/generated/app_localizations.dart';
 import '../../bloc/search/search_bloc.dart';
 import 'widgets/filter_sheet.dart';
 import 'widgets/search_map_view.dart';
@@ -130,24 +131,25 @@ class _SearchViewState extends State<_SearchView> {
   }
 
   Widget _buildBody(SearchState state) {
+    final l10n = AppLocalizations.of(context);
     if (state.isLoading && state.items.isEmpty) {
       return const _LoadingList();
     }
     if (state.errorMessage != null && state.items.isEmpty) {
       return EmptyState(
         icon: PhosphorIconsDuotone.wifiSlash,
-        title: "We couldn't reach the kitchen.",
+        title: l10n.commonReachKitchenError,
         body: state.errorMessage,
-        actionLabel: 'Try again',
+        actionLabel: l10n.commonTryAgain,
         onAction: () =>
             context.read<SearchBloc>().add(const SearchRefreshed()),
       );
     }
     if (state.isEmpty) {
-      return const EmptyState(
+      return EmptyState(
         icon: PhosphorIconsDuotone.forkKnife,
-        title: 'No matches yet',
-        body: 'Try widening the radius or clearing some filters.',
+        title: l10n.searchNoMatches,
+        body: l10n.searchNoMatchesBody,
       );
     }
 
@@ -204,6 +206,7 @@ class _SearchBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Padding(
       padding: const EdgeInsets.fromLTRB(
         AppSpacing.m,
@@ -220,7 +223,7 @@ class _SearchBar extends StatelessWidget {
               autofocus: false,
               decoration: InputDecoration(
                 prefixIcon: const Icon(PhosphorIconsRegular.magnifyingGlass),
-                hintText: 'Search restaurants',
+                hintText: l10n.searchHint,
                 suffixIcon: controller.text.isNotEmpty
                     ? IconButton(
                         icon: const Icon(PhosphorIconsRegular.x),
@@ -369,13 +372,13 @@ class _ModeToggle extends StatelessWidget {
                     Row(
                       children: [
                         _ModeSegment(
-                          label: 'List',
+                          label: AppLocalizations.of(context).searchModeList,
                           icon: PhosphorIconsRegular.list,
                           selected: !isMap,
                           onTap: () => onChanged(SearchMode.list),
                         ),
                         _ModeSegment(
-                          label: 'Map',
+                          label: AppLocalizations.of(context).searchModeMap,
                           icon: PhosphorIconsRegular.mapTrifold,
                           selected: isMap,
                           onTap: () => onChanged(SearchMode.map),

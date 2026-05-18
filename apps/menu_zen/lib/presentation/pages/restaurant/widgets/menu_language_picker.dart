@@ -2,6 +2,8 @@ import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
+import '../../../../l10n/generated/app_localizations.dart';
+
 class MenuLanguagePicker extends StatelessWidget {
   final List<String> languages;
   final String selected;
@@ -16,6 +18,7 @@ class MenuLanguagePicker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final scheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
@@ -43,7 +46,7 @@ class MenuLanguagePicker extends StatelessWidget {
           ),
           const SizedBox(width: AppSpacing.s),
           Text(
-            'Menu language',
+            l10n.menuLanguage,
             style: textTheme.labelMedium?.copyWith(
               color: scheme.onSurface.withValues(alpha: 0.7),
             ),
@@ -174,7 +177,7 @@ class _DropdownPicker extends StatelessWidget {
                 Text(_displayLabel(code)),
                 const Spacer(),
                 Text(
-                  _displayName(code),
+                  _displayName(context, code),
                   style: textTheme.bodySmall?.copyWith(
                     color: scheme.onSurface.withValues(alpha: 0.6),
                   ),
@@ -216,28 +219,29 @@ class _DropdownPicker extends StatelessWidget {
 
 String _displayLabel(String code) => code.toUpperCase();
 
-String _displayName(String code) {
+String _displayName(BuildContext context, String code) {
+  final l10n = AppLocalizations.of(context);
   switch (code.toLowerCase()) {
     case 'en':
-      return 'English';
+      return l10n.languageEnglish;
     case 'fr':
-      return 'Français';
+      return l10n.languageFrench;
     case 'mg':
-      return 'Malagasy';
+      return l10n.languageMalagasy;
     case 'es':
-      return 'Español';
+      return l10n.languageSpanish;
     case 'de':
-      return 'Deutsch';
+      return l10n.languageGerman;
     case 'it':
-      return 'Italiano';
+      return l10n.languageItalian;
     case 'pt':
-      return 'Português';
+      return l10n.languagePortuguese;
     case 'zh':
-      return '中文';
+      return l10n.languageChinese;
     case 'ja':
-      return '日本語';
+      return l10n.languageJapanese;
     case 'ar':
-      return 'العربية';
+      return l10n.languageArabic;
     default:
       return code.toUpperCase();
   }

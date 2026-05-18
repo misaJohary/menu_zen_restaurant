@@ -3,6 +3,8 @@ import 'package:domain/entities/discovery_filters.dart';
 import 'package:domain/entities/restaurant_public_entity.dart';
 import 'package:flutter/material.dart';
 
+import '../../../../l10n/generated/app_localizations.dart';
+
 class FilterSheet extends StatefulWidget {
   final DiscoveryFilters initial;
   const FilterSheet({super.key, required this.initial});
@@ -14,19 +16,61 @@ class FilterSheet extends StatefulWidget {
 class _FilterSheetState extends State<FilterSheet> {
   late DiscoveryFilters _filters = widget.initial;
 
-  static const _cuisineTypes = <(RestaurantType, String)>[
-    (RestaurantType.fastfood, 'Fast food'),
-    (RestaurantType.casual, 'Casual'),
-    (RestaurantType.fineDining, 'Fine dining'),
+  static const _cuisineTypes = <RestaurantType>[
+    RestaurantType.fastfood,
+    RestaurantType.casual,
+    RestaurantType.fineDining,
   ];
 
-  // TODO(api): backend doesn't expose capabilities/dietary yet — these
-  // are applied client-side at render time (see SearchPage._applyClient).
-  static const _capabilities = <String>['Reservations', 'Delivers', 'Takeaway'];
-  static const _dietary = <String>['Veg', 'Vegan', 'Halal', 'Gluten-free'];
+  // Backend filters are matched by their canonical key (stable across
+  // locales). The label is purely a display concern.
+  // TODO(api): backend doesn't expose capabilities/dietary yet — these are
+  // applied client-side at render time (see SearchPage._applyClient).
+  static const _capabilityKeys = <String>['Reservations', 'Delivers', 'Takeaway'];
+  static const _dietaryKeys = <String>['Veg', 'Vegan', 'Halal', 'Gluten-free'];
+
+  String _cuisineLabel(AppLocalizations l10n, RestaurantType type) {
+    switch (type) {
+      case RestaurantType.fastfood:
+        return l10n.cuisineFastFood;
+      case RestaurantType.casual:
+        return l10n.cuisineCasual;
+      case RestaurantType.fineDining:
+        return l10n.cuisineFineDining;
+    }
+  }
+
+  String _capabilityLabel(AppLocalizations l10n, String key) {
+    switch (key) {
+      case 'Reservations':
+        return l10n.capabilityReservations;
+      case 'Delivers':
+        return l10n.capabilityDelivers;
+      case 'Takeaway':
+        return l10n.capabilityTakeaway;
+      default:
+        return key;
+    }
+  }
+
+  String _dietaryLabel(AppLocalizations l10n, String key) {
+    switch (key) {
+      case 'Veg':
+        return l10n.dietaryVeg;
+      case 'Vegan':
+        return l10n.dietaryVegan;
+      case 'Halal':
+        return l10n.dietaryHalal;
+      case 'Gluten-free':
+        return l10n.dietaryGlutenFree;
+      default:
+        return key;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final textTheme = Theme.of(context).textTheme;
     return SafeArea(
       child: Padding(
@@ -40,17 +84,17 @@ class _FilterSheetState extends State<FilterSheet> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Filters', style: textTheme.titleLarge),
+            Text(l10n.filtersTitle, style: textTheme.titleLarge),
             const SizedBox(height: AppSpacing.l),
-            Text('Cuisine', style: textTheme.titleMedium),
+            Text(l10n.filtersCuisine, style: textTheme.titleMedium),
             const SizedBox(height: AppSpacing.s),
             Wrap(
               spacing: AppSpacing.s,
               runSpacing: AppSpacing.s,
               children: [
-                for (final (type, label) in _cuisineTypes)
+                for (final type in _cuisineTypes)
                   MoodChip(
-                    label: label,
+                    label: _cuisineLabel(l10n, type),
                     selected: _filters.type == type,
                     onTap: () => setState(() {
                       _filters = _filters.type == type
@@ -63,12 +107,14 @@ class _FilterSheetState extends State<FilterSheet> {
             const SizedBox(height: AppSpacing.l),
             Row(
               children: [
-                Text('Distance', style: textTheme.titleMedium),
+                Text(l10n.filtersDistance, style: textTheme.titleMedium),
                 const Spacer(),
                 Text(
                   _filters.radiusKm == null
-                      ? 'Any'
-                      : '${_filters.radiusKm!.toStringAsFixed(1)} km',
+                      ? l10n.filtersDistanceAny
+                      : l10n.filtersDistanceKm(
+                          _filters.radiusKm!.toStringAsFixed(1),
+                        ),
                   style: textTheme.bodyMedium,
                 ),
               ],
@@ -78,44 +124,46 @@ class _FilterSheetState extends State<FilterSheet> {
               max: 10,
               divisions: 49,
               value: _filters.radiusKm ?? 10,
-              label: '${(_filters.radiusKm ?? 10).toStringAsFixed(1)} km',
+              label: l10n.filtersDistanceKm(
+                (_filters.radiusKm ?? 10).toStringAsFixed(1),
+              ),
               onChanged: (v) => setState(() {
                 _filters = _filters.copyWith(radiusKm: v);
               }),
             ),
             const SizedBox(height: AppSpacing.s),
-            Text('Capabilities', style: textTheme.titleMedium),
+            Text(l10n.filtersCapabilities, style: textTheme.titleMedium),
             const SizedBox(height: AppSpacing.s),
             Wrap(
               spacing: AppSpacing.s,
               runSpacing: AppSpacing.s,
               children: [
-                for (final cap in _capabilities)
+                for (final key in _capabilityKeys)
                   MoodChip(
-                    label: cap,
-                    selected: _filters.capabilities.contains(cap),
+                    label: _capabilityLabel(l10n, key),
+                    selected: _filters.capabilities.contains(key),
                     onTap: () => setState(() {
                       final next = Set<String>.from(_filters.capabilities);
-                      next.contains(cap) ? next.remove(cap) : next.add(cap);
+                      next.contains(key) ? next.remove(key) : next.add(key);
                       _filters = _filters.copyWith(capabilities: next);
                     }),
                   ),
               ],
             ),
             const SizedBox(height: AppSpacing.l),
-            Text('Dietary', style: textTheme.titleMedium),
+            Text(l10n.filtersDietary, style: textTheme.titleMedium),
             const SizedBox(height: AppSpacing.s),
             Wrap(
               spacing: AppSpacing.s,
               runSpacing: AppSpacing.s,
               children: [
-                for (final d in _dietary)
+                for (final key in _dietaryKeys)
                   MoodChip(
-                    label: d,
-                    selected: _filters.dietary.contains(d),
+                    label: _dietaryLabel(l10n, key),
+                    selected: _filters.dietary.contains(key),
                     onTap: () => setState(() {
                       final next = Set<String>.from(_filters.dietary);
-                      next.contains(d) ? next.remove(d) : next.add(d);
+                      next.contains(key) ? next.remove(key) : next.add(key);
                       _filters = _filters.copyWith(dietary: next);
                     }),
                   ),
@@ -129,7 +177,7 @@ class _FilterSheetState extends State<FilterSheet> {
                     onPressed: () => setState(() {
                       _filters = const DiscoveryFilters();
                     }),
-                    child: const Text('Reset'),
+                    child: Text(l10n.commonReset),
                   ),
                 ),
                 const SizedBox(width: AppSpacing.s),
@@ -137,7 +185,7 @@ class _FilterSheetState extends State<FilterSheet> {
                   flex: 2,
                   child: FilledButton(
                     onPressed: () => Navigator.of(context).pop(_filters),
-                    child: const Text('Apply'),
+                    child: Text(l10n.commonApply),
                   ),
                 ),
               ],

@@ -7,22 +7,25 @@ import 'package:latlong2/latlong.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../../l10n/generated/app_localizations.dart';
+
 class AboutTab extends StatelessWidget {
   final RestaurantDetailPublicEntity detail;
   const AboutTab({super.key, required this.detail});
 
-  static const _weekdays = [
-    'Monday',
-    'Tuesday',
-    'Wednesday',
-    'Thursday',
-    'Friday',
-    'Saturday',
-    'Sunday',
-  ];
+  static List<String> _weekdays(AppLocalizations l10n) => [
+        l10n.weekdayMonday,
+        l10n.weekdayTuesday,
+        l10n.weekdayWednesday,
+        l10n.weekdayThursday,
+        l10n.weekdayFriday,
+        l10n.weekdaySaturday,
+        l10n.weekdaySunday,
+      ];
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final scheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
     final hasLocation = detail.lat != null && detail.long != null;
@@ -97,13 +100,13 @@ class AboutTab extends StatelessWidget {
         if (detail.openingHours != null &&
             detail.openingHours!.periods.isNotEmpty) ...[
           const SizedBox(height: AppSpacing.l),
-          Text('Opening hours', style: textTheme.titleMedium),
+          Text(l10n.aboutOpeningHours, style: textTheme.titleMedium),
           const SizedBox(height: AppSpacing.s),
           _HoursTable(hours: detail.openingHours!),
         ],
         if (detail.languages.isNotEmpty) ...[
           const SizedBox(height: AppSpacing.l),
-          Text('Languages spoken', style: textTheme.titleMedium),
+          Text(l10n.aboutLanguagesSpoken, style: textTheme.titleMedium),
           const SizedBox(height: AppSpacing.s),
           Wrap(
             spacing: AppSpacing.s,
@@ -129,7 +132,7 @@ class AboutTab extends StatelessWidget {
         ],
         if (detail.socialMedia.isNotEmpty) ...[
           const SizedBox(height: AppSpacing.l),
-          Text('Social media', style: textTheme.titleMedium),
+          Text(l10n.aboutSocialMedia, style: textTheme.titleMedium),
           const SizedBox(height: AppSpacing.s),
           for (final url in detail.socialMedia)
             _InfoRow(
@@ -214,6 +217,8 @@ class _HoursTable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final weekdays = AboutTab._weekdays(l10n);
     final today = DateTime.now().weekday - 1;
     final textTheme = Theme.of(context).textTheme;
     final scheme = Theme.of(context).colorScheme;
@@ -229,7 +234,7 @@ class _HoursTable extends StatelessWidget {
               SizedBox(
                 width: 96,
                 child: Text(
-                  AboutTab._weekdays[i],
+                  weekdays[i],
                   style: textTheme.bodyMedium?.copyWith(
                     fontWeight:
                         isToday ? FontWeight.w600 : FontWeight.w400,
@@ -239,9 +244,9 @@ class _HoursTable extends StatelessWidget {
               Expanded(
                 child: Text(
                   slots.isEmpty
-                      ? 'Closed'
+                      ? l10n.detailStatusClosed
                       : slots
-                            .map((s) => '${s.open} – ${s.close}')
+                            .map((s) => l10n.aboutHoursRange(s.open, s.close))
                             .join(', '),
                   style: textTheme.bodyMedium?.copyWith(
                     color: slots.isEmpty

@@ -1,0 +1,262 @@
+{
+  "@@locale": "en",
+
+  "appTitle": "Menu Zen",
+
+  "navDiscover": "Discover",
+  "navSearch": "Search",
+  "navBookings": "Bookings",
+  "navProfile": "Profile",
+
+  "commonTryAgain": "Try again",
+  "commonCancel": "Cancel",
+  "commonReset": "Reset",
+  "commonApply": "Apply",
+  "commonShare": "Share",
+  "commonEdit": "Edit",
+  "commonDelete": "Delete",
+  "commonKeep": "Keep",
+  "commonAnonymous": "Anonymous",
+  "commonYou": "You",
+  "commonComingSoon": "Coming soon",
+  "commonReachKitchenError": "We couldn't reach the kitchen.",
+
+  "authWelcomeBack": "Welcome back",
+  "authSignInSubtitle": "Sign in with your email or phone to continue.",
+  "authEmailOrPhone": "Email or phone",
+  "authValidationEmailOrPhone": "Please enter your email or phone",
+  "authPassword": "Password",
+  "authValidationPassword": "Please enter your password",
+  "authSignIn": "Sign in",
+  "authNoAccount": "Don't have an account?",
+  "authCreateOne": "Create one",
+  "authCreateAccount": "Create account",
+  "authCreateAccountSubtitle": "Tell us a bit about you to get started.",
+  "authFullName": "Full name",
+  "authEmail": "Email",
+  "authValidationEmail": "Please enter your email",
+  "authValidationEmailInvalid": "Please enter a valid email",
+  "authPhoneOptional": "Phone (optional)",
+  "authPasswordHelper": "At least 8 characters",
+  "authValidationPasswordRequired": "Please enter a password",
+  "authValidationPasswordLength": "Password must be at least 8 characters",
+
+  "discoverGreeting": "Good evening.",
+  "discoverBrowsingCity": "Browsing {city}",
+  "@discoverBrowsingCity": {
+    "placeholders": { "city": { "type": "String" } }
+  },
+  "discoverNearYou": "Near you",
+  "discoverSearchHint": "Search restaurants, dishes…",
+  "discoverNewOnMenuZen": "New on Menu Zen",
+  "discoverPickedForYou": "Picked for you",
+  "discoverTrendingThisWeek": "Trending this week",
+
+  "moodCozy": "Cozy",
+  "moodQuickBite": "Quick bite",
+  "moodDateNight": "Date night",
+  "moodFamily": "Family",
+  "moodOutdoor": "Outdoor",
+  "moodVegetarian": "Vegetarian",
+
+  "searchHint": "Search restaurants",
+  "searchModeList": "List",
+  "searchModeMap": "Map",
+  "searchNoMatches": "No matches yet",
+  "searchNoMatchesBody": "Try widening the radius or clearing some filters.",
+  "filtersTitle": "Filters",
+  "filtersCuisine": "Cuisine",
+  "filtersDistance": "Distance",
+  "filtersDistanceAny": "Any",
+  "filtersDistanceKm": "{km} km",
+  "@filtersDistanceKm": {
+    "placeholders": { "km": { "type": "String" } }
+  },
+  "filtersCapabilities": "Capabilities",
+  "filtersDietary": "Dietary",
+  "capabilityReservations": "Reservations",
+  "capabilityDelivers": "Delivers",
+  "capabilityTakeaway": "Takeaway",
+  "dietaryVeg": "Veg",
+  "dietaryVegan": "Vegan",
+  "dietaryHalal": "Halal",
+  "dietaryGlutenFree": "Gluten-free",
+  "cuisineFastFood": "Fast food",
+  "cuisineCasual": "Casual",
+  "cuisineFineDining": "Fine dining",
+  "cuisineCasualDining": "Casual dining",
+
+  "favoritesTitle": "My favorites",
+  "favoritesEmptyTitle": "Your favorites live here.",
+  "favoritesEmptyBody": "Tap ♡ on a place you love.",
+  "favoritesEmptyAction": "Explore restaurants",
+  "favoritesErrorTitle": "We couldn't load your favorites.",
+  "favoritesSignedOutTitle": "Sign in to see your favorites",
+  "favoritesSignedOutBody": "Save the places you love and find them in one tap.",
+  "favoritesSignedOutAction": "Sign in",
+  "favoriteSaveTooltip": "Save",
+  "favoriteRemoveTooltip": "Remove favorite",
+
+  "profileSignInTitle": "Sign in to Menu Zen",
+  "profileSignInBody": "Access your favorites, reservations, and orders.",
+  "profileSignInAction": "Sign in",
+  "profileFavorites": "Favorites",
+  "profileFavoritesSubtitle": "Restaurants you saved",
+  "profileReservationsOrders": "Reservations & orders",
+  "profileLanguage": "Language",
+  "profileSignOut": "Sign out",
+  "profileSignOutDialogTitle": "Sign out?",
+  "profileSignOutDialogBody": "You will need to sign in again to favorite places, reserve a table, or place an order.",
+
+  "languageEnglish": "English",
+  "languageFrench": "Français",
+  "languageMalagasy": "Malagasy",
+  "languageSpanish": "Español",
+  "languageGerman": "Deutsch",
+  "languageItalian": "Italiano",
+  "languagePortuguese": "Português",
+  "languageChinese": "中文",
+  "languageJapanese": "日本語",
+  "languageArabic": "العربية",
+  "languageSheetTitle": "Choose language",
+
+  "tabPhotos": "Photos",
+  "tabMenu": "Menu",
+  "tabReserve": "Reserve",
+  "tabReviews": "Reviews",
+  "tabAbout": "About",
+
+  "photosEmptyTitle": "No photos yet",
+  "photosEmptyBody": "This restaurant has not shared any photos.",
+  "photosCounter": "{current} / {total}",
+  "@photosCounter": {
+    "placeholders": {
+      "current": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+
+  "menuEmptyTitle": "Menu coming soon",
+  "menuEmptyBody": "We haven't published anything to taste yet.",
+  "menuLanguage": "Menu language",
+  "menuOtherCategory": "Other",
+  "menuSectionFallback": "Section {index}",
+  "@menuSectionFallback": {
+    "placeholders": { "index": { "type": "int" } }
+  },
+  "menuItemUntitled": "Untitled item",
+  "menuItemUnavailable": "Unavailable",
+  "menuItemPrice": "Ar {price}",
+  "@menuItemPrice": {
+    "placeholders": { "price": { "type": "String" } }
+  },
+  "menuItemAddToCart": "Add to cart · Ar {total}",
+  "@menuItemAddToCart": {
+    "placeholders": { "total": { "type": "String" } }
+  },
+
+  "reserveChooseDate": "Choose a date",
+  "reservePartySize": "Party size",
+  "reservePickTime": "Pick a time",
+  "reserveNoTimes": "No times available on this day.",
+  "reserveCta": "Reserve for {count} · {date} at {time}",
+  "@reserveCta": {
+    "placeholders": {
+      "count": { "type": "int" },
+      "date": { "type": "String" },
+      "time": { "type": "String" }
+    }
+  },
+  "reserveGuests": "{count, plural, one{{count} guest} other{{count} guests}}",
+  "@reserveGuests": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+
+  "reviewsEmptyTitle": "No reviews yet",
+  "reviewsEmptyBody": "Be the first to share your experience.",
+  "reviewsEmptyAction": "Write a review",
+  "reviewWriteEditTitle": "Edit your review",
+  "reviewWriteCreateTitle": "Share your experience",
+  "reviewWriteEditSubtitle": "Update your rating or comment.",
+  "reviewWriteCreateSubtitle": "Help other diners pick their next spot.",
+  "reviewsCount": "{count, plural, one{{count} review} other{{count} reviews}}",
+  "@reviewsCount": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "reviewSignInSnack": "Sign in to share a review.",
+  "reviewPostedSnack": "Review posted — thanks!",
+  "reviewUpdatedSnack": "Review updated.",
+  "reviewDeletedSnack": "Review deleted.",
+  "reviewDeleteDialogTitle": "Delete this review?",
+  "reviewDeleteDialogBody": "Your rating and comment will be removed from the restaurant page.",
+  "reviewComposerEditTitle": "Edit your review",
+  "reviewComposerCreateTitle": "Rate this restaurant",
+  "reviewCommentLabel": "Tell others about your visit",
+  "reviewCommentHint": "What did you love? What could improve?",
+  "reviewSaveChanges": "Save changes",
+  "reviewPostReview": "Post review",
+  "reviewRating1": "Disappointing",
+  "reviewRating2": "Below expectations",
+  "reviewRating3": "Good",
+  "reviewRating4": "Great",
+  "reviewRating5": "Excellent",
+  "reviewRatingNone": "Tap a star to rate",
+  "reviewStarSemantic": "{count, plural, one{{count} star} other{{count} stars}}",
+  "@reviewStarSemantic": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+
+  "aboutOpeningHours": "Opening hours",
+  "aboutLanguagesSpoken": "Languages spoken",
+  "aboutSocialMedia": "Social media",
+  "aboutHoursRange": "{open} – {close}",
+  "@aboutHoursRange": {
+    "placeholders": {
+      "open": { "type": "String" },
+      "close": { "type": "String" }
+    }
+  },
+  "weekdayMonday": "Monday",
+  "weekdayTuesday": "Tuesday",
+  "weekdayWednesday": "Wednesday",
+  "weekdayThursday": "Thursday",
+  "weekdayFriday": "Friday",
+  "weekdaySaturday": "Saturday",
+  "weekdaySunday": "Sunday",
+
+  "detailReserve": "Reserve",
+  "detailOrderDelivery": "Order delivery",
+  "detailStatusOpen": "Open",
+  "detailStatusOpenUntil": "Open · until {time}",
+  "@detailStatusOpenUntil": {
+    "placeholders": { "time": { "type": "String" } }
+  },
+  "detailStatusClosed": "Closed",
+  "detailStatusClosesAt": "Closes {time}",
+  "@detailStatusClosesAt": {
+    "placeholders": { "time": { "type": "String" } }
+  },
+  "detailStatusClosedOpensAt": "Closed · opens {day} {time}",
+  "@detailStatusClosedOpensAt": {
+    "placeholders": {
+      "day": { "type": "String" },
+      "time": { "type": "String" }
+    }
+  },
+
+  "distanceMeters": "{meters} m",
+  "@distanceMeters": {
+    "placeholders": { "meters": { "type": "int" } }
+  },
+  "distanceKilometersShort": "{km} km",
+  "@distanceKilometersShort": {
+    "placeholders": { "km": { "type": "String" } }
+  },
+  "distanceKilometersRound": "{km} km",
+  "@distanceKilometersRound": {
+    "placeholders": { "km": { "type": "int" } }
+  },
+
+  "bookingsPlaceholderTitle": "Bookings coming soon",
+  "bookingsPlaceholderBody": "Your reservations and orders will live here."
+}

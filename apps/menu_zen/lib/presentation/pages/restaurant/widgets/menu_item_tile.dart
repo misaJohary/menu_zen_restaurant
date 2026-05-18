@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/utils/translations.dart';
+import '../../../../l10n/generated/app_localizations.dart';
 
 class MenuItemTile extends StatelessWidget {
   final MenuItemEntity item;
@@ -22,13 +23,14 @@ class MenuItemTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final textTheme = Theme.of(context).textTheme;
     final scheme = Theme.of(context).colorScheme;
     final unavailable = item.active == false;
 
     final translation = pickTranslation(item.translations, locale);
     final rawName = translation?.name.trim() ?? '';
-    final name = rawName.isEmpty ? 'Untitled item' : rawName;
+    final name = rawName.isEmpty ? l10n.menuItemUntitled : rawName;
     final description = translation?.description?.trim();
 
     final tile = Padding(
@@ -65,7 +67,9 @@ class MenuItemTile extends StatelessWidget {
                 Row(
                   children: [
                     Text(
-                      'Ar ${_priceFormat.format(item.price.round())}',
+                      l10n.menuItemPrice(
+                        _priceFormat.format(item.price.round()),
+                      ),
                       style: textTheme.titleSmall?.copyWith(
                         fontWeight: FontWeight.w700,
                         color: scheme.primary,
@@ -84,7 +88,7 @@ class MenuItemTile extends StatelessWidget {
                               BorderRadius.circular(AppRadii.pill),
                         ),
                         child: Text(
-                          'Unavailable',
+                          l10n.menuItemUnavailable,
                           style: textTheme.labelSmall?.copyWith(
                             color: AppColors.error,
                             fontWeight: FontWeight.w600,

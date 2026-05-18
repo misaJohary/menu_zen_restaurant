@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../core/navigation/route_paths.dart';
+import '../../l10n/generated/app_localizations.dart';
 
 class MainShell extends StatelessWidget {
   final Widget child;
@@ -12,32 +13,33 @@ class MainShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final index = _indexFor(location);
     return Scaffold(
       body: child,
       bottomNavigationBar: NavigationBar(
         selectedIndex: index,
         onDestinationSelected: (i) => context.go(_paths[i]),
-        destinations: const [
+        destinations: [
           NavigationDestination(
-            icon: Icon(PhosphorIconsRegular.compass),
-            selectedIcon: Icon(PhosphorIconsFill.compass),
-            label: 'Discover',
+            icon: const Icon(PhosphorIconsRegular.compass),
+            selectedIcon: const Icon(PhosphorIconsFill.compass),
+            label: l10n.navDiscover,
           ),
           NavigationDestination(
-            icon: Icon(PhosphorIconsRegular.magnifyingGlass),
-            selectedIcon: Icon(PhosphorIconsFill.magnifyingGlass),
-            label: 'Search',
+            icon: const Icon(PhosphorIconsRegular.magnifyingGlass),
+            selectedIcon: const Icon(PhosphorIconsFill.magnifyingGlass),
+            label: l10n.navSearch,
           ),
           NavigationDestination(
-            icon: Icon(PhosphorIconsRegular.bookmarkSimple),
-            selectedIcon: Icon(PhosphorIconsFill.bookmarkSimple),
-            label: 'Bookings',
+            icon: const Icon(PhosphorIconsRegular.bookmarkSimple),
+            selectedIcon: const Icon(PhosphorIconsFill.bookmarkSimple),
+            label: l10n.navBookings,
           ),
           NavigationDestination(
-            icon: Icon(PhosphorIconsRegular.user),
-            selectedIcon: Icon(PhosphorIconsFill.user),
-            label: 'Profile',
+            icon: const Icon(PhosphorIconsRegular.user),
+            selectedIcon: const Icon(PhosphorIconsFill.user),
+            label: l10n.navProfile,
           ),
         ],
       ),
