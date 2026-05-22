@@ -22,6 +22,13 @@ dependencies:
   jwt_decoder: ^2.0.1
   geolocator: ^13.0.0
 
+  # Offline-first
+  drift: ^2.20.0
+  sqlite3_flutter_libs: ^0.5.24
+  path_provider: ^2.1.4
+  path: ^1.9.0
+  connectivity_plus: ^6.0.5
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -30,3 +37,4 @@ dev_dependencies:
   json_serializable: ^6.9.5
   retrofit_generator:
   injectable_generator: ^2.7.0
+  drift_dev: ^2.20.0

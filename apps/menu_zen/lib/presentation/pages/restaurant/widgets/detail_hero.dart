@@ -37,6 +37,7 @@ class DetailHero extends StatelessWidget {
           CachedNetworkImage(
             imageUrl: imageUrl!,
             fit: BoxFit.cover,
+            cacheManager: PersistentImageCacheManager.instance,
             placeholder: (_, __) => Container(color: AppColors.canvas),
             errorWidget: (_, __, ___) => fallback,
           ),

@@ -219,7 +219,7 @@ class FavoritesPageGate extends StatelessWidget {
         AuthInitial() || AuthSubmitting() => const Scaffold(
           body: Center(child: CircularProgressIndicator()),
         ),
-        AuthUnauthenticated() => Scaffold(
+        AuthUnauthenticated() || AuthOffline() => Scaffold(
           appBar: AppBar(title: Text(l10n.favoritesTitle)),
           body: SafeArea(
             child: EmptyState(

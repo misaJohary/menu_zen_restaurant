@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
+import '../cache/persistent_image_cache_manager.dart';
 import '../tokens/app_colors.dart';
 import '../tokens/app_spacing.dart';
 
@@ -42,6 +43,7 @@ class RestaurantCover extends StatelessWidget {
                 fit: fit,
                 width: width,
                 height: height,
+                cacheManager: PersistentImageCacheManager.instance,
                 placeholder: (_, __) => Container(color: AppColors.canvas),
                 errorWidget: (_, __, ___) => fallback,
               ),

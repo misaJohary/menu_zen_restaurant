@@ -28,3 +28,10 @@ class AuthUnauthenticated extends AuthState {
 
   const AuthUnauthenticated({this.errorMessage});
 }
+
+/// A token is on disk but the device is offline, so we can't verify it.
+/// The router lands on a "connect to sign in" screen until connectivity
+/// returns and `AuthStarted` is re-dispatched.
+class AuthOffline extends AuthState {
+  const AuthOffline();
+}

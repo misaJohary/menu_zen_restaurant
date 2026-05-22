@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../core/navigation/route_paths.dart';
+import '../../core/network/online_guard.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../bloc/auth/auth_bloc.dart';
 import '../bloc/favorites/favorites_cubit.dart';
@@ -65,11 +66,21 @@ class FavoriteHeartButton extends StatelessWidget {
     );
   }
 
-  void _onTap(BuildContext context, {required bool signedIn}) {
+  Future<void> _onTap(
+    BuildContext context, {
+    required bool signedIn,
+  }) async {
     if (!signedIn) {
       context.push(RoutePaths.authLogin);
       return;
     }
+    if (!await OnlineGuard.require(
+      context,
+      message: 'You need an internet connection to update favourites.',
+    )) {
+      return;
+    }
+    if (!context.mounted) return;
     context.read<FavoritesCubit>().toggle(restaurant);
   }
 

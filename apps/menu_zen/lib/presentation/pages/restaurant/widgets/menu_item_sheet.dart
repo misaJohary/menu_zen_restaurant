@@ -73,6 +73,8 @@ class _MenuItemSheetState extends State<MenuItemSheet> {
                         child: CachedNetworkImage(
                           imageUrl: widget.item.picture!,
                           fit: BoxFit.cover,
+                          cacheManager:
+                              PersistentImageCacheManager.instance,
                           placeholder: (_, __) =>
                               Container(color: AppColors.canvas),
                           errorWidget: (_, __, ___) =>

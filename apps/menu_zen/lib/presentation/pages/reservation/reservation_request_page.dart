@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:design_system/design_system.dart';
 import 'package:domain/entities/customer_entity.dart';
 import 'package:domain/entities/opening_hours_entity.dart';
@@ -47,7 +48,7 @@ class ReservationRequestPage extends StatelessWidget {
         AuthSubmitting() => const Scaffold(
           body: Center(child: CircularProgressIndicator()),
         ),
-        AuthUnauthenticated() => _SignedOutScaffold(),
+        AuthUnauthenticated() || AuthOffline() => _SignedOutScaffold(),
       },
     );
   }
@@ -594,10 +595,11 @@ class _RestaurantHeader extends StatelessWidget {
             width: 56,
             height: 56,
             child: restaurant.logo != null
-                ? Image.network(
-                    restaurant.logo!,
+                ? CachedNetworkImage(
+                    imageUrl: restaurant.logo!,
                     fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) =>
+                    cacheManager: PersistentImageCacheManager.instance,
+                    errorWidget: (_, __, ___) =>
                         _RestaurantInitial(name: restaurant.name),
                   )
                 : _RestaurantInitial(name: restaurant.name),

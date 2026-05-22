@@ -49,7 +49,7 @@ class OrderRequestPage extends StatelessWidget {
         AuthInitial() || AuthSubmitting() => const Scaffold(
           body: Center(child: CircularProgressIndicator()),
         ),
-        AuthUnauthenticated() => _SignedOutScaffold(),
+        AuthUnauthenticated() || AuthOffline() => _SignedOutScaffold(),
       },
     );
   }
@@ -628,6 +628,7 @@ class _ItemRow extends StatelessWidget {
                   ? CachedNetworkImage(
                       imageUrl: item.picture!,
                       fit: BoxFit.cover,
+                      cacheManager: PersistentImageCacheManager.instance,
                       placeholder: (_, __) =>
                           Container(color: AppColors.canvas),
                       errorWidget: (_, __, ___) => _Placeholder(scheme: scheme),

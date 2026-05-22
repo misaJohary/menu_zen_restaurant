@@ -7,6 +7,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../../core/navigation/route_paths.dart';
+import '../../../../core/network/cached_tile_provider.dart';
 import 'search_result_card.dart';
 
 /// Map view with a draggable bottom sheet showing the same results as the
@@ -55,6 +56,7 @@ class _SearchMapViewState extends State<SearchMapView> {
             TileLayer(
               urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
               userAgentPackageName: 'mg.menuzen.menu_zen',
+              tileProvider: CachedTileProvider(),
             ),
             MarkerLayer(
               markers: [

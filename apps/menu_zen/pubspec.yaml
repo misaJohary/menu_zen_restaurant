@@ -38,6 +38,9 @@ dependencies:
   flutter_dotenv: ^5.2.1
   shared_preferences: ^2.5.3
 
+  # Offline / connectivity
+  connectivity_plus: ^6.0.5
+
   # UI
   google_fonts: ^8.0.2
   cached_network_image: ^3.4.1

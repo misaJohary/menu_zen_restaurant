@@ -7,6 +7,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../../core/network/cached_tile_provider.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 
 class AboutTab extends StatelessWidget {
@@ -56,6 +57,7 @@ class AboutTab extends StatelessWidget {
                     urlTemplate:
                         'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                     userAgentPackageName: 'com.menuzen.app',
+                    tileProvider: CachedTileProvider(),
                   ),
                   MarkerLayer(
                     markers: [

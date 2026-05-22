@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:design_system/design_system.dart';
 import 'package:domain/entities/customer_reservation_entity.dart';
 import 'package:flutter/material.dart';
@@ -42,10 +43,11 @@ class ReservationCard extends StatelessWidget {
                   width: 56,
                   height: 56,
                   child: restaurant.logo != null
-                      ? Image.network(
-                          restaurant.logo!,
+                      ? CachedNetworkImage(
+                          imageUrl: restaurant.logo!,
                           fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) =>
+                          cacheManager: PersistentImageCacheManager.instance,
+                          errorWidget: (_, __, ___) =>
                               _Initial(name: restaurant.name),
                         )
                       : _Initial(name: restaurant.name),

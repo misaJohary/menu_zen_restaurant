@@ -43,6 +43,9 @@ class _DiscoverView extends StatelessWidget {
                 message: message,
                 onRetry: () => context.read<DiscoverCubit>().load(),
               ),
+              DiscoverOffline() => _OfflineView(
+                onRetry: () => context.read<DiscoverCubit>().load(),
+              ),
               DiscoverLoaded() => _LoadedView(state: state,),
             };
           },
@@ -219,6 +222,24 @@ class _ErrorView extends StatelessWidget {
       icon: PhosphorIconsDuotone.wifiSlash,
       title: l10n.commonReachKitchenError,
       body: message,
+      actionLabel: l10n.commonTryAgain,
+      onAction: onRetry,
+    );
+  }
+}
+
+class _OfflineView extends StatelessWidget {
+  final VoidCallback onRetry;
+  const _OfflineView({required this.onRetry});
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return EmptyState(
+      icon: PhosphorIconsDuotone.wifiSlash,
+      title: "You're offline",
+      body:
+          "Connect to the internet to load nearby restaurants. They'll be available offline once we've fetched them.",
       actionLabel: l10n.commonTryAgain,
       onAction: onRetry,
     );

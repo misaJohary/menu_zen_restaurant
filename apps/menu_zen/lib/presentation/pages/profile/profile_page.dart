@@ -24,6 +24,7 @@ class ProfilePage extends StatelessWidget {
               child: CircularProgressIndicator(),
             ),
             AuthUnauthenticated() => const _SignedOutView(),
+            AuthOffline() => const _OfflineView(),
             AuthAuthenticated(:final customer) => _ProfileView(
               customer: customer,
             ),
@@ -52,6 +53,32 @@ class _SignedOutView extends StatelessWidget {
           body: l10n.profileSignInBody,
           actionLabel: l10n.profileSignInAction,
           onAction: () => context.push(RoutePaths.authLogin),
+        ),
+        const SizedBox(height: AppSpacing.xl),
+        _LanguageTile(),
+      ],
+    );
+  }
+}
+
+class _OfflineView extends StatelessWidget {
+  const _OfflineView();
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.l,
+        vertical: AppSpacing.l,
+      ),
+      children: [
+        EmptyState(
+          icon: PhosphorIconsDuotone.wifiSlash,
+          title: "You're offline",
+          body: 'Connect to the internet to view and edit your profile.',
+          actionLabel: 'Try again',
+          onAction: () =>
+              context.read<AuthBloc>().add(AuthStarted()),
         ),
         const SizedBox(height: AppSpacing.xl),
         _LanguageTile(),
@@ -180,6 +207,7 @@ class _Avatar extends StatelessWidget {
             ? CachedNetworkImage(
                 imageUrl: url,
                 fit: BoxFit.cover,
+                cacheManager: PersistentImageCacheManager.instance,
                 errorWidget: (_, __, ___) =>
                     _initialsAvatar(initials, scheme),
               )

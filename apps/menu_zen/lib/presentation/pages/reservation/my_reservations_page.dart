@@ -28,7 +28,7 @@ class MyReservationsPage extends StatelessWidget {
         AuthSubmitting() => const Scaffold(
           body: Center(child: CircularProgressIndicator()),
         ),
-        AuthUnauthenticated() => _SignedOutScaffold(),
+        AuthUnauthenticated() || AuthOffline() => _SignedOutScaffold(),
       },
     );
   }

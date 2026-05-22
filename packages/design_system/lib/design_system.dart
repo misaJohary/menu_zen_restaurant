@@ -15,3 +15,4 @@ export 'src/widgets/restaurant_cover.dart';
 export 'src/widgets/mood_chip.dart';
 export 'src/widgets/status_pill.dart';
 export 'src/widgets/empty_state.dart';
+export 'src/cache/persistent_image_cache_manager.dart';

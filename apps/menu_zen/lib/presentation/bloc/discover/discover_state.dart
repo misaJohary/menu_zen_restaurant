@@ -35,3 +35,11 @@ class DiscoverError extends DiscoverState {
   final String message;
   const DiscoverError(this.message);
 }
+
+/// Device is offline and the local cache has nothing to show yet (first
+/// run while offline). Distinct from `DiscoverError` so the UI can offer a
+/// friendlier "connect to load restaurants" empty state instead of a
+/// generic server-error message.
+class DiscoverOffline extends DiscoverState {
+  const DiscoverOffline();
+}

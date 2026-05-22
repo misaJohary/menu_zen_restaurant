@@ -111,6 +111,7 @@ class MenuItemTile extends StatelessWidget {
                   ? CachedNetworkImage(
                       imageUrl: item.picture!,
                       fit: BoxFit.cover,
+                      cacheManager: PersistentImageCacheManager.instance,
                       placeholder: (_, __) =>
                           Container(color: AppColors.canvas),
                       errorWidget: (_, __, ___) => _placeholder(scheme),

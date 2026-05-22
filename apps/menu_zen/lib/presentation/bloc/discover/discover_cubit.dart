@@ -3,6 +3,7 @@ import 'package:domain/entities/restaurant_public_entity.dart';
 import 'package:domain/params/restaurant_search_params.dart';
 import 'package:domain/repositories/geolocation_repository.dart';
 import 'package:domain/repositories/public_restaurants_repository.dart';
+import 'package:domain/services/connectivity_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -17,12 +18,15 @@ const _kFallbackCity = 'Antananarivo';
 class DiscoverCubit extends Cubit<DiscoverState> {
   final PublicRestaurantsRepository _restaurants;
   final GeolocationRepository _geo;
+  final ConnectivityService _connectivity;
 
   DiscoverCubit({
     required PublicRestaurantsRepository restaurants,
     required GeolocationRepository geo,
+    required ConnectivityService connectivity,
   })  : _restaurants = restaurants,
         _geo = geo,
+        _connectivity = connectivity,
         super(const DiscoverInitial());
 
   Future<void> load() async {
@@ -40,6 +44,12 @@ class DiscoverCubit extends Cubit<DiscoverState> {
     );
 
     if (nearResult.isFailure) {
+      // Disambiguate "no network" from a real server error so the page can
+      // show a friendlier empty state instead of a kitchen-down message.
+      if (!await _connectivity.isOnline()) {
+        emit(const DiscoverOffline());
+        return;
+      }
       emit(DiscoverError(nearResult.getError?.message ?? 'Something went wrong'));
       return;
     }

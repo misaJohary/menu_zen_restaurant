@@ -23,7 +23,7 @@ class PublicRestaurantsRemoteDatasource {
 
   PublicRestaurantsRemoteDatasource(this._dio);
 
-  Future<RestaurantSearchResponseEntity> searchNearby(
+  Future<Map<String, dynamic>> searchNearbyRaw(
     RestaurantSearchParams params,
   ) async {
     final response = await _dio.get<Map<String, dynamic>>(
@@ -38,17 +38,29 @@ class PublicRestaurantsRemoteDatasource {
         'offset': params.offset,
       },
     );
-    return RestaurantSearchResponseModel.fromJson(response.data ?? const {});
+    return response.data ?? const {};
   }
 
-  Future<RestaurantDetailPublicEntity> getRestaurant(int id) async {
+  Future<RestaurantSearchResponseEntity> searchNearby(
+    RestaurantSearchParams params,
+  ) async {
+    return RestaurantSearchResponseModel.fromJson(
+      await searchNearbyRaw(params),
+    );
+  }
+
+  Future<Map<String, dynamic>> getRestaurantRaw(int id) async {
     final response = await _dio.get<Map<String, dynamic>>(
       '/public/restaurants/$id',
     );
-    return RestaurantDetailPublicModel.fromJson(response.data ?? const {});
+    return response.data ?? const {};
   }
 
-  Future<List<MenuEntity>> listMenus(
+  Future<RestaurantDetailPublicEntity> getRestaurant(int id) async {
+    return RestaurantDetailPublicModel.fromJson(await getRestaurantRaw(id));
+  }
+
+  Future<List<Map<String, dynamic>>> listMenusRaw(
     int restaurantId, {
     int limit = 50,
     int offset = 0,
@@ -59,8 +71,17 @@ class PublicRestaurantsRemoteDatasource {
     );
     return (response.data ?? const [])
         .whereType<Map<String, dynamic>>()
-        .map(MenuModel.fromJson)
-        .toList();
+        .toList(growable: false);
+  }
+
+  Future<List<MenuEntity>> listMenus(
+    int restaurantId, {
+    int limit = 50,
+    int offset = 0,
+  }) async {
+    final raw =
+        await listMenusRaw(restaurantId, limit: limit, offset: offset);
+    return raw.map(MenuModel.fromJson).toList();
   }
 
   Future<List<CategoryEntity>> listCategories(
@@ -78,7 +99,7 @@ class PublicRestaurantsRemoteDatasource {
         .toList();
   }
 
-  Future<List<MenuItemEntity>> listMenuItems(
+  Future<List<Map<String, dynamic>>> listMenuItemsRaw(
     int restaurantId, {
     int? menuId,
     int? categoryId,
@@ -98,18 +119,40 @@ class PublicRestaurantsRemoteDatasource {
     );
     return (response.data ?? const [])
         .whereType<Map<String, dynamic>>()
-        .map(MenuItemModel.fromJson)
-        .toList();
+        .toList(growable: false);
   }
 
-  Future<MenuItemEntity> getMenuItem(int id) async {
+  Future<List<MenuItemEntity>> listMenuItems(
+    int restaurantId, {
+    int? menuId,
+    int? categoryId,
+    String? search,
+    int limit = 50,
+    int offset = 0,
+  }) async {
+    final raw = await listMenuItemsRaw(
+      restaurantId,
+      menuId: menuId,
+      categoryId: categoryId,
+      search: search,
+      limit: limit,
+      offset: offset,
+    );
+    return raw.map(MenuItemModel.fromJson).toList();
+  }
+
+  Future<Map<String, dynamic>> getMenuItemRaw(int id) async {
     final response = await _dio.get<Map<String, dynamic>>(
       '/public/menu-items/$id',
     );
-    return MenuItemModel.fromJson(response.data ?? const {});
+    return response.data ?? const {};
   }
 
-  Future<List<ReviewEntity>> listReviews(
+  Future<MenuItemEntity> getMenuItem(int id) async {
+    return MenuItemModel.fromJson(await getMenuItemRaw(id));
+  }
+
+  Future<List<Map<String, dynamic>>> listReviewsRaw(
     int restaurantId, {
     ReviewSort sort = ReviewSort.recent,
     int limit = 20,
@@ -125,8 +168,22 @@ class PublicRestaurantsRemoteDatasource {
     );
     return (response.data ?? const [])
         .whereType<Map<String, dynamic>>()
-        .map(ReviewModel.fromJson)
-        .toList();
+        .toList(growable: false);
+  }
+
+  Future<List<ReviewEntity>> listReviews(
+    int restaurantId, {
+    ReviewSort sort = ReviewSort.recent,
+    int limit = 20,
+    int offset = 0,
+  }) async {
+    final raw = await listReviewsRaw(
+      restaurantId,
+      sort: sort,
+      limit: limit,
+      offset: offset,
+    );
+    return raw.map(ReviewModel.fromJson).toList();
   }
 
   Future<ReviewSummaryEntity> getReviewSummary(int restaurantId) async {

@@ -71,6 +71,7 @@ class _PhotoTile extends StatelessWidget {
         child: CachedNetworkImage(
           imageUrl: imageUrl,
           fit: BoxFit.cover,
+          cacheManager: PersistentImageCacheManager.instance,
           placeholder: (_, __) => Container(color: AppColors.canvas),
           errorWidget: (_, __, ___) => Container(
             color: scheme.surfaceContainerHighest,
@@ -141,6 +142,7 @@ class _PhotosViewerState extends State<_PhotosViewer> {
             child: CachedNetworkImage(
               imageUrl: widget.pictures[index],
               fit: BoxFit.contain,
+              cacheManager: PersistentImageCacheManager.instance,
               placeholder: (_, __) => const Center(
                 child: CircularProgressIndicator(color: Colors.white),
               ),

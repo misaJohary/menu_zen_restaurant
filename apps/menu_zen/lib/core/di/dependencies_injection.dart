@@ -11,9 +11,16 @@ import 'package:data/repositories/customer_reservations_repository_impl.dart';
 import 'package:data/repositories/customer_reviews_repository_impl.dart';
 import 'package:data/repositories/favorites_repository_impl.dart';
 import 'package:data/repositories/geolocation_repository_impl.dart';
+import 'package:data/local/app_database.dart';
+import 'package:data/local/datasources/customer_orders_local_datasource.dart';
+import 'package:data/local/datasources/customer_reservations_local_datasource.dart';
+import 'package:data/local/datasources/favorites_local_datasource.dart';
+import 'package:data/local/datasources/public_restaurants_local_datasource.dart';
 import 'package:data/repositories/public_restaurants_repository_impl.dart';
+import 'package:data/services/connectivity_service_impl.dart';
 import 'package:data/services/customer_token_storage.dart';
 import 'package:dio/dio.dart';
+import 'package:domain/services/connectivity_service.dart';
 import 'package:domain/repositories/customer_auth_repository.dart';
 import 'package:domain/repositories/customer_orders_repository.dart';
 import 'package:domain/repositories/customer_reservations_repository.dart';
@@ -48,6 +55,14 @@ Future<void> configureDependencies() async {
   );
   getIt.registerLazySingleton<CustomerTokenStorage>(
     () => CustomerTokenStorageImpl(getIt<SharedPreferencesAsync>()),
+  );
+
+  // ---- Local DB ---------------------------------------------------------
+  getIt.registerLazySingleton<AppDatabase>(() => AppDatabase());
+
+  // ---- Connectivity -----------------------------------------------------
+  getIt.registerLazySingleton<ConnectivityService>(
+    () => ConnectivityServiceImpl(),
   );
 
   // ---- Dio --------------------------------------------------------------
@@ -121,10 +136,26 @@ Future<void> configureDependencies() async {
     ),
   );
 
+  // ---- Local datasources -----------------------------------------------
+  getIt.registerLazySingleton<PublicRestaurantsLocalDatasource>(
+    () => PublicRestaurantsLocalDatasource(getIt<AppDatabase>()),
+  );
+  getIt.registerLazySingleton<CustomerOrdersLocalDatasource>(
+    () => CustomerOrdersLocalDatasource(getIt<AppDatabase>()),
+  );
+  getIt.registerLazySingleton<CustomerReservationsLocalDatasource>(
+    () => CustomerReservationsLocalDatasource(getIt<AppDatabase>()),
+  );
+  getIt.registerLazySingleton<FavoritesLocalDatasource>(
+    () => FavoritesLocalDatasource(getIt<AppDatabase>()),
+  );
+
   // ---- Repositories -----------------------------------------------------
   getIt.registerLazySingleton<PublicRestaurantsRepository>(
     () => PublicRestaurantsRepositoryImpl(
       getIt<PublicRestaurantsRemoteDatasource>(),
+      getIt<PublicRestaurantsLocalDatasource>(),
+      getIt<ConnectivityService>(),
     ),
   );
 
@@ -146,18 +177,26 @@ Future<void> configureDependencies() async {
   );
 
   getIt.registerLazySingleton<FavoritesRepository>(
-    () => FavoritesRepositoryImpl(getIt<CustomerFavoritesRemoteDatasource>()),
+    () => FavoritesRepositoryImpl(
+      getIt<CustomerFavoritesRemoteDatasource>(),
+      getIt<FavoritesLocalDatasource>(),
+      getIt<ConnectivityService>(),
+    ),
   );
 
   getIt.registerLazySingleton<CustomerReservationsRepository>(
     () => CustomerReservationsRepositoryImpl(
       getIt<CustomerReservationsRemoteDatasource>(),
+      getIt<CustomerReservationsLocalDatasource>(),
+      getIt<ConnectivityService>(),
     ),
   );
 
   getIt.registerLazySingleton<CustomerOrdersRepository>(
     () => CustomerOrdersRepositoryImpl(
       getIt<CustomerOrdersRemoteDatasource>(),
+      getIt<CustomerOrdersLocalDatasource>(),
+      getIt<ConnectivityService>(),
     ),
   );
 
@@ -168,6 +207,10 @@ Future<void> configureDependencies() async {
     () => AuthBloc(
       auth: getIt<CustomerAuthRepository>(),
       tokenStorage: getIt<CustomerTokenStorage>(),
+      connectivity: getIt<ConnectivityService>(),
+      ordersLocal: getIt<CustomerOrdersLocalDatasource>(),
+      reservationsLocal: getIt<CustomerReservationsLocalDatasource>(),
+      favoritesLocal: getIt<FavoritesLocalDatasource>(),
     ),
   );
 
@@ -175,6 +218,7 @@ Future<void> configureDependencies() async {
     () => DiscoverCubit(
       restaurants: getIt<PublicRestaurantsRepository>(),
       geo: getIt<GeolocationRepository>(),
+      connectivity: getIt<ConnectivityService>(),
     ),
   );
 

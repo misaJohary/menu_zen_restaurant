@@ -9,6 +9,7 @@ import 'package:intl/intl.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../../core/navigation/route_paths.dart';
+import '../../../../core/network/online_guard.dart';
 import '../../../../l10n/generated/app_localizations.dart';
 import '../../../bloc/auth/auth_bloc.dart';
 import '../../../bloc/restaurant_detail/restaurant_detail_cubit.dart';
@@ -49,6 +50,13 @@ class ReviewsTab extends StatelessWidget {
       if (!context.mounted) return;
       if (context.read<AuthBloc>().state is! AuthAuthenticated) return;
     }
+    if (!await OnlineGuard.require(
+      context,
+      message: "You need an internet connection to post a review.",
+    )) {
+      return;
+    }
+    if (!context.mounted) return;
 
     final result = await showModalBottomSheet<ReviewComposerResult>(
       context: context,
@@ -343,6 +351,7 @@ class _ReviewCard extends StatelessWidget {
                       ? CachedNetworkImage(
                           imageUrl: review.customer.avatar!,
                           fit: BoxFit.cover,
+                          cacheManager: PersistentImageCacheManager.instance,
                           errorWidget: (_, __, ___) =>
                               _initialAvatar(scheme, initial),
                         )

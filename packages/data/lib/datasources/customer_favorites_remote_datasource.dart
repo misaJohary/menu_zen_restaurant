@@ -10,23 +10,34 @@ class CustomerFavoritesRemoteDatasource {
 
   CustomerFavoritesRemoteDatasource(this._dio);
 
-  Future<List<FavoriteEntity>> list({int limit = 50, int offset = 0}) async {
+  Future<List<Map<String, dynamic>>> listRaw({
+    int limit = 50,
+    int offset = 0,
+  }) async {
     final response = await _dio.get<List<dynamic>>(
       '/customers/me/favorites',
       queryParameters: {'limit': limit, 'offset': offset},
     );
     return (response.data ?? const [])
         .whereType<Map<String, dynamic>>()
-        .map(FavoriteModel.fromJson)
-        .toList();
+        .toList(growable: false);
   }
 
-  Future<FavoriteEntity> add(int restaurantId) async {
+  Future<List<FavoriteEntity>> list({int limit = 50, int offset = 0}) async {
+    final raw = await listRaw(limit: limit, offset: offset);
+    return raw.map(FavoriteModel.fromJson).toList();
+  }
+
+  Future<Map<String, dynamic>> addRaw(int restaurantId) async {
     final response = await _dio.post<Map<String, dynamic>>(
       '/customers/me/favorites',
       data: {'restaurant_id': restaurantId},
     );
-    return FavoriteModel.fromJson(response.data ?? const {});
+    return response.data ?? const {};
+  }
+
+  Future<FavoriteEntity> add(int restaurantId) async {
+    return FavoriteModel.fromJson(await addRaw(restaurantId));
   }
 
   Future<void> remove(int restaurantId) async {

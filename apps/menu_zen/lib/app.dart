@@ -9,6 +9,7 @@ import 'l10n/material_locale_fallback.dart';
 import 'presentation/bloc/auth/auth_bloc.dart';
 import 'presentation/bloc/favorites/favorites_cubit.dart';
 import 'presentation/bloc/locale/locale_cubit.dart';
+import 'presentation/widgets/offline_banner.dart';
 
 class MenuZenApp extends StatelessWidget {
   const MenuZenApp({super.key});
@@ -51,6 +52,9 @@ class MenuZenApp extends StatelessWidget {
                 ...AppLocalizations.localizationsDelegates,
               ],
               supportedLocales: AppLocalizations.supportedLocales,
+              builder: (context, child) => OfflineBanner(
+                child: child ?? const SizedBox.shrink(),
+              ),
             );
           },
         ),

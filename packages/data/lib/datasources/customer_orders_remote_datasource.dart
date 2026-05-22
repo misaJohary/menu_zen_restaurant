@@ -12,17 +12,23 @@ class CustomerOrdersRemoteDatasource {
 
   CustomerOrdersRemoteDatasource(this._dio);
 
-  Future<CustomerOrderEntity> create(
+  Future<Map<String, dynamic>> createRaw(
     CustomerOrderCreateParams params,
   ) async {
     final response = await _dio.post<Map<String, dynamic>>(
       '/customers/me/orders',
       data: params.toJson(),
     );
-    return CustomerOrderModel.fromJson(response.data ?? const {});
+    return response.data ?? const {};
   }
 
-  Future<List<CustomerOrderEntity>> listMine({
+  Future<CustomerOrderEntity> create(
+    CustomerOrderCreateParams params,
+  ) async {
+    return CustomerOrderModel.fromJson(await createRaw(params));
+  }
+
+  Future<List<Map<String, dynamic>>> listMineRaw({
     CustomerOrderStatus? status,
     int limit = 50,
     int offset = 0,
@@ -37,21 +43,41 @@ class CustomerOrdersRemoteDatasource {
     );
     return (response.data ?? const [])
         .whereType<Map<String, dynamic>>()
-        .map(CustomerOrderModel.fromJson)
-        .toList();
+        .toList(growable: false);
   }
 
-  Future<CustomerOrderEntity> get(int id) async {
+  Future<List<CustomerOrderEntity>> listMine({
+    CustomerOrderStatus? status,
+    int limit = 50,
+    int offset = 0,
+  }) async {
+    final raw = await listMineRaw(
+      status: status,
+      limit: limit,
+      offset: offset,
+    );
+    return raw.map(CustomerOrderModel.fromJson).toList();
+  }
+
+  Future<Map<String, dynamic>> getRaw(int id) async {
     final response = await _dio.get<Map<String, dynamic>>(
       '/customers/me/orders/$id',
     );
-    return CustomerOrderModel.fromJson(response.data ?? const {});
+    return response.data ?? const {};
   }
 
-  Future<CustomerOrderEntity> cancel(int id) async {
+  Future<CustomerOrderEntity> get(int id) async {
+    return CustomerOrderModel.fromJson(await getRaw(id));
+  }
+
+  Future<Map<String, dynamic>> cancelRaw(int id) async {
     final response = await _dio.patch<Map<String, dynamic>>(
       '/customers/me/orders/$id/cancel',
     );
-    return CustomerOrderModel.fromJson(response.data ?? const {});
+    return response.data ?? const {};
+  }
+
+  Future<CustomerOrderEntity> cancel(int id) async {
+    return CustomerOrderModel.fromJson(await cancelRaw(id));
   }
 }
