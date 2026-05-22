@@ -1155,6 +1155,546 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Your reservations and orders will live here.'**
   String get bookingsPlaceholderBody;
+
+  /// No description provided for @reservationRequestTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Request a reservation'**
+  String get reservationRequestTitle;
+
+  /// No description provided for @reservationDetailTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reservation'**
+  String get reservationDetailTitle;
+
+  /// No description provided for @reservationsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'My reservations'**
+  String get reservationsTitle;
+
+  /// No description provided for @reservationsTabAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get reservationsTabAll;
+
+  /// No description provided for @reservationStatusWaiting.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting'**
+  String get reservationStatusWaiting;
+
+  /// No description provided for @reservationStatusAccepted.
+  ///
+  /// In en, this message translates to:
+  /// **'Accepted'**
+  String get reservationStatusAccepted;
+
+  /// No description provided for @reservationStatusRefused.
+  ///
+  /// In en, this message translates to:
+  /// **'Refused'**
+  String get reservationStatusRefused;
+
+  /// No description provided for @reservationStatusCanceled.
+  ///
+  /// In en, this message translates to:
+  /// **'Canceled'**
+  String get reservationStatusCanceled;
+
+  /// No description provided for @reservationDateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get reservationDateLabel;
+
+  /// No description provided for @reservationTimeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Time'**
+  String get reservationTimeLabel;
+
+  /// No description provided for @reservationPartySizeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Party size'**
+  String get reservationPartySizeLabel;
+
+  /// No description provided for @reservationPhoneLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone'**
+  String get reservationPhoneLabel;
+
+  /// No description provided for @reservationPhoneRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a phone number'**
+  String get reservationPhoneRequired;
+
+  /// No description provided for @reservationPhoneInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid phone number'**
+  String get reservationPhoneInvalid;
+
+  /// No description provided for @reservationNoteLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Special requests'**
+  String get reservationNoteLabel;
+
+  /// No description provided for @reservationNoteHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Allergies, occasion, seating preference…'**
+  String get reservationNoteHint;
+
+  /// No description provided for @reservationOpeningHoursMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'This restaurant has not published opening hours.'**
+  String get reservationOpeningHoursMissing;
+
+  /// No description provided for @reservationMoreDates.
+  ///
+  /// In en, this message translates to:
+  /// **'More…'**
+  String get reservationMoreDates;
+
+  /// No description provided for @reservationMoreParty.
+  ///
+  /// In en, this message translates to:
+  /// **'More…'**
+  String get reservationMoreParty;
+
+  /// No description provided for @reservationPickDateFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a date to see available times.'**
+  String get reservationPickDateFirst;
+
+  /// No description provided for @reservationNoTimes.
+  ///
+  /// In en, this message translates to:
+  /// **'No times available on this day.'**
+  String get reservationNoTimes;
+
+  /// No description provided for @reservationSubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Send request'**
+  String get reservationSubmit;
+
+  /// No description provided for @reservationSubmitHint.
+  ///
+  /// In en, this message translates to:
+  /// **'The restaurant will confirm your request shortly.'**
+  String get reservationSubmitHint;
+
+  /// No description provided for @reservationSuccessToast.
+  ///
+  /// In en, this message translates to:
+  /// **'Request sent — the restaurant will confirm shortly.'**
+  String get reservationSuccessToast;
+
+  /// No description provided for @reservationErrorPastTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Please pick a future time.'**
+  String get reservationErrorPastTime;
+
+  /// No description provided for @reservationRequestedAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Requested'**
+  String get reservationRequestedAt;
+
+  /// No description provided for @reservationCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel reservation'**
+  String get reservationCancel;
+
+  /// No description provided for @reservationCancelDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel this reservation?'**
+  String get reservationCancelDialogTitle;
+
+  /// No description provided for @reservationCancelDialogBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You can always request a new one later.'**
+  String get reservationCancelDialogBody;
+
+  /// No description provided for @reservationRefusedBanner.
+  ///
+  /// In en, this message translates to:
+  /// **'This reservation was refused by the restaurant.'**
+  String get reservationRefusedBanner;
+
+  /// No description provided for @reservationTablesAssigned.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} table assigned} other{{count} tables assigned}}'**
+  String reservationTablesAssigned(int count);
+
+  /// No description provided for @reservationsEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No reservations yet'**
+  String get reservationsEmptyTitle;
+
+  /// No description provided for @reservationsEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Find a place you like and request a table.'**
+  String get reservationsEmptyBody;
+
+  /// No description provided for @reservationsEmptyAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Explore restaurants'**
+  String get reservationsEmptyAction;
+
+  /// No description provided for @reservationsEmptyFiltered.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing here for this filter.'**
+  String get reservationsEmptyFiltered;
+
+  /// No description provided for @reservationsErrorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t load your reservations.'**
+  String get reservationsErrorTitle;
+
+  /// No description provided for @reservationSignedOutTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to reserve'**
+  String get reservationSignedOutTitle;
+
+  /// No description provided for @reservationSignedOutBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Create an account or sign in to request a table.'**
+  String get reservationSignedOutBody;
+
+  /// No description provided for @reservationSignedOutAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in'**
+  String get reservationSignedOutAction;
+
+  /// No description provided for @orderRequestTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Order delivery'**
+  String get orderRequestTitle;
+
+  /// No description provided for @orderDetailTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Order'**
+  String get orderDetailTitle;
+
+  /// No description provided for @ordersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'My orders'**
+  String get ordersTitle;
+
+  /// No description provided for @ordersTabAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get ordersTabAll;
+
+  /// No description provided for @orderStatusCreated.
+  ///
+  /// In en, this message translates to:
+  /// **'Placed'**
+  String get orderStatusCreated;
+
+  /// No description provided for @orderStatusInPreparation.
+  ///
+  /// In en, this message translates to:
+  /// **'Preparing'**
+  String get orderStatusInPreparation;
+
+  /// No description provided for @orderStatusReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready'**
+  String get orderStatusReady;
+
+  /// No description provided for @orderStatusServed.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivered'**
+  String get orderStatusServed;
+
+  /// No description provided for @orderStatusCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get orderStatusCancelled;
+
+  /// No description provided for @orderStepItemsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose items'**
+  String get orderStepItemsTitle;
+
+  /// No description provided for @orderStepAddressTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivery address'**
+  String get orderStepAddressTitle;
+
+  /// No description provided for @orderStepNotesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Note for the courier'**
+  String get orderStepNotesTitle;
+
+  /// No description provided for @orderStepPhoneTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm your phone'**
+  String get orderStepPhoneTitle;
+
+  /// No description provided for @orderStepAddressHeadline.
+  ///
+  /// In en, this message translates to:
+  /// **'Where should we bring it?'**
+  String get orderStepAddressHeadline;
+
+  /// No description provided for @orderStepAddressBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Add enough detail for the courier to find you (building, gate, floor).'**
+  String get orderStepAddressBody;
+
+  /// No description provided for @orderStepNotesHeadline.
+  ///
+  /// In en, this message translates to:
+  /// **'Anything we should know?'**
+  String get orderStepNotesHeadline;
+
+  /// No description provided for @orderStepNotesBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional. Gate code, bell instructions, allergies, etc.'**
+  String get orderStepNotesBody;
+
+  /// No description provided for @orderStepPhoneHeadline.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone number for delivery'**
+  String get orderStepPhoneHeadline;
+
+  /// No description provided for @orderStepPhoneBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The courier may call you when they arrive.'**
+  String get orderStepPhoneBody;
+
+  /// No description provided for @orderItemsEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing to order yet'**
+  String get orderItemsEmptyTitle;
+
+  /// No description provided for @orderItemsEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This restaurant hasn\'t published any items yet.'**
+  String get orderItemsEmptyBody;
+
+  /// No description provided for @orderItemAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get orderItemAdd;
+
+  /// No description provided for @orderAddressLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivery address'**
+  String get orderAddressLabel;
+
+  /// No description provided for @orderAddressHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Lot II A 23 bis, Antananarivo 101'**
+  String get orderAddressHint;
+
+  /// No description provided for @orderAddressRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a delivery address'**
+  String get orderAddressRequired;
+
+  /// No description provided for @orderNotesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Note for the courier'**
+  String get orderNotesLabel;
+
+  /// No description provided for @orderNotesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Ring twice, gate code 4321…'**
+  String get orderNotesHint;
+
+  /// No description provided for @orderPhoneLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone'**
+  String get orderPhoneLabel;
+
+  /// No description provided for @orderPhoneHint.
+  ///
+  /// In en, this message translates to:
+  /// **'+261 34 12 345 67'**
+  String get orderPhoneHint;
+
+  /// No description provided for @orderPhoneRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a phone number'**
+  String get orderPhoneRequired;
+
+  /// No description provided for @orderPhoneInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid phone number'**
+  String get orderPhoneInvalid;
+
+  /// No description provided for @orderBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get orderBack;
+
+  /// No description provided for @orderNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get orderNext;
+
+  /// No description provided for @orderPlaceOrder.
+  ///
+  /// In en, this message translates to:
+  /// **'Place order'**
+  String get orderPlaceOrder;
+
+  /// No description provided for @orderTotalLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Total'**
+  String get orderTotalLabel;
+
+  /// No description provided for @orderSummaryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Order summary'**
+  String get orderSummaryTitle;
+
+  /// No description provided for @orderSummaryItems.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{{count} item} other{{count} items}}'**
+  String orderSummaryItems(int count);
+
+  /// No description provided for @orderCardId.
+  ///
+  /// In en, this message translates to:
+  /// **'Order #{id}'**
+  String orderCardId(int id);
+
+  /// No description provided for @orderSuccessToast.
+  ///
+  /// In en, this message translates to:
+  /// **'Order placed — the restaurant will start preparing it.'**
+  String get orderSuccessToast;
+
+  /// No description provided for @orderSignedOutTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to order'**
+  String get orderSignedOutTitle;
+
+  /// No description provided for @orderSignedOutBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Create an account or sign in to place an order.'**
+  String get orderSignedOutBody;
+
+  /// No description provided for @orderSignedOutAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in'**
+  String get orderSignedOutAction;
+
+  /// No description provided for @ordersEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No orders yet'**
+  String get ordersEmptyTitle;
+
+  /// No description provided for @ordersEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Browse restaurants and place your first delivery.'**
+  String get ordersEmptyBody;
+
+  /// No description provided for @ordersEmptyAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Explore restaurants'**
+  String get ordersEmptyAction;
+
+  /// No description provided for @ordersEmptyFiltered.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing here for this filter.'**
+  String get ordersEmptyFiltered;
+
+  /// No description provided for @ordersErrorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t load your orders.'**
+  String get ordersErrorTitle;
+
+  /// No description provided for @orderCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel order'**
+  String get orderCancel;
+
+  /// No description provided for @orderCancelDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel this order?'**
+  String get orderCancelDialogTitle;
+
+  /// No description provided for @orderCancelDialogBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You can only cancel while the order is still being placed.'**
+  String get orderCancelDialogBody;
+
+  /// No description provided for @orderCancelTooLate.
+  ///
+  /// In en, this message translates to:
+  /// **'It\'s too late to cancel — contact the restaurant directly.'**
+  String get orderCancelTooLate;
 }
 
 class _AppLocalizationsDelegate

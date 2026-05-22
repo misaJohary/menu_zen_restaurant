@@ -1,16 +1,17 @@
 import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../../core/di/dependencies_injection.dart';
+import '../../../core/navigation/route_paths.dart';
 import '../../../l10n/generated/app_localizations.dart';
 import '../../bloc/restaurant_detail/restaurant_detail_cubit.dart';
 import '../../widgets/favorite_heart_button.dart';
 import 'tabs/about_tab.dart';
 import 'tabs/menu_tab.dart';
 import 'tabs/photos_tab.dart';
-import 'tabs/reserve_tab.dart';
 import 'tabs/reviews_tab.dart';
 import 'widgets/detail_bottom_bar.dart';
 import 'widgets/detail_hero.dart';
@@ -72,7 +73,7 @@ class _LoadedViewState extends State<_LoadedView>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 5, vsync: this);
+    _tabController = TabController(length: 4, vsync: this);
     _scrollController = ScrollController()..addListener(_onScroll);
   }
 
@@ -146,7 +147,6 @@ class _LoadedViewState extends State<_LoadedView>
                 tabs: [
                   Tab(text: l10n.tabPhotos),
                   Tab(text: l10n.tabMenu),
-                  Tab(text: l10n.tabReserve),
                   Tab(text: l10n.tabReviews),
                   Tab(text: l10n.tabAbout),
                 ],
@@ -164,7 +164,6 @@ class _LoadedViewState extends State<_LoadedView>
               menuByCategory: widget.state.menuByCategory,
               availableLanguages: detail.languages,
             ),
-            ReserveTab(detail: detail),
             ReviewsTab(
               restaurantId: detail.id,
               restaurantName: detail.name,
@@ -181,8 +180,14 @@ class _LoadedViewState extends State<_LoadedView>
         child: IgnorePointer(
           ignoring: _bottomBarOpacity < 0.1,
           child: DetailBottomBar(
-            onReserve: () => _tabController.animateTo(2),
-            onOrder: () {},
+            onReserve: () => context.push(
+              RoutePaths.restaurantReserve(detail.id),
+              extra: detail,
+            ),
+            onOrder: () => context.push(
+              RoutePaths.restaurantOrder(detail.id),
+              extra: detail,
+            ),
           ),
         ),
       ),

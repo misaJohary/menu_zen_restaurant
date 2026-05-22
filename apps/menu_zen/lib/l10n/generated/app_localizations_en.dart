@@ -597,4 +597,307 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get bookingsPlaceholderBody =>
       'Your reservations and orders will live here.';
+
+  @override
+  String get reservationRequestTitle => 'Request a reservation';
+
+  @override
+  String get reservationDetailTitle => 'Reservation';
+
+  @override
+  String get reservationsTitle => 'My reservations';
+
+  @override
+  String get reservationsTabAll => 'All';
+
+  @override
+  String get reservationStatusWaiting => 'Waiting';
+
+  @override
+  String get reservationStatusAccepted => 'Accepted';
+
+  @override
+  String get reservationStatusRefused => 'Refused';
+
+  @override
+  String get reservationStatusCanceled => 'Canceled';
+
+  @override
+  String get reservationDateLabel => 'Date';
+
+  @override
+  String get reservationTimeLabel => 'Time';
+
+  @override
+  String get reservationPartySizeLabel => 'Party size';
+
+  @override
+  String get reservationPhoneLabel => 'Phone';
+
+  @override
+  String get reservationPhoneRequired => 'Please enter a phone number';
+
+  @override
+  String get reservationPhoneInvalid => 'Enter a valid phone number';
+
+  @override
+  String get reservationNoteLabel => 'Special requests';
+
+  @override
+  String get reservationNoteHint => 'Allergies, occasion, seating preference…';
+
+  @override
+  String get reservationOpeningHoursMissing =>
+      'This restaurant has not published opening hours.';
+
+  @override
+  String get reservationMoreDates => 'More…';
+
+  @override
+  String get reservationMoreParty => 'More…';
+
+  @override
+  String get reservationPickDateFirst => 'Pick a date to see available times.';
+
+  @override
+  String get reservationNoTimes => 'No times available on this day.';
+
+  @override
+  String get reservationSubmit => 'Send request';
+
+  @override
+  String get reservationSubmitHint =>
+      'The restaurant will confirm your request shortly.';
+
+  @override
+  String get reservationSuccessToast =>
+      'Request sent — the restaurant will confirm shortly.';
+
+  @override
+  String get reservationErrorPastTime => 'Please pick a future time.';
+
+  @override
+  String get reservationRequestedAt => 'Requested';
+
+  @override
+  String get reservationCancel => 'Cancel reservation';
+
+  @override
+  String get reservationCancelDialogTitle => 'Cancel this reservation?';
+
+  @override
+  String get reservationCancelDialogBody =>
+      'You can always request a new one later.';
+
+  @override
+  String get reservationRefusedBanner =>
+      'This reservation was refused by the restaurant.';
+
+  @override
+  String reservationTablesAssigned(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count tables assigned',
+      one: '$count table assigned',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get reservationsEmptyTitle => 'No reservations yet';
+
+  @override
+  String get reservationsEmptyBody =>
+      'Find a place you like and request a table.';
+
+  @override
+  String get reservationsEmptyAction => 'Explore restaurants';
+
+  @override
+  String get reservationsEmptyFiltered => 'Nothing here for this filter.';
+
+  @override
+  String get reservationsErrorTitle => 'We couldn\'t load your reservations.';
+
+  @override
+  String get reservationSignedOutTitle => 'Sign in to reserve';
+
+  @override
+  String get reservationSignedOutBody =>
+      'Create an account or sign in to request a table.';
+
+  @override
+  String get reservationSignedOutAction => 'Sign in';
+
+  @override
+  String get orderRequestTitle => 'Order delivery';
+
+  @override
+  String get orderDetailTitle => 'Order';
+
+  @override
+  String get ordersTitle => 'My orders';
+
+  @override
+  String get ordersTabAll => 'All';
+
+  @override
+  String get orderStatusCreated => 'Placed';
+
+  @override
+  String get orderStatusInPreparation => 'Preparing';
+
+  @override
+  String get orderStatusReady => 'Ready';
+
+  @override
+  String get orderStatusServed => 'Delivered';
+
+  @override
+  String get orderStatusCancelled => 'Cancelled';
+
+  @override
+  String get orderStepItemsTitle => 'Choose items';
+
+  @override
+  String get orderStepAddressTitle => 'Delivery address';
+
+  @override
+  String get orderStepNotesTitle => 'Note for the courier';
+
+  @override
+  String get orderStepPhoneTitle => 'Confirm your phone';
+
+  @override
+  String get orderStepAddressHeadline => 'Where should we bring it?';
+
+  @override
+  String get orderStepAddressBody =>
+      'Add enough detail for the courier to find you (building, gate, floor).';
+
+  @override
+  String get orderStepNotesHeadline => 'Anything we should know?';
+
+  @override
+  String get orderStepNotesBody =>
+      'Optional. Gate code, bell instructions, allergies, etc.';
+
+  @override
+  String get orderStepPhoneHeadline => 'Phone number for delivery';
+
+  @override
+  String get orderStepPhoneBody => 'The courier may call you when they arrive.';
+
+  @override
+  String get orderItemsEmptyTitle => 'Nothing to order yet';
+
+  @override
+  String get orderItemsEmptyBody =>
+      'This restaurant hasn\'t published any items yet.';
+
+  @override
+  String get orderItemAdd => 'Add';
+
+  @override
+  String get orderAddressLabel => 'Delivery address';
+
+  @override
+  String get orderAddressHint => 'Lot II A 23 bis, Antananarivo 101';
+
+  @override
+  String get orderAddressRequired => 'Please enter a delivery address';
+
+  @override
+  String get orderNotesLabel => 'Note for the courier';
+
+  @override
+  String get orderNotesHint => 'Ring twice, gate code 4321…';
+
+  @override
+  String get orderPhoneLabel => 'Phone';
+
+  @override
+  String get orderPhoneHint => '+261 34 12 345 67';
+
+  @override
+  String get orderPhoneRequired => 'Please enter a phone number';
+
+  @override
+  String get orderPhoneInvalid => 'Enter a valid phone number';
+
+  @override
+  String get orderBack => 'Back';
+
+  @override
+  String get orderNext => 'Next';
+
+  @override
+  String get orderPlaceOrder => 'Place order';
+
+  @override
+  String get orderTotalLabel => 'Total';
+
+  @override
+  String get orderSummaryTitle => 'Order summary';
+
+  @override
+  String orderSummaryItems(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count items',
+      one: '$count item',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String orderCardId(int id) {
+    return 'Order #$id';
+  }
+
+  @override
+  String get orderSuccessToast =>
+      'Order placed — the restaurant will start preparing it.';
+
+  @override
+  String get orderSignedOutTitle => 'Sign in to order';
+
+  @override
+  String get orderSignedOutBody =>
+      'Create an account or sign in to place an order.';
+
+  @override
+  String get orderSignedOutAction => 'Sign in';
+
+  @override
+  String get ordersEmptyTitle => 'No orders yet';
+
+  @override
+  String get ordersEmptyBody =>
+      'Browse restaurants and place your first delivery.';
+
+  @override
+  String get ordersEmptyAction => 'Explore restaurants';
+
+  @override
+  String get ordersEmptyFiltered => 'Nothing here for this filter.';
+
+  @override
+  String get ordersErrorTitle => 'We couldn\'t load your orders.';
+
+  @override
+  String get orderCancel => 'Cancel order';
+
+  @override
+  String get orderCancelDialogTitle => 'Cancel this order?';
+
+  @override
+  String get orderCancelDialogBody =>
+      'You can only cancel while the order is still being placed.';
+
+  @override
+  String get orderCancelTooLate =>
+      'It\'s too late to cancel — contact the restaurant directly.';
 }

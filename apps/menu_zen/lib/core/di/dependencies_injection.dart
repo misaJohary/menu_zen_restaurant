@@ -1,9 +1,13 @@
 import 'package:data/config/base_url_config.dart';
 import 'package:data/datasources/customer_favorites_remote_datasource.dart';
+import 'package:data/datasources/customer_orders_remote_datasource.dart';
+import 'package:data/datasources/customer_reservations_remote_datasource.dart';
 import 'package:data/datasources/customer_reviews_remote_datasource.dart';
 import 'package:data/datasources/customers_remote_datasource.dart';
 import 'package:data/datasources/public_restaurants_remote_datasource.dart';
 import 'package:data/repositories/customer_auth_repository_impl.dart';
+import 'package:data/repositories/customer_orders_repository_impl.dart';
+import 'package:data/repositories/customer_reservations_repository_impl.dart';
 import 'package:data/repositories/customer_reviews_repository_impl.dart';
 import 'package:data/repositories/favorites_repository_impl.dart';
 import 'package:data/repositories/geolocation_repository_impl.dart';
@@ -11,6 +15,8 @@ import 'package:data/repositories/public_restaurants_repository_impl.dart';
 import 'package:data/services/customer_token_storage.dart';
 import 'package:dio/dio.dart';
 import 'package:domain/repositories/customer_auth_repository.dart';
+import 'package:domain/repositories/customer_orders_repository.dart';
+import 'package:domain/repositories/customer_reservations_repository.dart';
 import 'package:domain/repositories/customer_reviews_repository.dart';
 import 'package:domain/repositories/favorites_repository.dart';
 import 'package:domain/repositories/geolocation_repository.dart';
@@ -23,6 +29,12 @@ import '../../presentation/bloc/customer_review/customer_review_cubit.dart';
 import '../../presentation/bloc/discover/discover_cubit.dart';
 import '../../presentation/bloc/favorites/favorites_cubit.dart';
 import '../../presentation/bloc/locale/locale_cubit.dart';
+import '../../presentation/bloc/my_orders/my_orders_cubit.dart';
+import '../../presentation/bloc/my_reservations/my_reservations_cubit.dart';
+import '../../presentation/bloc/order_detail/order_detail_cubit.dart';
+import '../../presentation/bloc/order_request/order_request_cubit.dart';
+import '../../presentation/bloc/reservation_detail/reservation_detail_cubit.dart';
+import '../../presentation/bloc/reservation_request/reservation_request_cubit.dart';
 import '../../presentation/bloc/restaurant_detail/restaurant_detail_cubit.dart';
 import '../../presentation/bloc/search/search_bloc.dart';
 import '../network/customer_auth_interceptor.dart';
@@ -97,6 +109,18 @@ Future<void> configureDependencies() async {
     ),
   );
 
+  getIt.registerLazySingleton<CustomerReservationsRemoteDatasource>(
+    () => CustomerReservationsRemoteDatasource(
+      getIt<Dio>(instanceName: 'customerDio'),
+    ),
+  );
+
+  getIt.registerLazySingleton<CustomerOrdersRemoteDatasource>(
+    () => CustomerOrdersRemoteDatasource(
+      getIt<Dio>(instanceName: 'customerDio'),
+    ),
+  );
+
   // ---- Repositories -----------------------------------------------------
   getIt.registerLazySingleton<PublicRestaurantsRepository>(
     () => PublicRestaurantsRepositoryImpl(
@@ -123,6 +147,18 @@ Future<void> configureDependencies() async {
 
   getIt.registerLazySingleton<FavoritesRepository>(
     () => FavoritesRepositoryImpl(getIt<CustomerFavoritesRemoteDatasource>()),
+  );
+
+  getIt.registerLazySingleton<CustomerReservationsRepository>(
+    () => CustomerReservationsRepositoryImpl(
+      getIt<CustomerReservationsRemoteDatasource>(),
+    ),
+  );
+
+  getIt.registerLazySingleton<CustomerOrdersRepository>(
+    () => CustomerOrdersRepositoryImpl(
+      getIt<CustomerOrdersRemoteDatasource>(),
+    ),
   );
 
   // ---- Blocs & cubits ---------------------------------------------------
@@ -155,6 +191,30 @@ Future<void> configureDependencies() async {
 
   getIt.registerFactory<CustomerReviewCubit>(
     () => CustomerReviewCubit(getIt<CustomerReviewsRepository>()),
+  );
+
+  getIt.registerFactory<ReservationRequestCubit>(
+    () => ReservationRequestCubit(getIt<CustomerReservationsRepository>()),
+  );
+
+  getIt.registerFactory<MyReservationsCubit>(
+    () => MyReservationsCubit(getIt<CustomerReservationsRepository>()),
+  );
+
+  getIt.registerFactory<ReservationDetailCubit>(
+    () => ReservationDetailCubit(getIt<CustomerReservationsRepository>()),
+  );
+
+  getIt.registerFactory<OrderRequestCubit>(
+    () => OrderRequestCubit(getIt<CustomerOrdersRepository>()),
+  );
+
+  getIt.registerFactory<MyOrdersCubit>(
+    () => MyOrdersCubit(getIt<CustomerOrdersRepository>()),
+  );
+
+  getIt.registerFactory<OrderDetailCubit>(
+    () => OrderDetailCubit(getIt<CustomerOrdersRepository>()),
   );
 
   // App-scoped: a single instance keeps the heart state in sync across

@@ -602,4 +602,308 @@ class AppLocalizationsMg extends AppLocalizations {
   @override
   String get bookingsPlaceholderBody =>
       'Ho eto ny famandrihanao sy ny baikonao.';
+
+  @override
+  String get reservationRequestTitle => 'Hangataka famandrihana';
+
+  @override
+  String get reservationDetailTitle => 'Famandrihana';
+
+  @override
+  String get reservationsTitle => 'Ny famandrihako';
+
+  @override
+  String get reservationsTabAll => 'Rehetra';
+
+  @override
+  String get reservationStatusWaiting => 'Miandry';
+
+  @override
+  String get reservationStatusAccepted => 'Nekena';
+
+  @override
+  String get reservationStatusRefused => 'Notsipahina';
+
+  @override
+  String get reservationStatusCanceled => 'Nofoanana';
+
+  @override
+  String get reservationDateLabel => 'Daty';
+
+  @override
+  String get reservationTimeLabel => 'Ora';
+
+  @override
+  String get reservationPartySizeLabel => 'Isan\'ny mpiara-misakafo';
+
+  @override
+  String get reservationPhoneLabel => 'Finday';
+
+  @override
+  String get reservationPhoneRequired => 'Ampidiro ny laharan-finday';
+
+  @override
+  String get reservationPhoneInvalid => 'Ampidiro laharana mety';
+
+  @override
+  String get reservationNoteLabel => 'Fangatahana manokana';
+
+  @override
+  String get reservationNoteHint => 'Allergie, fety, toerana tianao…';
+
+  @override
+  String get reservationOpeningHoursMissing =>
+      'Tsy nampiavaka ora fisokafana ity trano fisakafoanana ity.';
+
+  @override
+  String get reservationMoreDates => 'Hafa…';
+
+  @override
+  String get reservationMoreParty => 'Hafa…';
+
+  @override
+  String get reservationPickDateFirst =>
+      'Misafidiana daty mba hahitana ireo ora.';
+
+  @override
+  String get reservationNoTimes => 'Tsy misy ora amin\'io andro io.';
+
+  @override
+  String get reservationSubmit => 'Alefa ny fangatahana';
+
+  @override
+  String get reservationSubmitHint =>
+      'Hanamafy ny fangatahanao ny trano fisakafoanana.';
+
+  @override
+  String get reservationSuccessToast =>
+      'Voaray ny fangatahana — handefasana valiny tsy ho ela.';
+
+  @override
+  String get reservationErrorPastTime => 'Misafidiana ora ho avy.';
+
+  @override
+  String get reservationRequestedAt => 'Nangatahina';
+
+  @override
+  String get reservationCancel => 'Foano ny famandrihana';
+
+  @override
+  String get reservationCancelDialogTitle => 'Foanana ity famandrihana ity?';
+
+  @override
+  String get reservationCancelDialogBody =>
+      'Afaka mangataka iray hafa ianao avy eo.';
+
+  @override
+  String get reservationRefusedBanner =>
+      'Notsipahin\'ny trano fisakafoanana ity famandrihana ity.';
+
+  @override
+  String reservationTablesAssigned(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Latabatra $count natokana',
+      one: 'Latabatra $count natokana',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get reservationsEmptyTitle => 'Tsy mbola misy famandrihana';
+
+  @override
+  String get reservationsEmptyBody =>
+      'Mitadiava trano fisakafoanana ary mangataha latabatra.';
+
+  @override
+  String get reservationsEmptyAction => 'Hizaha ireo trano fisakafoanana';
+
+  @override
+  String get reservationsEmptyFiltered => 'Tsy misy ho an\'ity sivana ity.';
+
+  @override
+  String get reservationsErrorTitle =>
+      'Tsy afaka naka ny famandrihanao izahay.';
+
+  @override
+  String get reservationSignedOutTitle => 'Midira mba hamandrihana';
+
+  @override
+  String get reservationSignedOutBody =>
+      'Mamoròna kaonty na midira mba hangataka latabatra.';
+
+  @override
+  String get reservationSignedOutAction => 'Hiditra';
+
+  @override
+  String get orderRequestTitle => 'Hibaiko ho fanaterana';
+
+  @override
+  String get orderDetailTitle => 'Baiko';
+
+  @override
+  String get ordersTitle => 'Ny baikoko';
+
+  @override
+  String get ordersTabAll => 'Rehetra';
+
+  @override
+  String get orderStatusCreated => 'Voaray';
+
+  @override
+  String get orderStatusInPreparation => 'Mikarakara';
+
+  @override
+  String get orderStatusReady => 'Vonona';
+
+  @override
+  String get orderStatusServed => 'Voatatitra';
+
+  @override
+  String get orderStatusCancelled => 'Nofoanana';
+
+  @override
+  String get orderStepItemsTitle => 'Misafidiana sakafo';
+
+  @override
+  String get orderStepAddressTitle => 'Adiresy fanaterana';
+
+  @override
+  String get orderStepNotesTitle => 'Hafatra ho an\'ny mpitatitra';
+
+  @override
+  String get orderStepPhoneTitle => 'Hamafiso ny laharanao';
+
+  @override
+  String get orderStepAddressHeadline => 'Aiza no hanaterana?';
+
+  @override
+  String get orderStepAddressBody =>
+      'Manomeza antsipiriany hahitan\'ny mpitatitra anao (trano, vavahady, rihana).';
+
+  @override
+  String get orderStepNotesHeadline => 'Misy ve ny tianao holazaina?';
+
+  @override
+  String get orderStepNotesBody =>
+      'Tsy voatery. Kaody vavahady, fampahafantarana, allergie, sns.';
+
+  @override
+  String get orderStepPhoneHeadline => 'Laharana ho an\'ny fanaterana';
+
+  @override
+  String get orderStepPhoneBody =>
+      'Mety hiantso anao ny mpitatitra rehefa tonga.';
+
+  @override
+  String get orderItemsEmptyTitle => 'Mbola tsy misy hibaikoana';
+
+  @override
+  String get orderItemsEmptyBody =>
+      'Mbola tsy nametraka sakafo ity trano fisakafoanana ity.';
+
+  @override
+  String get orderItemAdd => 'Ampio';
+
+  @override
+  String get orderAddressLabel => 'Adiresy fanaterana';
+
+  @override
+  String get orderAddressHint => 'Lot II A 23 bis, Antananarivo 101';
+
+  @override
+  String get orderAddressRequired => 'Ampidiro ny adiresy fanaterana';
+
+  @override
+  String get orderNotesLabel => 'Hafatra ho an\'ny mpitatitra';
+
+  @override
+  String get orderNotesHint => 'Mampaneno indroa, kaody vavahady 4321…';
+
+  @override
+  String get orderPhoneLabel => 'Finday';
+
+  @override
+  String get orderPhoneHint => '+261 34 12 345 67';
+
+  @override
+  String get orderPhoneRequired => 'Ampidiro ny laharan-finday';
+
+  @override
+  String get orderPhoneInvalid => 'Ampidiro laharana mety';
+
+  @override
+  String get orderBack => 'Hiverina';
+
+  @override
+  String get orderNext => 'Manaraka';
+
+  @override
+  String get orderPlaceOrder => 'Alefa ny baiko';
+
+  @override
+  String get orderTotalLabel => 'Totalin\'ny';
+
+  @override
+  String get orderSummaryTitle => 'Famintinan\'ny baiko';
+
+  @override
+  String orderSummaryItems(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Sakafo $count',
+      one: 'Sakafo $count',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String orderCardId(int id) {
+    return 'Baiko #$id';
+  }
+
+  @override
+  String get orderSuccessToast =>
+      'Voaray ny baiko — manomboka manomana izy ireo.';
+
+  @override
+  String get orderSignedOutTitle => 'Midira mba hibaiko';
+
+  @override
+  String get orderSignedOutBody => 'Mamoròna kaonty na midira mba hibaiko.';
+
+  @override
+  String get orderSignedOutAction => 'Hiditra';
+
+  @override
+  String get ordersEmptyTitle => 'Tsy mbola misy baiko';
+
+  @override
+  String get ordersEmptyBody => 'Hizahà trano fisakafoanana ary mibaikoa.';
+
+  @override
+  String get ordersEmptyAction => 'Hizaha ireo trano fisakafoanana';
+
+  @override
+  String get ordersEmptyFiltered => 'Tsy misy ho an\'ity sivana ity.';
+
+  @override
+  String get ordersErrorTitle => 'Tsy afaka naka ny baikonao izahay.';
+
+  @override
+  String get orderCancel => 'Foano ny baiko';
+
+  @override
+  String get orderCancelDialogTitle => 'Foanana ity baiko ity?';
+
+  @override
+  String get orderCancelDialogBody =>
+      'Tsy azo foanana intsony raha efa nanomboka.';
+
+  @override
+  String get orderCancelTooLate =>
+      'Tara loatra ny manafoana — antsoy mivantana ny trano fisakafoanana.';
 }

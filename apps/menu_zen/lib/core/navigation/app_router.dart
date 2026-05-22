@@ -1,11 +1,19 @@
+import 'package:domain/entities/customer_order_entity.dart';
+import 'package:domain/entities/customer_reservation_entity.dart';
+import 'package:domain/entities/restaurant_public_entity.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../presentation/pages/auth/login_page.dart';
 import '../../presentation/pages/auth/register_page.dart';
-import '../../presentation/pages/bookings/bookings_placeholder_page.dart';
 import '../../presentation/pages/discover/discover_page.dart';
 import '../../presentation/pages/favorites/favorites_page.dart';
+import '../../presentation/pages/order/my_orders_page.dart';
+import '../../presentation/pages/order/order_detail_page.dart';
+import '../../presentation/pages/order/order_request_page.dart';
 import '../../presentation/pages/profile/profile_page.dart';
+import '../../presentation/pages/reservation/my_reservations_page.dart';
+import '../../presentation/pages/reservation/reservation_detail_page.dart';
+import '../../presentation/pages/reservation/reservation_request_page.dart';
 import '../../presentation/pages/restaurant/restaurant_detail_page.dart';
 import '../../presentation/pages/search/search_page.dart';
 import '../../presentation/widgets/main_shell.dart';
@@ -31,7 +39,7 @@ final GoRouter appRouter = GoRouter(
         GoRoute(
           path: RoutePaths.bookings,
           pageBuilder: (_, __) =>
-              const NoTransitionPage(child: BookingsPlaceholderPage()),
+              const NoTransitionPage(child: MyReservationsPage()),
         ),
         GoRoute(
           path: RoutePaths.profile,
@@ -54,10 +62,71 @@ final GoRouter appRouter = GoRouter(
         final id = int.parse(state.pathParameters['id']!);
         return RestaurantDetailPage(restaurantId: id);
       },
+      routes: [
+        GoRoute(
+          path: 'reserve',
+          builder: (_, state) {
+            final id = int.parse(state.pathParameters['id']!);
+            final extra = state.extra;
+            return ReservationRequestPage(
+              restaurantId: id,
+              initialRestaurant:
+                  extra is RestaurantPublicEntity ? extra : null,
+            );
+          },
+        ),
+        GoRoute(
+          path: 'order',
+          builder: (_, state) {
+            final id = int.parse(state.pathParameters['id']!);
+            final extra = state.extra;
+            return OrderRequestPage(
+              restaurantId: id,
+              initialRestaurant:
+                  extra is RestaurantPublicEntity ? extra : null,
+            );
+          },
+        ),
+      ],
     ),
     GoRoute(
       path: RoutePaths.favorites,
       builder: (_, __) => const FavoritesPageGate(),
+    ),
+    GoRoute(
+      path: RoutePaths.reservations,
+      builder: (_, __) => const MyReservationsPage(),
+      routes: [
+        GoRoute(
+          path: ':id',
+          builder: (_, state) {
+            final id = int.parse(state.pathParameters['id']!);
+            final extra = state.extra;
+            return ReservationDetailPage(
+              reservationId: id,
+              initial:
+                  extra is CustomerReservationEntity ? extra : null,
+            );
+          },
+        ),
+      ],
+    ),
+    GoRoute(
+      path: RoutePaths.orders,
+      builder: (_, __) => const MyOrdersPage(),
+      routes: [
+        GoRoute(
+          path: ':id',
+          builder: (_, state) {
+            final id = int.parse(state.pathParameters['id']!);
+            final extra = state.extra;
+            return OrderDetailPage(
+              orderId: id,
+              initial: extra is CustomerOrderEntity ? extra : null,
+            );
+          },
+        ),
+      ],
     ),
   ],
 );
